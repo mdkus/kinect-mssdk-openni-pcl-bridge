@@ -127,9 +127,15 @@ void MSRKinectDepthGenerator::UnregisterFromViewPointChange(XnCallbackHandle hCa
 
 XnStatus MSRKinectDepthGenerator::GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
 {
-	// todo -- dummy values to allow UserGenerator run
-	if (strcmp(strName, "MaxShift") == 0 || strcmp(strName, "ZPD") == 0 || strcmp(strName, "ConstShift") == 0) {
+	// empirical values
+	if (strcmp(strName, "MaxShift") == 0) {
 		nValue = 2047;
+		return XN_STATUS_OK;
+	} else if (strcmp(strName, "ZPD") == 0) {
+		nValue = 120;
+		return XN_STATUS_OK;
+	} else if (strcmp(strName, "ConstShift") == 0) {
+		nValue = 200;
 		return XN_STATUS_OK;
 	}
 	return XN_STATUS_ERROR;
@@ -138,9 +144,12 @@ XnStatus MSRKinectDepthGenerator::GetIntProperty(const XnChar* strName, XnUInt64
 
 XnStatus MSRKinectDepthGenerator::GetRealProperty(const XnChar* strName, XnDouble& dValue) const
 {
-	// todo -- dummy values to allow UserGenerator run
-	if (strcmp(strName, "ZPPS") == 0 || strcmp(strName, "LDDIS") == 0) {
-		dValue = 1.0;
+	// empirical values
+	if (strcmp(strName, "ZPPS") == 0) {
+		dValue = 0.1052;
+		return XN_STATUS_OK;
+	} else if (strcmp(strName, "LDDIS") == 0) {
+		dValue = 7.5;
 		return XN_STATUS_OK;
 	}
 	return XN_STATUS_ERROR;
