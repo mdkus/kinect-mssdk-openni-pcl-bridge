@@ -1,0 +1,27 @@
+Kinect-mssdk-openni-bridge License Terms
+
+Copyright (c) 2011, Tomoto S. Washio
+All rights reserved.
+
+This document ("End User License Agreement" or "EULA") is a contract between you and the person who (or company that) provided you this software ("Software Provider"). The EULA defines your rights and responsibilities related to the software. 
+
+By downloading, installing, accessing, or using the software, you accept all terms in this EULA. If you do not accept them, you have no right to download, install, access, or use the software.
+
+1. RIGHTS. The software is licensed, not sold. You may distribute and use the software, in source and binary forms, with or without modification, but only if the following conditions are met:
+
+a. Distributions of source code must retain the above copyright notice, this list of conditions and the disclaimer below;
+
+b. Distributions in binary form must reproduce the above copyright notice, this list of conditions and the disclaimer below in the documentation or other materials provided with the distribution;
+
+c. Neither the name of the Software Provider nor the names of its licensors may be used to endorse or promote products derived from this software without specific prior written permission;
+
+d. The software may not be used or run on any software platform other than Microsoft Windows;
+
+e. The software may not be used for any commercial purpose;
+
+f. If you provide feedback, input, or suggestions ("Feedback") on the software, you grant to the Software Provider and its licensors, under all intellectual property rights, the right to make, use, modify, distribute, and otherwise commercialize your Feedback in any way and for any purpose; and
+
+g. You may not do anything with or to the software in any way that would subject it to the terms of an Excluded License. An Excluded License is a license that requires, as a condition of use, modification, or distribution of code subject to that license, that: (i) the code be disclosed or distributed in source code form; or (ii) others have the right to modify the code.
+
+2. DISCLAIMER. This software is provided by the Software Provider and its licensors "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event will the Software Provider or its licensors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage. You can recover from the Software Provider and its licensors only direct damages up to U.S. $5.00.
+
