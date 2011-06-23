@@ -166,8 +166,20 @@ public:
 			KINECT_LOCKED_RECT lockedRect;
 			pFrame->pFrameTexture->LockRect(0, &lockedRect, NULL, 0);
 
-			// todo check status co qde
+			// todo check status code
 			UpdateImageData(pFrame, (SourcePixelType*)lockedRect.pBits, lockedRect);
+
+			if (m_bMirror) {
+				// slow but works
+				for (int y = 0; y < Y_RES; y++) {
+					TargetPixelType* p = m_pBuffer + y * X_RES;
+					for (int x = 0; x < X_RES / 2; x++) {
+						TargetPixelType a = *(p + x);
+						*(p + x) = *(p + X_RES - 1 - x);
+						*(p + X_RES - 1 - x) = a;
+					}
+				}
+			}
 
 			m_nFrameID++;
 			m_lTimestamp = pFrame->liTimeStamp.QuadPart;
