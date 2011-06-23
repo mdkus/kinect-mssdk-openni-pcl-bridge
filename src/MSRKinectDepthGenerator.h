@@ -18,7 +18,7 @@ public:
 
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName);
 	virtual xn::ModuleAlternativeViewPointInterface* GetAlternativeViewPointInterface();
-
+	
 	// DepthGenerator methods
 	virtual XnDepthPixel* GetDepthMap();
 	virtual XnDepthPixel GetDeviceMaxDepth();
@@ -33,6 +33,10 @@ public:
 	virtual XnStatus ResetViewPoint();
 	virtual XnStatus RegisterToViewPointChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback);
 	virtual void UnregisterFromViewPointChange(XnCallbackHandle hCallback);
+
+	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const;
+	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const;
+	XnStatus GetGeneralProperty(const XnChar* strName, XnUInt32 nBufferSize, void* pBuffer) const;
 
 protected:
 	virtual XnStatus MSRKinectDepthGenerator::UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect);
