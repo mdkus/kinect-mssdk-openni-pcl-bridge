@@ -57,7 +57,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(OPEN_NI_INCLUDE);$(MSRKINECTSDK)\inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(OPEN_NI_LIB);$(MSRKINECTSDK)\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\..\bin\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)\..\bin\$(Configuration)\</OutDir>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
