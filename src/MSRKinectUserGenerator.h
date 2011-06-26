@@ -10,10 +10,10 @@ private:
 	typedef AbstractMSRKinectImageStreamGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
 
 	struct UserCallbackHandleSet {
-		XnCallbackHandle hNewUserCallbackHandle;
-		XnCallbackHandle hLostUserCallbackHandle;
+		XnCallbackHandle hNewUser;
+		XnCallbackHandle hLostUser;
 
-		UserCallbackHandleSet() : hNewUserCallbackHandle(NULL), hLostUserCallbackHandle(NULL) {}
+		UserCallbackHandleSet() : hNewUser(NULL), hLostUser(NULL) {}
 	};
 	typedef std::vector<UserCallbackHandleSet*> UserCallbackHandleSetList;
 
@@ -101,8 +101,8 @@ public:
 	virtual XnStatus RegisterUserCallbacks(XnModuleUserHandler NewUserCB, XnModuleUserHandler LostUserCB, void* pCookie, XnCallbackHandle& hCallback)
 	{
 		UserCallbackHandleSet* pCallbackHandleSet = new UserCallbackHandleSet();
-		if (NewUserCB) m_newUserEvent.Register(NewUserCB, pCookie, &pCallbackHandleSet->hNewUserCallbackHandle);
-		if (LostUserCB) m_lostUserEvent.Register(LostUserCB, pCookie, &pCallbackHandleSet->hLostUserCallbackHandle);
+		if (NewUserCB) m_newUserEvent.Register(NewUserCB, pCookie, &pCallbackHandleSet->hNewUser);
+		if (LostUserCB) m_lostUserEvent.Register(LostUserCB, pCookie, &pCallbackHandleSet->hLostUser);
 		m_userCallbackHandleSets.push_back(pCallbackHandleSet);
 		hCallback = pCallbackHandleSet;
 		return XN_STATUS_OK;
@@ -113,8 +113,8 @@ public:
 		UserCallbackHandleSetList::iterator i = 
 			std::find(m_userCallbackHandleSets.begin(), m_userCallbackHandleSets.end(), hCallback);
 		if (i != m_userCallbackHandleSets.end()) {
-			m_newUserEvent.Unregister((*i)->hNewUserCallbackHandle);
-			m_lostUserEvent.Unregister((*i)->hLostUserCallbackHandle);
+			m_newUserEvent.Unregister((*i)->hNewUser);
+			m_lostUserEvent.Unregister((*i)->hLostUser);
 			delete *i;
 			m_userCallbackHandleSets.erase(i);
 		}
@@ -174,6 +174,7 @@ protected:
 		XnUserID lostUserID = 1;
 		while (lostUsersMask) {
 			if (lostUsersMask & 1) {
+				OnLostUser(lostUserID);
 				m_lostUserEvent.Raise(lostUserID);
 			}
 			lostUserID++;
@@ -184,6 +185,7 @@ protected:
 		XnUserID newUserID = 1;
 		while (newUsersMask) {
 			if (newUsersMask & 1) {
+				OnNewUser(newUserID);
 				m_newUserEvent.Raise(newUserID);
 			}
 			newUserID++;
@@ -192,6 +194,9 @@ protected:
 
 		return XN_STATUS_OK;
 	}
+
+	virtual void OnNewUser(XnUserID userID) {}
+	virtual void OnLostUser(XnUserID userID) {}
 
 private:
 	static XnUInt countBits(XnUInt value)

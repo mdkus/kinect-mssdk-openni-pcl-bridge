@@ -4,6 +4,7 @@
 #include <XnCppWrapper.h>
 #include <XnModuleCppInterface.h>
 #include <XnEvent.h>
+#include <XnLog.h>
 
 #pragma warning(disable : 4996)
 
@@ -25,3 +26,5 @@ struct XnStatusException {
 	HRESULT __hr = (statement); \
 	if (FAILED(__hr)) { fprintf(stderr, "%s", #statement); throw XnStatusException(XN_STATUS_ERROR, __hr); } \
 }
+
+#define LOG(format, ...) fprintf(stderr, format, __VA_ARGS__)

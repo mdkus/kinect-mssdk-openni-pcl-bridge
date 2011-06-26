@@ -24,6 +24,7 @@ public:
 	XnUInt64 GetTimestamp() const { return m_lTimestamp; }
 	BOOL IsRunning() const { return m_bRunning; }
 
+	int GetMirrorFactor() const { return m_bMirror ? 1 : -1; } // Note the factor is inverted
 	BOOL IsMirror() const { return m_bMirror; }
 	void SetMirror(BOOL value) { m_bMirror = value; m_mirrorChangeEvent.Raise(); }
 	ChangeEvent GetMirrorChangeEvent() { return m_mirrorChangeEvent; }

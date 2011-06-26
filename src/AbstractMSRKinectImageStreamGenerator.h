@@ -107,7 +107,7 @@ public:
 			// FIXME check status code
 			UpdateImageData(pFrame, (SourcePixelType*)lockedRect.pBits, lockedRect);
 
-			if (m_pReader->IsMirror()) {
+			if (m_pReader->GetMirrorFactor() < 0) {
 				// slow but works
 				for (int y = 0; y < Y_RES; y++) {
 					TargetPixelType* p = m_pBuffer + y * X_RES;

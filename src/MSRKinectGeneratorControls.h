@@ -40,9 +40,10 @@ public: \
 	AbstractMSRKinectGeneratorControl_IMPL(pReader) \
 	virtual XnStatus StartGenerating() \
 	{ \
-		return XN_STATUS_INVALID_OPERATION; \
+		return XN_STATUS_OK; /* just ignore */ \
 	} \
 	\
 	virtual void StopGenerating() \
 	{ \
+		/* just ignore */ \
 	}
