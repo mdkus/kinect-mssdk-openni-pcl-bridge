@@ -1,20 +1,41 @@
 #pragma once
 #include "base.h"
 #include "MSRKinectManager.h"
-#include <XnModuleCppInterface.h>
-#include <XnEvent.h>
+#include "MSRKinectStreamReader.h"
+#include "MSRKinectStreamMirrorCap.h"
 
-template <class ParentModuleMapGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION resolution>
-class AbstractMSRKinectMapGenerator : public virtual ParentModuleMapGeneratorClass, public virtual xn::ModuleMirrorInterface
+template <class ParentModuleMapGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
+class AbstractMSRKinectMapGenerator :
+	public virtual ParentModuleMapGeneratorClass,
+	public virtual MSRKinectStreamMirrorCap,
+	public virtual MSRKinectImageStreamReader::Listener
 {
+private:
+	typedef AbstractMSRKinectMapGenerator<ParentModuleMapGeneratorClass, SourcePixelType, TargetPixelType, eImageType> ThisClass;
+
+private:
+	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
+	ChangeEvent m_generatingEvent;
+	ChangeEvent m_dataAvailableEvent;
+
+protected:
+	MSRKinectImageStreamReader* m_pReader;
+	BOOL m_bIsNewDataAvailable;
+	TargetPixelType* m_pBuffer;
+
+	static const XnUInt32 X_RES = 640;
+	static const XnUInt32 Y_RES = 480;
+	static const XnUInt32 FPS = 30;
+
 protected:
 	AbstractMSRKinectMapGenerator() :
-		m_isNuiInitialized(FALSE),
-		m_bGenerating(FALSE), m_bMirror(FALSE),
-		m_hNextFrameEvent(NULL), m_hStreamHandle(NULL), m_pFrame(NULL),
-		m_pBuffer(NULL), m_nFrameID(0), m_lTimestamp(0)
+		m_pBuffer(NULL),
+		m_bIsNewDataAvailable(FALSE)
 	{
-		InitializeCriticalSection(&m_csModifyFrame);
+	}
+
+	virtual MSRKinectStreamContextBase* GetContextBase() {
+		return m_pReader;
 	}
 
 public:
@@ -23,41 +44,33 @@ public:
 		if (m_pBuffer) {
 			delete[] m_pBuffer;
 		}
-
-		if (m_isNuiInitialized) {
-			MSRKinectManager::getInstance()->shutdown();
-		}
-
-		if (m_hNextFrameEvent) {
-			CloseHandle(m_hNextFrameEvent);
-		}
-
-		DeleteCriticalSection(&m_csModifyFrame);
 	}
 
-	XnStatus Init()
+	virtual XnStatus Init()
 	{
-		if (FAILED(MSRKinectManager::getInstance()->init())) {
-			return XN_STATUS_INVALID_OPERATION;
-		}
-		m_isNuiInitialized = TRUE;
+		HANDLE hNextFrameEvent = NULL;
+		try {
+			MSRKinectManager* pMan = MSRKinectManager::getInstance();
 
-		m_hNextFrameEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-		if (m_hNextFrameEvent == NULL) {
-			return XN_STATUS_INVALID_OPERATION;
-		}
+			m_pReader = pMan->GetImageStreamByType(eImageType)->GetReader();
+			m_pReader->AddListener(this);
 
-		if (FAILED(NuiImageStreamOpen(eImageType, resolution, 0, 2, m_hNextFrameEvent, &m_hStreamHandle))) {
-			return XN_STATUS_INVALID_OPERATION;
-		}
+			m_pBuffer = new TargetPixelType[X_RES * Y_RES];
+			if (m_pBuffer == NULL) {
+				return XN_STATUS_ALLOC_FAILED;
+			}
+			xnOSMemSet(m_pBuffer, 0, X_RES * Y_RES * sizeof(TargetPixelType));
 
-		m_pBuffer = new TargetPixelType[X_RES * Y_RES];
-		if (m_pBuffer == NULL) {
-			return XN_STATUS_ALLOC_FAILED;
+			return XN_STATUS_OK;
+		} catch (XnStatusException& e) {
+			if (hNextFrameEvent) xnOSCloseEvent(&hNextFrameEvent);
+			return e.nStatus;
 		}
-		xnOSMemSet(m_pBuffer, 0, X_RES * Y_RES * sizeof(TargetPixelType));
+	}
 
-		return XN_STATUS_OK;
+	virtual void OnUpdateFrame() {
+		m_bIsNewDataAvailable = TRUE;
+		m_dataAvailableEvent.Raise();
 	}
 
 	// ProductionNode methods
@@ -69,55 +82,23 @@ public:
 	// Generator methods
 	virtual XnStatus StartGenerating()
 	{
-		XnStatus nRetVal = XN_STATUS_OK;
-	
-		m_bGenerating = TRUE;
-
-		// start scheduler thread
-		nRetVal = xnOSCreateThread(schedulerThread, this, &m_hScheduler);
-		if (nRetVal != XN_STATUS_OK) {
-			m_bGenerating = FALSE;
-			return nRetVal;
+		try {
+			CHECK_XN_STATUS(m_pReader->Start());
+			m_generatingEvent.Raise();
+			return XN_STATUS_OK;
+		} catch (XnStatusException& e) {
+			return e.nStatus;
 		}
-
-		m_generatingEvent.Raise();
-
-		return XN_STATUS_OK;
-	}
-
-	static XN_THREAD_PROC schedulerThread( void* pCookie )
-	{
-		AbstractMSRKinectMapGenerator* that = (AbstractMSRKinectMapGenerator*)pCookie;
-
-		while (that->m_bGenerating) {
-			DWORD rc = WaitForSingleObject(that->m_hNextFrameEvent, INFINITE);
-			if (rc == WAIT_OBJECT_0 && that->m_bGenerating) {
-				// fprintf(stderr, ".");
-				HRESULT hr = that->getFrame();
-				ResetEvent(that->m_hNextFrameEvent);
-				if (SUCCEEDED(hr)) {
-					that->m_dataAvailableEvent.Raise();
-				}
-			}
-		}
-
-		XN_THREAD_PROC_RETURN(0);
 	}
 
 	virtual XnBool IsGenerating()
 	{
-		return m_bGenerating;
+		return m_pReader->IsRunning();
 	}
 
 	virtual void StopGenerating()
 	{
-		m_bGenerating = FALSE;
-
-		// awake thread by fake event
-		SetEvent(m_hNextFrameEvent);
-		// wait for thread to exit
-		xnOSWaitForThreadExit(m_hScheduler, 100);
-
+		m_pReader->Stop();
 		m_generatingEvent.Raise();
 	}
 
@@ -143,7 +124,7 @@ public:
 
 	virtual XnBool IsNewDataAvailable(XnUInt64& nTimestamp)
 	{
-		return m_pFrame != NULL;
+		return m_bIsNewDataAvailable;
 	}
 
 	virtual const void* GetData()
@@ -158,18 +139,20 @@ public:
 
 	virtual XnStatus UpdateData()
 	{
-		// fprintf(stderr, "X");
+		if (!m_bIsNewDataAvailable) {
+			return XN_STATUS_OK;
+		}
 
-		EnterCriticalSection(&m_csModifyFrame);
-		const NUI_IMAGE_FRAME *pFrame = m_pFrame;
+		// fprintf(stderr, "X");
+		const NUI_IMAGE_FRAME *pFrame = m_pReader->LockFrame();
 		if (pFrame) {
 			KINECT_LOCKED_RECT lockedRect;
 			pFrame->pFrameTexture->LockRect(0, &lockedRect, NULL, 0);
 
-			// todo check status code
+			// FIXME check status code
 			UpdateImageData(pFrame, (SourcePixelType*)lockedRect.pBits, lockedRect);
 
-			if (m_bMirror) {
+			if (m_pReader->IsMirror()) {
 				// slow but works
 				for (int y = 0; y < Y_RES; y++) {
 					TargetPixelType* p = m_pBuffer + y * X_RES;
@@ -181,13 +164,11 @@ public:
 				}
 			}
 
-			m_nFrameID++;
-			m_lTimestamp = pFrame->liTimeStamp.QuadPart;
-			clearFrame();
+			m_bIsNewDataAvailable = FALSE;
 		} else {
 			// keep the previous result
 		}
-		LeaveCriticalSection(&m_csModifyFrame);
+		m_pReader->UnlockFrame();
 
 		return XN_STATUS_OK;
 	}
@@ -245,12 +226,12 @@ public:
 
 	virtual XnUInt64 GetTimestamp()
 	{
-		return m_lTimestamp;
+		return m_pReader->GetTimestamp();
 	}
 
 	virtual XnUInt32 GetFrameID()
 	{
-		return m_nFrameID;
+		return m_pReader->GetFrameID();
 	}
 
 	virtual xn::ModuleMirrorInterface* GetMirrorInterface()
@@ -258,77 +239,7 @@ public:
 		return this;
 	}
 
-	// Mirror methods
-	virtual XnStatus SetMirror(XnBool bMirror)
-	{
-		m_bMirror = bMirror;
-		m_mirrorEvent.Raise();
-		return XN_STATUS_OK;
-	}
-
-	virtual XnBool IsMirrored()
-	{
-		return m_bMirror;
-	}
-
-	virtual XnStatus RegisterToMirrorChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback)
-	{
-		return m_mirrorEvent.Register(handler, pCookie, &hCallback);
-	}
-
-	virtual void UnregisterFromMirrorChange(XnCallbackHandle hCallback)
-	{
-		m_mirrorEvent.Unregister(hCallback);
-	}
-
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const KINECT_LOCKED_RECT& lockedRect) = 0;
 
-private:
-	HRESULT getFrame()
-	{
-		EnterCriticalSection(&m_csModifyFrame);
-		clearFrame();
-		HRESULT hr = NuiImageStreamGetNextFrame(m_hStreamHandle, 100, &m_pFrame);
-		LeaveCriticalSection(&m_csModifyFrame);
-		return hr;
-	}
-
-	void clearFrame()
-	{
-		EnterCriticalSection(&m_csModifyFrame);
-		if (m_pFrame) {
-			NuiImageStreamReleaseFrame(m_hStreamHandle, m_pFrame);
-			m_pFrame = NULL;
-		}
-		LeaveCriticalSection(&m_csModifyFrame);
-	}
-
-private:
-	XN_THREAD_HANDLE m_hScheduler;
-
-	BOOL m_bGenerating;
-	BOOL m_bMirror;
-
-	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
-	ChangeEvent m_generatingEvent;
-	ChangeEvent m_dataAvailableEvent;
-	ChangeEvent m_mirrorEvent;
-
-	CRITICAL_SECTION m_csModifyFrame;
-	BOOL m_isNuiInitialized;
-
-protected:
-	HANDLE m_hNextFrameEvent;
-	HANDLE m_hStreamHandle;
-	const NUI_IMAGE_FRAME *m_pFrame;
-
-	TargetPixelType* m_pBuffer;
-
-	XnUInt32 m_nFrameID;
-	XnUInt64 m_lTimestamp;
-
-	static const XnUInt32 X_RES = 640;
-	static const XnUInt32 Y_RES = 480;
-	static const XnUInt32 FPS = 30;
 };

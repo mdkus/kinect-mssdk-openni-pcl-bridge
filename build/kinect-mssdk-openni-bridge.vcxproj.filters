@@ -24,10 +24,25 @@
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MSRKinectDepthGeneratorCompatibleWithPrimeSense.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\MSRKinectImageGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MSRKinectImageStreamManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\MSRKinectManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectStreamContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectStreamReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectUserGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ProductionNodeExporter.h">
@@ -36,9 +51,27 @@
     <ClInclude Include="..\src\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\SimpleProductionNodeExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectStreamMirrorCap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectStreamContextBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectStreamAlternativeViewPointCap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\MSRKinectDepthGenerator.cpp">
@@ -48,9 +81,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\MSRKinectManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

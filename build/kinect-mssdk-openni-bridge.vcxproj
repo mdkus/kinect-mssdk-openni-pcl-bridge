@@ -14,17 +14,27 @@
     <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h" />
     <ClInclude Include="..\src\base.h" />
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h" />
+    <ClInclude Include="..\src\MSRKinectDepthGeneratorCompatibleWithPrimeSense.h" />
     <ClInclude Include="..\src\MSRKinectImageGenerator.h" />
+    <ClInclude Include="..\src\MSRKinectImageStreamManager.h" />
     <ClInclude Include="..\src\MSRKinectManager.h" />
+    <ClInclude Include="..\src\MSRKinectStreamAlternativeViewPointCap.h" />
+    <ClInclude Include="..\src\MSRKinectStreamContext.h" />
+    <ClInclude Include="..\src\MSRKinectStreamContextBase.h" />
+    <ClInclude Include="..\src\MSRKinectStreamMirrorCap.h" />
+    <ClInclude Include="..\src\MSRKinectStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectUserGenerator.h" />
+    <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
+    <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
     <ClInclude Include="..\src\version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp" />
+    <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp" />
     <ClCompile Include="..\src\MSRKinectDepthGenerator.cpp" />
     <ClCompile Include="..\src\MSRKinectImageGenerator.cpp" />
     <ClCompile Include="..\src\MSRKinectManager.cpp" />
-    <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}</ProjectGuid>
@@ -64,7 +74,7 @@
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(OPEN_NI_LIB);$(MSRKINECTSDK)\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(OPEN_NI_INCLUDE);$(MSRKINECTSDK)\inc;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)\..\bin\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)\..\bin\$(Configuration)\</OutDir>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

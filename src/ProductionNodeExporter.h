@@ -30,34 +30,21 @@ public:
 	{
 		XnProductionNodeDescription desc;
 		GetDescription(&desc);
-		return nodes.Add(desc, NULL, NULL);
+		NodeInfoList neededNodes;
+		return nodes.Add(desc, NULL, &neededNodes);
 	}
 
 	XnStatus Create(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
 	{
-		ProductionNodeClass* pGen = new ProductionNodeClass();
-
-		XnStatus nRetVal = pGen->Init(); // ProductionNodeClass must have Init method that returns XnStatus
-		if (nRetVal != XN_STATUS_OK) {
-			delete pGen;
-			return nRetVal;
-		}
-
-		*ppInstance = pGen;
-	
-		return XN_STATUS_OK;
+		return InitImpl(context, strInstanceName, strCreationInfo, pNodes, strConfigurationDir, ppInstance);
 	}
 
 	void Destroy(xn::ModuleProductionNode* pInstance)
 	{
 		delete pInstance;
 	}
-};
 
-#define PRODUCTION_NODE_EXPORTER_DEF(ProductionNodeClass, nodeTypeSuffix) \
-class Exported##ProductionNodeClass : public ProductionNodeExporter<ProductionNodeClass> \
-{ \
-public: \
-	Exported##ProductionNodeClass() : ProductionNodeExporter(#ProductionNodeClass, XN_NODE_TYPE_##nodeTypeSuffix) {} \
-}; \
-XN_EXPORT_##nodeTypeSuffix(Exported##ProductionNodeClass)
+protected:
+	virtual XnStatus InitImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance) = 0;
+
+};

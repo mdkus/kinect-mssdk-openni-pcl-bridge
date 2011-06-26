@@ -1,16 +1,14 @@
 #pragma once
 #include "base.h"
 #include "AbstractMSRKinectMapGenerator.h"
+#include "MSRKinectStreamAlternativeViewPointCap.h"
 
 class MSRKinectDepthGenerator :
-	public virtual AbstractMSRKinectMapGenerator<xn::ModuleDepthGenerator, USHORT, XnDepthPixel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX, NUI_IMAGE_RESOLUTION_320x240>,
-	public virtual xn::ModuleAlternativeViewPointInterface
+	public virtual AbstractMSRKinectMapGenerator<xn::ModuleDepthGenerator, USHORT, XnDepthPixel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX>,
+	public virtual MSRKinectStreamAlternativeViewPointCap
 {
 private:
-	BOOL m_bCalibrateViewPoint;
-
-	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
-	ChangeEvent m_viewPointChangeEvent;
+	typedef AbstractMSRKinectMapGenerator<xn::ModuleDepthGenerator, USHORT, XnDepthPixel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
 
 public:
 	MSRKinectDepthGenerator();
@@ -26,18 +24,16 @@ public:
 	virtual XnStatus RegisterToFieldOfViewChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback);
 	virtual void UnregisterFromFieldOfViewChange(XnCallbackHandle hCallback);
 
-	// AlternativeViewPoint method
-	virtual XnBool IsViewPointSupported(xn::ProductionNode& other);
-	virtual XnStatus SetViewPoint(xn::ProductionNode& other);
-	virtual XnBool IsViewPointAs(xn::ProductionNode& other);
-	virtual XnStatus ResetViewPoint();
-	virtual XnStatus RegisterToViewPointChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback);
-	virtual void UnregisterFromViewPointChange(XnCallbackHandle hCallback);
-
-	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const;
-	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const;
-	XnStatus GetGeneralProperty(const XnChar* strName, XnUInt32 nBufferSize, void* pBuffer) const;
-
 protected:
+	virtual MSRKinectStreamContextBase* GetContextBase()
+	{
+		return m_pReader;
+	}
+
+	inline void processPixel(const USHORT* sp, XnDepthPixel* dp)
+	{
+		*dp = *(dp+1) = *(dp+640) = *(dp+641) = (*sp >> NUI_IMAGE_PLAYER_INDEX_SHIFT);
+	}
+
 	virtual XnStatus MSRKinectDepthGenerator::UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect);
 };

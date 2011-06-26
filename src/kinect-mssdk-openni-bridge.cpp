@@ -1,9 +1,15 @@
 #include "base.h"
-#include "MSRKinectDepthGenerator.h"
-#include "MSRKinectImageGenerator.h"
-#include "ProductionNodeExporter.h"
+#include "MSRKinectUserGenerator.h"
+#include "SimpleProductionNodeExporter.h"
 #include <XnModuleCppRegistratration.h>
 
 XN_EXPORT_MODULE(Module)
-PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
-PRODUCTION_NODE_EXPORTER_DEF(MSRKinectImageGenerator, IMAGE);
+
+#include "MSRKinectDepthGenerator.h"
+SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
+
+#include "MSRKinectImageGenerator.h"
+SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectImageGenerator, IMAGE);
+
+#include "MSRKinectUserSkeletonGenerator.h"
+SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectUserSkeletonGenerator, USER);

@@ -2,7 +2,7 @@
 #include "base.h"
 #include "AbstractMSRKinectMapGenerator.h"
 
-class MSRKinectImageGenerator : public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel, NUI_IMAGE_TYPE_COLOR, NUI_IMAGE_RESOLUTION_640x480>
+class MSRKinectImageGenerator : public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel, NUI_IMAGE_TYPE_COLOR>
 {
 public:
 	MSRKinectImageGenerator();
