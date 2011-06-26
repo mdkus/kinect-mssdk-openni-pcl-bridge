@@ -1,12 +1,13 @@
 #pragma once
 #include "base.h"
-#include "AbstractMSRKinectMapGenerator.h"
+#include "AbstractMSRKinectFrameGenerator.h"
+#include "MSRKinectGeneratorControls.h"
 
 class MSRKinectUserGenerator :
-	public virtual AbstractMSRKinectMapGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX>
+	public virtual AbstractMSRKinectFrameGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX>
 {
 private:
-	typedef AbstractMSRKinectMapGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
+	typedef AbstractMSRKinectFrameGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
 
 	struct UserCallbackHandleSet {
 		XnCallbackHandle hNewUserCallbackHandle;
@@ -118,6 +119,8 @@ public:
 			m_userCallbackHandleSets.erase(i);
 		}
 	}
+
+	PassiveMSRKinectGeneratorControl_IMPL(m_pReader);
 
 protected:
 	inline void processPixel(const USHORT* sp, XnLabel* dp)

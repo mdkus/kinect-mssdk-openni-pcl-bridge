@@ -1,6 +1,6 @@
 #pragma once
 #include "base.h"
-#include "MSRKinectStreamReader.h"
+#include "MSRKinectImageStreamReader.h"
 
 class MSRKinectImageStreamManager
 {
@@ -24,12 +24,11 @@ public:
 		try {
 			CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
 
-			if (FAILED(NuiImageStreamOpen(m_eImageType, m_eResolution, 0, 2, m_hNextFrameEvent, &m_hStreamHandle))) {
-				throw XnStatusException(XN_STATUS_INVALID_OPERATION);
-			}
+			CHECK_HRESULT(NuiImageStreamOpen(m_eImageType, m_eResolution, 0, 2, m_hNextFrameEvent, &m_hStreamHandle));
 
 			m_pReader = new MSRKinectImageStreamReader();
 			m_pReader->Init(m_hStreamHandle, m_hNextFrameEvent);
+
 		} catch (XnStatusException&) {
 			if (m_pReader) delete m_pReader;
 			if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
@@ -39,7 +38,7 @@ public:
 
 	virtual ~MSRKinectImageStreamManager()
 	{
-		if (m_pReader) m_pReader->Stop();
+		if (m_pReader) delete m_pReader;
 		if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
 	}
 

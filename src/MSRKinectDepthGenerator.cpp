@@ -1,25 +1,5 @@
 #include "MSRKinectDepthGenerator.h"
 
-MSRKinectDepthGenerator::MSRKinectDepthGenerator()
-{
-}
-
-MSRKinectDepthGenerator::~MSRKinectDepthGenerator()
-{
-}
-
-XnBool MSRKinectDepthGenerator::IsCapabilitySupported(const XnChar* strCapabilityName)
-{
-	return
-		SuperClass::IsCapabilitySupported(strCapabilityName) ||
-		strcmp(strCapabilityName, XN_CAPABILITY_ALTERNATIVE_VIEW_POINT) == 0;
-}
-
-xn::ModuleAlternativeViewPointInterface* MSRKinectDepthGenerator::GetAlternativeViewPointInterface()
-{
-	return this;
-}
-
 XnStatus MSRKinectDepthGenerator::UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 {
 	// todo flexible resolution

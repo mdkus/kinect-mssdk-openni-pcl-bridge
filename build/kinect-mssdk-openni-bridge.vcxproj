@@ -11,18 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\AbstractMSRKinectFrameGenerator.h" />
     <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h" />
     <ClInclude Include="..\src\base.h" />
+    <ClInclude Include="..\src\MSRKinectAlternativeViewPointCap.h" />
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h" />
     <ClInclude Include="..\src\MSRKinectDepthGeneratorCompatibleWithPrimeSense.h" />
+    <ClInclude Include="..\src\MSRKinectFrameContext.h" />
+    <ClInclude Include="..\src\MSRKinectFrameContextBase.h" />
+    <ClInclude Include="..\src\MSRKinectFrameReader.h" />
+    <ClInclude Include="..\src\MSRKinectGeneratorControls.h" />
     <ClInclude Include="..\src\MSRKinectImageGenerator.h" />
+    <ClInclude Include="..\src\MSRKinectImageStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamManager.h" />
+    <ClInclude Include="..\src\MSRKinectImageStreamReader.h" />
     <ClInclude Include="..\src\MSRKinectManager.h" />
-    <ClInclude Include="..\src\MSRKinectStreamAlternativeViewPointCap.h" />
-    <ClInclude Include="..\src\MSRKinectStreamContext.h" />
-    <ClInclude Include="..\src\MSRKinectStreamContextBase.h" />
-    <ClInclude Include="..\src\MSRKinectStreamMirrorCap.h" />
-    <ClInclude Include="..\src\MSRKinectStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectMirrorCap.h" />
+    <ClInclude Include="..\src\MSRKinectSkeletonContext.h" />
+    <ClInclude Include="..\src\MSRKinectSkeletonManager.h" />
+    <ClInclude Include="..\src\MSRKinectSkeletonReader.h" />
     <ClInclude Include="..\src\MSRKinectUserGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />

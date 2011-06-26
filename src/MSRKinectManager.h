@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "MSRKinectImageStreamManager.h"
+#include "MSRKinectSkeletonManager.h"
 #include <map>
 
 class MSRKinectManager
@@ -10,24 +11,28 @@ private:
 
 private:
 	static MSRKinectManager* cs_pInstance;
-	MSRKinectImageStreamManagerMap m_streamMap;
+
+	MSRKinectImageStreamManagerMap m_streamManagerMap;
+	MSRKinectSkeletonManager* m_pSkeletonManager;
 
 public:
-	static MSRKinectManager* getInstance()
+	static MSRKinectManager* getInstance() // throws XnStatusException
 	{
 		if (!cs_pInstance) {
 			cs_pInstance = new MSRKinectManager();
-			if (FAILED(cs_pInstance->Init())) {
-				delete cs_pInstance;
-				cs_pInstance = NULL;
-			}
 		}
 
 		return cs_pInstance;
 	}
 
-	MSRKinectManager()
+	MSRKinectManager() : m_pSkeletonManager(NULL) // throws XnStatusException
 	{
+		const DWORD nuiInitFlags =
+			NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX |
+			NUI_INITIALIZE_FLAG_USES_SKELETON |
+			NUI_INITIALIZE_FLAG_USES_COLOR;
+
+		CHECK_HRESULT(NuiInitialize(nuiInitFlags));
 	}
 
 	virtual ~MSRKinectManager()
@@ -35,24 +40,7 @@ public:
 		Shutdown();
 	}
 
-	HRESULT Init()
-	{
-		const DWORD nuiInitFlags =
-			NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX |
-			NUI_INITIALIZE_FLAG_USES_SKELETON |
-			NUI_INITIALIZE_FLAG_USES_COLOR;
-
-		try {
-			CHECK_HRESULT(NuiInitialize(nuiInitFlags));
-			CHECK_HRESULT(NuiSkeletonTrackingEnable(CreateEvent(NULL, TRUE, FALSE, NULL), 0));
-			return S_OK;
-		} catch (Win32ResultException& e) {
-			// FIXME error log
-			return e.hResult;
-		}
-	}
-
-	MSRKinectImageStreamManager* GetImageStreamByType(NUI_IMAGE_TYPE eImageType)
+	MSRKinectImageStreamManager* GetImageStreamManagerByType(NUI_IMAGE_TYPE eImageType) // throws XnStatusException
 	{
 
 		switch (eImageType) {
@@ -62,17 +50,25 @@ public:
 		case NUI_IMAGE_TYPE_COLOR:
 			return GetDepthStreamByTypeAndResolution(eImageType, NUI_IMAGE_RESOLUTION_640x480);
 		default:
-			// FIXME error log or exception
-			return NULL;
+			// FIXME error log
+			throw XnStatusException(XN_STATUS_BAD_PARAM);
 		}
+	}
+
+	MSRKinectSkeletonManager* GetSkeletonManager() // throws XnStatusException
+	{
+		if (!m_pSkeletonManager) {
+			m_pSkeletonManager = new MSRKinectSkeletonManager();
+		}
+		return m_pSkeletonManager;
 	}
 
 	void Shutdown()
 	{
-		for (MSRKinectImageStreamManagerMap::iterator i = m_streamMap.begin(); i != m_streamMap.end(); i++) {
+		for (MSRKinectImageStreamManagerMap::iterator i = m_streamManagerMap.begin(); i != m_streamManagerMap.end(); i++) {
 			delete i->second;
 		}
-		m_streamMap.clear();
+		m_streamManagerMap.clear();
 
 		NuiShutdown();
 	}
@@ -80,11 +76,11 @@ public:
 private:
 	MSRKinectImageStreamManager* GetDepthStreamByTypeAndResolution(NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION eResolution)
 	{
-		MSRKinectImageStreamManager* pStream = m_streamMap[eImageType];
+		MSRKinectImageStreamManager* pStream = m_streamManagerMap[eImageType];
 
 		if (!pStream) {
 			pStream = new MSRKinectImageStreamManager(eImageType, eResolution);
-			m_streamMap[eImageType] = pStream;
+			m_streamManagerMap[eImageType] = pStream;
 		}
 
 		return pStream;

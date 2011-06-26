@@ -1,13 +1,5 @@
 #include "MSRKinectImageGenerator.h"
 
-MSRKinectImageGenerator::MSRKinectImageGenerator()
-{
-}
-
-MSRKinectImageGenerator::~MSRKinectImageGenerator()
-{
-}
-
 XnStatus MSRKinectImageGenerator::UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const DWORD* data, const KINECT_LOCKED_RECT& lockedRect)
 {
 	// todo support mirror

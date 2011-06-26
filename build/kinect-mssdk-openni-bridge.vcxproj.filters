@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h">
+    <ClInclude Include="..\src\base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\base.h">
+    <ClInclude Include="..\src\MSRKinectAlternativeViewPointCap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h">
@@ -27,43 +27,64 @@
     <ClInclude Include="..\src\MSRKinectDepthGeneratorCompatibleWithPrimeSense.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MSRKinectFrameContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectFrameContextBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectFrameReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\MSRKinectImageGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectImageStreamContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\MSRKinectImageStreamManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MSRKinectImageStreamReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\MSRKinectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectStreamContext.h">
+    <ClInclude Include="..\src\MSRKinectMirrorCap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectStreamReader.h">
+    <ClInclude Include="..\src\MSRKinectSkeletonContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectSkeletonManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectSkeletonReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\MSRKinectUserGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ProductionNodeExporter.h">
+    <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\version.h">
+    <ClInclude Include="..\src\ProductionNodeExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectStreamMirrorCap.h">
+    <ClInclude Include="..\src\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectStreamContextBase.h">
+    <ClInclude Include="..\src\AbstractMSRKinectFrameGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectStreamAlternativeViewPointCap.h">
+    <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h">
+    <ClInclude Include="..\src\MSRKinectGeneratorControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,21 +1,18 @@
 #pragma once
 #include "base.h"
 
-class MSRKinectStreamContextBase
+class MSRKinectFrameContextBase
 {
 public:
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 protected:
-	HANDLE m_hStreamHandle;
 	HANDLE m_hNextFrameEvent;
 
 	BOOL m_bRunning;
 
 	XnUInt32 m_nFrameID;
 	XnUInt64 m_lTimestamp;
-
-	CRITICAL_SECTION m_csFrameAccess;
 
 	BOOL m_bMirror; // Note; flag only
 	ChangeEvent m_mirrorChangeEvent;
@@ -35,24 +32,20 @@ public:
 	void SetCalibrateViewPoint(BOOL value) { m_bCalibrateViewPoint = value; m_calibrateViewPointChangeEvent.Raise(); }
 	ChangeEvent GetCalibrateViewPointChangeEvent() { return m_calibrateViewPointChangeEvent; }
 
-public:
-	MSRKinectStreamContextBase() :
-		m_hNextFrameEvent(NULL), m_hStreamHandle(NULL),
+protected:
+	MSRKinectFrameContextBase() :
+		m_hNextFrameEvent(NULL),
 		m_bRunning(FALSE),
-		m_nFrameID(0), m_lTimestamp(0)
+		m_nFrameID(0), m_lTimestamp(0),
+		m_bMirror(FALSE), m_bCalibrateViewPoint(FALSE)
 	{
-		InitializeCriticalSection(&m_csFrameAccess);
 	}
 
-	virtual ~MSRKinectStreamContextBase()
+	void InitContext(HANDLE hNextFrameEvent)
 	{
-		DeleteCriticalSection(&m_csFrameAccess);
-	}
-
-	virtual void Init(HANDLE hStreamHandle, HANDLE hNextFrameEvent)
-	{
-		m_hStreamHandle = hStreamHandle;
 		m_hNextFrameEvent = hNextFrameEvent;
 	}
 
+public:
+	virtual ~MSRKinectFrameContextBase() {}
 };
