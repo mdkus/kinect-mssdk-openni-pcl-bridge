@@ -1,6 +1,6 @@
 kinect-mssdk-openni-bridge V0.0
 Author: Tomoto S. Washio
-Release Date: 2011/6/22
+Release Date: 2011/6/26
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. これは何？
@@ -13,11 +13,12 @@ Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 この残念な状況を打開するため、公式SDKのドライバをOpenNI上から
 使えるようにする実験モジュールがこのkinect-mssdk-openni-bridgeです。
 
-このモジュールをインストールすると、DepthノードとImageノードが
-公式SDK上で動作するようになります。SceneノードやUserノードは
-残念ながらまだ動きません。
+このモジュールをインストールすると、Depthノード、Imageノード、
+Userノードが公式SDK上で(なんとなく)動作するようになります。
 
-2. インストール
+2. インストールとアンインストール
+
+2.1 インストール
 
 OpenNIをインストールした上で、install.batを「管理者として実行」
 してください。
@@ -29,11 +30,27 @@ OpenNIをインストールした上で、install.batを「管理者として実行」
 -lオプションをつけて呼び出すことで確認できます。本モジュールの
 名前が表示されていれば成功です。
 
-3. アンインストール
+2.2. アンインストール
 
 uninstall.batを「管理者として実行」してください。
-デバッグ版をインストールしている場合には代わりに
-uninstall-debug.batを実行してください。
+
+3. 使い方
+
+DepthノードとImageノードは何もしなくても自動的に動作します。
+Userノードは設定XMLファイルに次のように<Query>を記述してください。
+
+<OpenNI>
+    ...
+    <ProductionNodes>
+        ...
+        <Node type="User" name="User1">
+            <Query>
+                <Name>MSRKinectUserSkeletonGenerator</Name>
+            </Query>
+        </Node>
+        ...
+    </ProductionNodes>
+</OpenNI>
 
 4. ライセンス
 
