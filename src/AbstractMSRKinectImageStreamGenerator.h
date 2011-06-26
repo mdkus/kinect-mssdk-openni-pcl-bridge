@@ -1,16 +1,15 @@
 #pragma once
 #include "base.h"
-#include "MSRKinectManager.h"
 #include "MSRKinectImageStreamReader.h"
-#include "MSRKinectMirrorCap.h"
+#include "MSRKinectManager.h"
 
 template <class ParentModuleGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
-class AbstractMSRKinectFrameGenerator :
+class AbstractMSRKinectImageStreamGenerator :
 	public virtual ParentModuleGeneratorClass,
 	public virtual MSRKinectImageStreamReader::Listener
 {
 private:
-	typedef AbstractMSRKinectFrameGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType, eImageType> ThisClass;
+	typedef AbstractMSRKinectImageStreamGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType, eImageType> ThisClass;
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 private:
@@ -18,7 +17,7 @@ private:
 
 protected:
 	MSRKinectImageStreamReader* m_pReader;
-	BOOL m_bIsNewDataAvailable;
+	BOOL m_bNewDataAvailable;
 	TargetPixelType* m_pBuffer;
 
 	static const XnUInt32 X_RES = 640;
@@ -26,14 +25,14 @@ protected:
 	static const XnUInt32 FPS = 30;
 
 protected:
-	AbstractMSRKinectFrameGenerator() :
+	AbstractMSRKinectImageStreamGenerator() :
 		m_pBuffer(NULL),
-		m_bIsNewDataAvailable(FALSE)
+		m_bNewDataAvailable(FALSE)
 	{
 	}
 
 public:
-	virtual ~AbstractMSRKinectFrameGenerator()
+	virtual ~AbstractMSRKinectImageStreamGenerator()
 	{
 		if (m_pBuffer) {
 			delete[] m_pBuffer;
@@ -63,7 +62,7 @@ public:
 	}
 
 	virtual void OnUpdateFrame() {
-		m_bIsNewDataAvailable = TRUE;
+		m_bNewDataAvailable = TRUE;
 		m_dataAvailableEvent.Raise();
 	}
 
@@ -80,7 +79,7 @@ public:
 
 	virtual XnBool IsNewDataAvailable(XnUInt64& nTimestamp)
 	{
-		return m_bIsNewDataAvailable;
+		return m_bNewDataAvailable;
 	}
 
 	virtual const void* GetData()
@@ -95,7 +94,7 @@ public:
 
 	virtual XnStatus UpdateData()
 	{
-		if (!m_bIsNewDataAvailable) {
+		if (!m_bNewDataAvailable) {
 			return XN_STATUS_OK;
 		}
 
@@ -120,7 +119,7 @@ public:
 				}
 			}
 
-			m_bIsNewDataAvailable = FALSE;
+			m_bNewDataAvailable = FALSE;
 		} else {
 			// keep the previous result
 		}

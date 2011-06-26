@@ -1,9 +1,9 @@
 #pragma once
 #include "base.h"
-#include "AbstractMSRKinectFrameGenerator.h"
+#include "AbstractMSRKinectImageStreamGenerator.h"
 
 template <class ParentModuleMapGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
-class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectFrameGenerator<ParentModuleMapGeneratorClass, SourcePixelType, TargetPixelType, eImageType>
+class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectImageStreamGenerator<ParentModuleMapGeneratorClass, SourcePixelType, TargetPixelType, eImageType>
 {
 protected:
 	AbstractMSRKinectMapGenerator() {}

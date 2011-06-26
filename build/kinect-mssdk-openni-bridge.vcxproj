@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\AbstractMSRKinectFrameGenerator.h" />
+    <ClInclude Include="..\src\AbstractMSRKinectImageStreamGenerator.h" />
     <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h" />
     <ClInclude Include="..\src\base.h" />
     <ClInclude Include="..\src\MSRKinectAlternativeViewPointCap.h" />
@@ -25,6 +25,7 @@
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamManager.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectJointMap.h" />
     <ClInclude Include="..\src\MSRKinectManager.h" />
     <ClInclude Include="..\src\MSRKinectMirrorCap.h" />
     <ClInclude Include="..\src\MSRKinectSkeletonContext.h" />
@@ -41,6 +42,7 @@
     <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp" />
     <ClCompile Include="..\src\MSRKinectDepthGenerator.cpp" />
     <ClCompile Include="..\src\MSRKinectImageGenerator.cpp" />
+    <ClCompile Include="..\src\MSRKinectJointMap.cpp" />
     <ClCompile Include="..\src\MSRKinectManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

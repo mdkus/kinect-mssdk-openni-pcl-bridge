@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "AbstractMSRKinectMapGenerator.h"
+#include "MSRKinectMirrorCap.h"
 #include "MSRKinectGeneratorControls.h"
 
 class MSRKinectImageGenerator :

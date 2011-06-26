@@ -1,13 +1,13 @@
 #pragma once
 #include "base.h"
-#include "AbstractMSRKinectFrameGenerator.h"
+#include "AbstractMSRKinectImageStreamGenerator.h"
 #include "MSRKinectGeneratorControls.h"
 
 class MSRKinectUserGenerator :
-	public virtual AbstractMSRKinectFrameGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX>
+	public virtual AbstractMSRKinectImageStreamGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX>
 {
 private:
-	typedef AbstractMSRKinectFrameGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
+	typedef AbstractMSRKinectImageStreamGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
 
 	struct UserCallbackHandleSet {
 		XnCallbackHandle hNewUserCallbackHandle;
