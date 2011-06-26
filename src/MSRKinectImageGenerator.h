@@ -54,13 +54,15 @@ protected:
 		const DWORD* sp = data;
 		XnRGB24Pixel* dp = m_pBuffer;
 
+		int step = m_pReader->GetMirrorFactor();
 		for (XnUInt y = 0; y < 480; y++) {
+			sp = data + y * 640 + (step < 0 ? 640-1 : 0);
 			for (XnUInt x = 0; x < 640; x++) {
 				dp->nRed = XnUInt8(*sp >> 16);
 				dp->nGreen = XnUInt8(*sp >> 8);
 				dp->nBlue = XnUInt8(*sp >> 0);
 
-				sp++;
+				sp += step;
 				dp++;
 			}
 		}

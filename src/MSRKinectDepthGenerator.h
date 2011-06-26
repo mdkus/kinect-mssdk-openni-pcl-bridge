@@ -58,11 +58,13 @@ protected:
 		const USHORT* sp = data;
 		XnDepthPixel* dp = m_pBuffer;
 
+		int step = m_pReader->GetMirrorFactor();
 		if (!m_pReader->IsCalibrateViewPoint()) {
 			for (XnUInt y = 0; y < 240; y++) {
+				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
 				for (XnUInt x = 0; x < 320; x++) {
 					processPixel(sp, dp);
-					sp++;
+					sp += step;
 					dp += 2;
 				}
 				dp += 640;
@@ -71,13 +73,14 @@ protected:
 			memset(m_pBuffer, 0, 640*480);
 
 			for (int y = 0; y < 240; y++) {
+				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
 				for (int x = 0; x < 320; x++) {
 					LONG ix, iy;
 					NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, *sp &  ~NUI_IMAGE_PLAYER_INDEX_MASK, &ix, &iy);
 					if (ix >= 0 && ix < 639 && iy >= 0 && iy < 479) {
 						processPixel(sp, m_pBuffer + iy * 640 + ix);
 					}
-					sp++;
+					sp += step;
 				}
 			}
 		}

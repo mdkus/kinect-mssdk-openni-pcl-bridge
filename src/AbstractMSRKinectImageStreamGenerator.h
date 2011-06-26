@@ -107,17 +107,17 @@ public:
 			// FIXME check status code
 			UpdateImageData(pFrame, (SourcePixelType*)lockedRect.pBits, lockedRect);
 
-			if (m_pReader->GetMirrorFactor() < 0) {
-				// slow but works
-				for (int y = 0; y < Y_RES; y++) {
-					TargetPixelType* p = m_pBuffer + y * X_RES;
-					for (int x = 0; x < X_RES / 2; x++) {
-						TargetPixelType a = *(p + x);
-						*(p + x) = *(p + X_RES - 1 - x);
-						*(p + X_RES - 1 - x) = a;
-					}
-				}
-			}
+			//if (m_pReader->GetMirrorFactor() < 0) {
+			//	// slow but works
+			//	for (int y = 0; y < Y_RES; y++) {
+			//		TargetPixelType* p = m_pBuffer + y * X_RES;
+			//		for (int x = 0; x < X_RES / 2; x++) {
+			//			TargetPixelType a = *(p + x);
+			//			*(p + x) = *(p + X_RES - 1 - x);
+			//			*(p + X_RES - 1 - x) = a;
+			//		}
+			//	}
+			//}
 
 			m_bNewDataAvailable = FALSE;
 		} else {
