@@ -36,7 +36,9 @@ public:
 
 	virtual ~MSRKinectFrameReader()
 	{
-		Stop();
+		if (m_bRunning) {
+			StopImpl();
+		}
 	}
 
 	void AddListener(Listener* listener)
@@ -73,17 +75,20 @@ public:
 
 	void Stop()
 	{
-		if (!m_bRunning) {
-			return; // ignore
+		if (m_bRunning) {
+			StopImpl();
+			m_generatingEvent.Raise();
 		}
-
-		m_bRunning = FALSE;
-		SetEvent(m_hNextFrameEvent); // awake the worker thread by sending a fake event
-		xnOSWaitForThreadExit(m_hReaderThread, 100);
-		m_generatingEvent.Raise();
 	}
 
 private:
+	void StopImpl()
+	{
+		m_bRunning = FALSE;
+		SetEvent(m_hNextFrameEvent); // awake the worker thread by sending a fake event
+		xnOSWaitForThreadExit(m_hReaderThread, 100);
+	}
+
 	static XN_THREAD_PROC ReaderThread(void* pCookie)
 	{
 		ThisClass* that = (ThisClass*)pCookie;

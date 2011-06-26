@@ -70,6 +70,10 @@ public:
 		}
 		m_streamManagerMap.clear();
 
+		if (m_pSkeletonManager) {
+			delete m_pSkeletonManager;
+		}
+
 		NuiShutdown();
 	}
 

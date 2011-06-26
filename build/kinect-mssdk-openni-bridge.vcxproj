@@ -39,11 +39,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp" />
+    <ClCompile Include="..\src\globals.cpp" />
     <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp" />
-    <ClCompile Include="..\src\MSRKinectDepthGenerator.cpp" />
-    <ClCompile Include="..\src\MSRKinectImageGenerator.cpp" />
-    <ClCompile Include="..\src\MSRKinectJointMap.cpp" />
-    <ClCompile Include="..\src\MSRKinectManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}</ProjectGuid>
