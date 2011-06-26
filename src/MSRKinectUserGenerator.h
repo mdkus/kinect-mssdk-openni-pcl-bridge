@@ -159,8 +159,8 @@ protected:
 			memset(m_pBuffer, 0, 640*480);
 
 			for (int y = 0; y < 240; y++) {
+				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
 				for (int x = 0; x < 320; x++) {
-					sp = data + y * 320 + (step < 0 ? 320-1 : 0);
 					LONG ix, iy;
 					NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, *sp &  ~NUI_IMAGE_PLAYER_INDEX_MASK, &ix, &iy);
 					if (ix >= 0 && ix < 639 && iy >= 0 && iy < 479) {
@@ -173,6 +173,7 @@ protected:
 
 		m_nNumberOfUsers = countBits(m_nUsersMask);
 
+		// check lost user
 		XnUInt16 lostUsersMask = previousUsersMask & ~m_nUsersMask;
 		XnUserID lostUserID = 1;
 		while (lostUsersMask) {
@@ -184,6 +185,7 @@ protected:
 			lostUsersMask >>= 1;
 		}
 
+		// check new user
 		XnUInt16 newUsersMask = ~previousUsersMask & m_nUsersMask;
 		XnUserID newUserID = 1;
 		while (newUsersMask) {
@@ -198,6 +200,7 @@ protected:
 		return XN_STATUS_OK;
 	}
 
+	// callbacks
 	virtual void OnNewUser(XnUserID userID) {}
 	virtual void OnLostUser(XnUserID userID) {}
 
