@@ -90,6 +90,9 @@
     <ClInclude Include="..\src\AbstractMSRKinectImageStreamGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">

@@ -1,13 +1,28 @@
 #pragma once
 #include "base.h"
-#include "AbstractMSRKinectImageStreamGenerator.h"
+#include "MSRKinectDepthGeneratorBase.h"
 #include "MSRKinectGeneratorControls.h"
 
-class MSRKinectUserGenerator :
-	public virtual AbstractMSRKinectImageStreamGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX>
+class MSRKinectUserGeneratorDepthPixelProcessor
+{
+public:
+	XnUInt16 m_nUsersMask;
+	MSRKinectUserGeneratorDepthPixelProcessor() : m_nUsersMask(0) {}
+
+	void Process(const USHORT* sp, XnDepthPixel* dp)
+	{
+		XnLabel label = *sp & NUI_IMAGE_PLAYER_INDEX_MASK;
+		*dp = *(dp+1) = *(dp+640) = *(dp+641) = label;
+		if (label) {
+			m_nUsersMask |= 1 << (label-1);
+		}
+	}
+};
+
+class MSRKinectUserGenerator : public virtual MSRKinectDepthGeneratorBase<xn::ModuleUserGenerator, MSRKinectUserGeneratorDepthPixelProcessor>
 {
 private:
-	typedef AbstractMSRKinectImageStreamGenerator<xn::ModuleUserGenerator, USHORT, XnLabel, NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX> SuperClass;
+	typedef MSRKinectDepthGeneratorBase<xn::ModuleUserGenerator, MSRKinectUserGeneratorDepthPixelProcessor> SuperClass;
 
 	struct UserCallbackHandleSet {
 		XnCallbackHandle hNewUser;
@@ -23,7 +38,7 @@ private:
 	static const int MAX_USERS = 8;
 
 	XnUInt16 m_nNumberOfUsers;
-	XnUInt8 m_nUsersMask;
+	XnUInt16 m_nUsersMask;
 	XnLabel* m_pFilteredBuffer;
 
 	UserCallbackHandleSetList m_userCallbackHandleSets;
@@ -123,79 +138,19 @@ public:
 	PassiveMSRKinectGeneratorControl_IMPL(m_pReader);
 
 protected:
-	inline void processPixel(const USHORT* sp, XnLabel* dp)
-	{
-		XnLabel label = *sp & NUI_IMAGE_PLAYER_INDEX_MASK;
-		*dp = *(dp+1) = *(dp+640) = *(dp+641) = label;
-		if (label) {
-			m_nUsersMask |= 1 << (label-1);
-		}
-	}
 
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
 		// todo flexible resolution
+		XnUInt32 previousUsersMask = m_nUsersMask;
 
-		assert(lockedRect.Pitch == 320 * sizeof(USHORT));
+		MSRKinectUserGeneratorDepthPixelProcessor proc;
+		UpdateDepthData(proc, pFrame, data, lockedRect);
+		m_nUsersMask = proc.m_nUsersMask;
+		m_nNumberOfUsers = CountBits(m_nUsersMask);
 
-		XnUInt16 previousUsersMask = m_nUsersMask;
-		m_nUsersMask = 0;
-
-		const USHORT* sp = data;
-		XnLabel* dp = m_pBuffer;
-
-		int step = m_pReader->GetMirrorFactor();
-		if (!m_pReader->IsCalibrateViewPoint()) {
-			for (XnUInt y = 0; y < 240; y++) {
-				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
-				for (XnUInt x = 0; x < 320; x++) {
-					processPixel(sp, dp);
-					sp += step;
-					dp += 2;
-				}
-				dp += 640;
-			}
-		} else {
-			memset(m_pBuffer, 0, 640*480);
-
-			for (int y = 0; y < 240; y++) {
-				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
-				for (int x = 0; x < 320; x++) {
-					LONG ix, iy;
-					NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, *sp &  ~NUI_IMAGE_PLAYER_INDEX_MASK, &ix, &iy);
-					if (ix >= 0 && ix < 639 && iy >= 0 && iy < 479) {
-						processPixel(sp, m_pBuffer + iy * 640 + ix);
-					}
-					sp += step;
-				}
-			}
-		}
-
-		m_nNumberOfUsers = countBits(m_nUsersMask);
-
-		// check lost user
-		XnUInt16 lostUsersMask = previousUsersMask & ~m_nUsersMask;
-		XnUserID lostUserID = 1;
-		while (lostUsersMask) {
-			if (lostUsersMask & 1) {
-				OnLostUser(lostUserID);
-				m_lostUserEvent.Raise(lostUserID);
-			}
-			lostUserID++;
-			lostUsersMask >>= 1;
-		}
-
-		// check new user
-		XnUInt16 newUsersMask = ~previousUsersMask & m_nUsersMask;
-		XnUserID newUserID = 1;
-		while (newUsersMask) {
-			if (newUsersMask & 1) {
-				OnNewUser(newUserID);
-				m_newUserEvent.Raise(newUserID);
-			}
-			newUserID++;
-			newUsersMask >>= 1;
-		}
+		CheckLostUsers(previousUsersMask & ~m_nUsersMask);
+		CheckNewUsers(~previousUsersMask & m_nUsersMask);
 
 		return XN_STATUS_OK;
 	}
@@ -205,13 +160,39 @@ protected:
 	virtual void OnLostUser(XnUserID userID) {}
 
 private:
-	static XnUInt countBits(XnUInt value)
+	static XnUInt CountBits(XnUInt32 value)
 	{
-		XnUInt result = 0;
+		XnUInt32 result = 0;
 		while (value) {
 			if (value & 1) result++;
 			value >>= 1;
 		}
 		return result;
+	}
+
+	void CheckLostUsers(XnUInt16 mask)
+	{
+		XnUserID userID = 1;
+		while (mask) {
+			if (mask & 1) {
+				OnLostUser(userID);
+				m_lostUserEvent.Raise(userID);
+			}
+			userID++;
+			mask >>= 1;
+		}
+	}
+
+	void CheckNewUsers(XnUInt16 mask)
+	{
+		XnUserID userID = 1;
+		while (mask) {
+			if (mask & 1) {
+				OnNewUser(userID);
+				m_newUserEvent.Raise(userID);
+			}
+			userID++;
+			mask >>= 1;
+		}
 	}
 };

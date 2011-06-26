@@ -2,8 +2,8 @@
 #include "base.h"
 #include "AbstractMSRKinectImageStreamGenerator.h"
 
-template <class ParentModuleMapGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
-class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectImageStreamGenerator<ParentModuleMapGeneratorClass, SourcePixelType, TargetPixelType, eImageType>
+template <class ParentMapGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
+class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType, eImageType>
 {
 protected:
 	AbstractMSRKinectMapGenerator() {}
