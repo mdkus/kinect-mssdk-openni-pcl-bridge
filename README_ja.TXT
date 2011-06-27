@@ -35,6 +35,10 @@ Windowsのユーザーアカウント制御(UAC)が有効になっている場合、
 書いていただきました。合わせて参照してください。
 http://d.hatena.ne.jp/kaorun55/20110627/1309193339
 
+補足: kaorun55さんの記事ではダウンロードにgitを使用していますが、
+      下記URLからzip版をダウンロードできるのでこれは不要です:
+      https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes/release/
+
 2.2. アンインストール
 
 uninstall.batを実行してください。UACが有効になっている場合、
