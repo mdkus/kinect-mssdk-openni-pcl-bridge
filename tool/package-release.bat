@@ -9,5 +9,6 @@ xcopy ..\bin %TARGET%\bin\ /e
 copy ..\LICENSE.TXT %TARGET%
 copy ..\README_*.TXT %TARGET%
 copy ..\HISTORY_*.TXT %TARGET%
+copy ..\*.bat %TARGET%
 perl zip.pl %TARGET%
 copy %TARGET%.zip ..\release
