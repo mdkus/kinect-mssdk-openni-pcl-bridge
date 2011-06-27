@@ -17,11 +17,13 @@ allowing the applications to use the offical SDK through OpenNI.
 If you install this module, Depth, Image, and User node can
 (a sort of) work with the official SDK installed.
 
-2. Install and Uninstall
+2. Installation and Uninstallation
 
-2.1 Install
+2.1 Installation
 
-Having OpenNI installed, run install.bat "as administrator".
+After installing OpenNI, run install.bat. If your Windows
+turns on User Account Control (UAC), run it "as administrator"
+by right-clicking the batch file.
 
 If you need the debug version, use install-debug.bat instead.
 
@@ -29,9 +31,10 @@ To check if the installation is successfully done, run niReg
 (an OpenNI utility) with -l option. If you find the name of this
 module displayed, it is OK.
 
-2.2. Uninstall
+2.2. Uninstallation
 
-Run uninstall.bat "as administrator".
+Run uninstall.bat. If your Windows turns on UAC, run it
+"as administrator" as described above.
 
 3. Usage
 
