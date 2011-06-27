@@ -1,22 +1,33 @@
-&generate(0, 0);
-&generate(0, 1);
-&generate(1, 0);
-&generate(1, 1);
+&generate("install", "", ["Release"]);
+&generate("install-debug", "", ["Debug"]);
+&generate("uninstall", "-u", ["Release", "Debug"]);
 
 sub generate {
-	my($debug, $uninst) = @_;
-	my($file_name) = ($uninst ? "uninstall" : "install") . ($debug ? "-debug" : "") . ".bat";
-	my($dir) = $debug ? "Debug" : "Release";
-	my($opt) = $uninst ? "-u" : "";
+	my($file_name, $opt, $dirs) = @_;
+	$file_name .= ".bat";
 	
 	open(FILE, ">../$file_name") || die;
 	
-	print FILE <<EOT;
-\@echo Note: this script must be run as administrator.
-"%OPEN_NI_BIN%\\niReg" ${opt} %0\\..\\bin\\${dir}\\kinect-mssdk-openni-bridge.dll && \@echo OK
-pause
+	for $dir (@$dirs) {
+		print FILE <<EOT;
+\@echo ----------
+"%OPEN_NI_BIN%\\niReg" ${opt} %0\\..\\bin\\${dir}\\kinect-mssdk-openni-bridge.dll
+\@IF NOT "%ERRORLEVEL%" == "0" GOTO ERR
+\@echo OK!
 EOT
-
+	}
+	
+	print FILE <<EOT;
+\@GOTO END
+:ERR
+\@echo ----------
+\@echo [en] Error occured. If you see "Failed to write to the file!" message, try again "as Administrator" by right-clicking the batch file.
+\@echo [ja] エラーが発生しました。"Failed to write to the file!" というメッセージが出ている場合、バッチファイルを右クリックして「管理者として実行」してください。
+:END
+\@echo ----------
+\@pause
+EOT
+	
 	close(FILE);
 }
 
