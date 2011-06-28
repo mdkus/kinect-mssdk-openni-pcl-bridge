@@ -156,8 +156,15 @@ protected:
 	}
 
 	// callbacks
-	virtual void OnNewUser(XnUserID userID) {}
-	virtual void OnLostUser(XnUserID userID) {}
+	virtual void OnNewUser(XnUserID userID)
+	{
+		m_newUserEvent.Raise(userID);
+	}
+
+	virtual void OnLostUser(XnUserID userID)
+	{
+		m_lostUserEvent.Raise(userID);
+	}
 
 private:
 	static XnUInt CountBits(XnUInt32 value)
@@ -176,7 +183,6 @@ private:
 		while (mask) {
 			if (mask & 1) {
 				OnLostUser(userID);
-				m_lostUserEvent.Raise(userID);
 			}
 			userID++;
 			mask >>= 1;
@@ -189,7 +195,6 @@ private:
 		while (mask) {
 			if (mask & 1) {
 				OnNewUser(userID);
-				m_newUserEvent.Raise(userID);
 			}
 			userID++;
 			mask >>= 1;

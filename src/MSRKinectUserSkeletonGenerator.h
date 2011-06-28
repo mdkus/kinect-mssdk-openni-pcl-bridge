@@ -230,6 +230,9 @@ protected:
 
 	virtual void OnNewUser(XnUserID userID)
 	{
+		// raise new user event first
+		SuperClass::OnNewUser(userID);
+
 		// mimicks calibration event
 		m_calibrationStartEvent.Raise(userID);
 		m_calibrationEndEvent.Raise(userID, TRUE);
@@ -237,6 +240,10 @@ protected:
 
 	virtual void OnLostUser(XnUserID userID)
 	{
+		// nothing to do here
+
+		// raise lost user event lastly
+		SuperClass::OnLostUser(userID);
 	}
 
 	inline void copyPointToXn(const Vector4* sp, XnPoint3D* dp)
