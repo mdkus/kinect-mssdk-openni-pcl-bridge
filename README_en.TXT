@@ -19,7 +19,20 @@ If you install this module, Depth, Image, and User node can
 
 2. Installation and Uninstallation
 
-2.1 Installation
+2.1 Download
+
+If you already have a copy of the binary package or the source
+code repository, skip this section and go to Installation.
+
+If not, download the binary package from the URL below, and
+extract it somewhere in your computer.
+https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes/release/
+
+If you are interested in the source code, you can access to the
+entire repository by git at:
+https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
+
+2.2 Installation
 
 After installing OpenNI, run install.bat. If your Windows
 turns on User Account Control (UAC), run it "as administrator"
@@ -31,7 +44,7 @@ To check if the installation is successfully done, run niReg
 (an OpenNI utility) with -l option. If you find the name of this
 module displayed, it is OK.
 
-2.2. Uninstallation
+2.3. Uninstallation
 
 Run uninstall.bat. If your Windows turns on UAC, run it
 "as administrator" as described above.

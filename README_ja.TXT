@@ -18,7 +18,20 @@ Userノードが公式SDK上で(なんとなく)動作するようになります。
 
 2. インストールとアンインストール
 
-2.1 インストール
+2.1 ダウンロード
+
+既にバイナリパッケージまたはソースコードリポジトリのコピーを
+入手しているならば、本節を飛ばしてインストールに進んでください。
+
+そうでなければ、バイナリパッケージを次のURLからダウンロードし、
+どこかに展開してください。
+https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes/release/
+
+もしソースコードに興味があるならば、次のURLにあるソースコード
+リポジトリにgitでアクセスすることができます。
+https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
+
+2.2 インストール
 
 OpenNIをインストールした上で、install.batを実行してください。
 Windowsのユーザーアカウント制御(UAC)が有効になっている場合、
@@ -35,11 +48,7 @@ Windowsのユーザーアカウント制御(UAC)が有効になっている場合、
 書いていただきました。合わせて参照してください。
 http://d.hatena.ne.jp/kaorun55/20110627/1309193339
 
-補足: kaorun55さんの記事ではダウンロードにgitを使用していますが、
-      下記URLからzip版をダウンロードできるのでこれは不要です:
-      https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes/release/
-
-2.2. アンインストール
+2.3. アンインストール
 
 uninstall.batを実行してください。UACが有効になっている場合、
 上と同様に「管理者として実行」してください。
