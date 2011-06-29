@@ -221,10 +221,36 @@ protected:
 				m_skeletonFrame = *pSkeletonFrame;
 			}
 			m_pSkeletonReader->UnlockFrame();
-			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			m_pSkeletonReader->UnlockFrame();
 			return e.nStatus;
+		}
+
+		motor(); // test
+		return XN_STATUS_OK;
+	}
+
+	LONGLONG m_lTimestamp;
+	void motor()
+	{
+		if (abs(m_skeletonFrame.liTimeStamp.QuadPart - m_lTimestamp) > 5000) {
+			XnUserID userIDs[6];
+			XnUInt16 users = 6;
+			GetUsers(userIDs, users);
+			if (users > 0) {
+				NUI_SKELETON_DATA* sd = GetSkeletonData(userIDs[0]);
+				DWORD clippedTop = sd->dwQualityFlags & NUI_SKELETON_QUALITY_CLIPPED_TOP;
+				DWORD clippedBottom = sd->dwQualityFlags & NUI_SKELETON_QUALITY_CLIPPED_BOTTOM;
+				LONG angle;
+				NuiCameraElevationGetAngle(&angle);
+				if (clippedTop && !clippedBottom) {
+					angle += 5;
+				} else if (clippedBottom && !clippedTop) {
+					angle -= 5;
+				}
+				NuiCameraElevationSetAngle(angle);
+			}
+			m_lTimestamp = m_skeletonFrame.liTimeStamp.QuadPart;
 		}
 	}
 
