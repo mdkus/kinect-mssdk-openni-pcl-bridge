@@ -2,7 +2,6 @@
 #include "base.h"
 #include "AbstractMSRKinectMapGenerator.h"
 #include "MSRKinectMirrorCap.h"
-#include "MSRKinectGeneratorControls.h"
 
 class MSRKinectImageGenerator :
 	public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel>,
@@ -17,6 +16,7 @@ public:
 		};
 		static ImageConfiguration::Desc s_desc(NUI_IMAGE_TYPE_COLOR, s_modes, 2);
 		SetImageConfigurationDesc(&s_desc);
+		SetActiveGeneratorControl(TRUE);
 	}
 
 	virtual ~MSRKinectImageGenerator() {}
@@ -50,7 +50,6 @@ public:
 	virtual void UnregisterFromPixelFormatChange(XnCallbackHandle hCallback) {} // ignore
 
 	MSRKinectMirrorCap_IMPL(m_pReader);
-	ActiveMSRKinectGeneratorControl_IMPL(m_pReader);
 
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const DWORD* data, const KINECT_LOCKED_RECT& lockedRect)

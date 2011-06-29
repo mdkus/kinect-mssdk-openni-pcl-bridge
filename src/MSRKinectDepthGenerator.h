@@ -1,7 +1,6 @@
 #pragma once
 #include "base.h"
 #include "MSRKinectDepthGeneratorBase.h"
-#include "MSRKinectGeneratorControls.h"
 #include "MSRKinectMirrorCap.h"
 #include "MSRKinectAlternativeViewPointCap.h"
 
@@ -23,7 +22,12 @@ private:
 	typedef MSRKinectDepthGeneratorBase<xn::ModuleDepthGenerator, MSRKinectDepthGeneratorDepthPixelProcessor> SuperClass;
 
 public:
-	MSRKinectDepthGenerator() {}
+	MSRKinectDepthGenerator()
+	{
+		SetActiveGeneratorControl(TRUE);
+	}
+
+
 	virtual ~MSRKinectDepthGenerator() {}
 
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
@@ -50,7 +54,6 @@ public:
 
 	MSRKinectAlternativeViewPointCap_IMPL(m_pReader);
 	MSRKinectMirrorCap_IMPL(m_pReader);
-	ActiveMSRKinectGeneratorControl_IMPL(m_pReader);
 
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)

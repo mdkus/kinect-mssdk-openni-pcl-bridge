@@ -22,7 +22,6 @@
     <ClInclude Include="..\src\MSRKinectFrameContext.h" />
     <ClInclude Include="..\src\MSRKinectFrameContextBase.h" />
     <ClInclude Include="..\src\MSRKinectFrameReader.h" />
-    <ClInclude Include="..\src\MSRKinectGeneratorControls.h" />
     <ClInclude Include="..\src\MSRKinectImageGenerator.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamManager.h" />

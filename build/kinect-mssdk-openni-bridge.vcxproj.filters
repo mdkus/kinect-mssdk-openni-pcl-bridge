@@ -39,9 +39,6 @@
     <ClInclude Include="..\src\MSRKinectFrameReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectGeneratorControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>

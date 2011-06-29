@@ -18,6 +18,7 @@ private:
 
 protected:
 	ImageConfiguration m_imageConfig;
+	BOOL m_bActiveGeneratorControl;
 	MSRKinectImageStreamReader* m_pReader;
 	BOOL m_bNewDataAvailable;
 	TargetPixelType* m_pBuffer;
@@ -28,13 +29,19 @@ protected:
 protected:
 	AbstractMSRKinectImageStreamGenerator() :
 		m_pBuffer(NULL),
-		m_bNewDataAvailable(FALSE)
+		m_bNewDataAvailable(FALSE),
+		m_bActiveGeneratorControl(TRUE)
 	{
 	}
 
 	void SetImageConfigurationDesc(const ImageConfiguration::Desc* pDesc)
 	{
 		m_imageConfig.SetDesc(pDesc);
+	}
+
+	void SetActiveGeneratorControl(BOOL value)
+	{
+		m_bActiveGeneratorControl = value;
 	}
 
 public:
@@ -51,7 +58,6 @@ public:
 			MSRKinectManager* pMan = MSRKinectManager::getInstance();
 
 			m_pReader = pMan->GetImageStreamManager(m_imageConfig.GetImageType(), m_imageConfig.GetSelectedMode()->eResolution)->GetReader();
-			m_pReader->AddListener(this);
 
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
@@ -144,6 +150,46 @@ public:
 	virtual XnUInt32 GetFrameID()
 	{
 		return m_pReader->GetFrameID();
+	}
+
+	//
+	// Generator Start/Stop
+	//
+
+	virtual XnBool IsGenerating()
+	{
+		return m_pReader->IsRunning();
+	}
+	
+	virtual XnStatus RegisterToGenerationRunningChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		return m_pReader->GetGeneratingEvent()->Register(handler, pCookie, &hCallback);
+	}
+	
+	virtual void UnregisterFromGenerationRunningChange(XnCallbackHandle hCallback)
+	{
+		m_pReader->GetGeneratingEvent()->Unregister(hCallback);
+	}
+
+	virtual XnStatus StartGenerating()
+	{
+		try {
+			m_pReader->AddListener(this);
+			if (m_bActiveGeneratorControl) {
+				CHECK_XN_STATUS(m_pReader->Start());
+			}
+			return XN_STATUS_OK;
+		} catch (XnStatusException& e) {
+			return e.nStatus;
+		}
+	}
+	
+	virtual void StopGenerating()
+	{
+		if (m_bActiveGeneratorControl) {
+			m_pReader->Stop();
+		}
+		m_pReader->RemoveListener(this);
 	}
 
 protected:

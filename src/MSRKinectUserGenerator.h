@@ -1,7 +1,6 @@
 #pragma once
 #include "base.h"
 #include "MSRKinectDepthGeneratorBase.h"
-#include "MSRKinectGeneratorControls.h"
 
 class MSRKinectUserGeneratorDepthPixelProcessor
 {
@@ -49,6 +48,7 @@ private:
 public:
 	MSRKinectUserGenerator() : m_nNumberOfUsers(0), m_nUsersMask(0), m_pFilteredBuffer(NULL)
 	{
+		SetActiveGeneratorControl(FALSE);
 	}
 
 	virtual ~MSRKinectUserGenerator()
@@ -135,8 +135,6 @@ public:
 			m_userCallbackHandleSets.erase(i);
 		}
 	}
-
-	PassiveMSRKinectGeneratorControl_IMPL(m_pReader);
 
 protected:
 
