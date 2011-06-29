@@ -71,6 +71,19 @@ Userノードは設定XMLファイルに次のように<Query>を記述してください。
     </ProductionNodes>
 </OpenNI>
 
+Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
+次のように指定するとImageノードを高解像モードで使用できます。
+
+		<Node type="Image" name="Image1">
+			<Configuration>
+				<MapOutputMode xRes="1280" yRes="1024" FPS="15"/>
+			</Configuration>
+		</Node>
+
+Depthノードは640x480の解像度のみサポートしています。
+これは内部的には320x240の解像度で動作しています。
+
+
 4. ライセンス
 
 LICENSE.TXTを見てください。

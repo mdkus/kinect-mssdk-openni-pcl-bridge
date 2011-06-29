@@ -2,27 +2,28 @@
 #include "base.h"
 #include "MSRKinectImageStreamReader.h"
 #include "MSRKinectManager.h"
+#include "ImageConfiguration.h"
 
-template <class ParentModuleGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
+template <class ParentModuleGeneratorClass, class SourcePixelType, class TargetPixelType, class ImageConfigurationClass>
 class AbstractMSRKinectImageStreamGenerator :
 	public virtual ParentModuleGeneratorClass,
 	public virtual MSRKinectImageStreamReader::Listener
 {
 private:
-	typedef AbstractMSRKinectImageStreamGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType, eImageType> ThisClass;
+	typedef AbstractMSRKinectImageStreamGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType, ImageConfigurationClass> ThisClass;
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 private:
 	ChangeEvent m_dataAvailableEvent;
 
 protected:
+	ImageConfigurationClass m_imageConfig;
 	MSRKinectImageStreamReader* m_pReader;
 	BOOL m_bNewDataAvailable;
 	TargetPixelType* m_pBuffer;
 
-	static const XnUInt32 X_RES = 640;
-	static const XnUInt32 Y_RES = 480;
-	static const XnUInt32 FPS = 30;
+	XnUInt32 GetXRes() const { return m_imageConfig.GetSelectedMode()->outputMode.nXRes; }
+	XnUInt32 GetYRes() const { return m_imageConfig.GetSelectedMode()->outputMode.nYRes; }
 
 protected:
 	AbstractMSRKinectImageStreamGenerator() :
@@ -41,22 +42,15 @@ public:
 
 	virtual XnStatus Init()
 	{
-		HANDLE hNextFrameEvent = NULL;
 		try {
 			MSRKinectManager* pMan = MSRKinectManager::getInstance();
 
-			m_pReader = pMan->GetImageStreamManagerByType(eImageType)->GetReader();
+			m_pReader = pMan->GetImageStreamManager(m_imageConfig.GetImageType(), m_imageConfig.GetSelectedMode()->eResolution)->GetReader();
 			m_pReader->AddListener(this);
-
-			m_pBuffer = new TargetPixelType[X_RES * Y_RES];
-			if (m_pBuffer == NULL) {
-				return XN_STATUS_ALLOC_FAILED;
-			}
-			xnOSMemSet(m_pBuffer, 0, X_RES * Y_RES * sizeof(TargetPixelType));
 
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
-			if (hNextFrameEvent) xnOSCloseEvent(&hNextFrameEvent);
+			m_pReader->RemoveListener(this);
 			return e.nStatus;
 		}
 	}
@@ -89,11 +83,20 @@ public:
 
 	virtual XnUInt32 GetDataSize()
 	{
-		return X_RES * Y_RES * sizeof(TargetPixelType);
+		return GetXRes() * GetYRes() * sizeof(TargetPixelType);
 	}
 
 	virtual XnStatus UpdateData()
 	{
+		if (!m_pBuffer) {
+			// lazily initialize the buffer because the size is unknown at Init
+			m_pBuffer = new TargetPixelType[GetXRes() * GetYRes()];
+			if (m_pBuffer == NULL) {
+				return XN_STATUS_ALLOC_FAILED;
+			}
+			xnOSMemSet(m_pBuffer, 0, GetXRes() * GetYRes() * sizeof(TargetPixelType));
+		}
+
 		if (!m_bNewDataAvailable) {
 			return XN_STATUS_OK;
 		}

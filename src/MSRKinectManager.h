@@ -40,20 +40,23 @@ public:
 		Shutdown();
 	}
 
-	MSRKinectImageStreamManager* GetImageStreamManagerByType(NUI_IMAGE_TYPE eImageType) // throws XnStatusException
+	MSRKinectImageStreamManager* GetImageStreamManager(NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION eResolution) // throws XnStatusException
 	{
+		MSRKinectImageStreamManager* pStream = m_streamManagerMap[eImageType];
 
-		switch (eImageType) {
-		case NUI_IMAGE_TYPE_DEPTH:
-		case NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX:
-			return GetDepthStreamByTypeAndResolution(eImageType, NUI_IMAGE_RESOLUTION_320x240);
-		case NUI_IMAGE_TYPE_COLOR:
-			return GetDepthStreamByTypeAndResolution(eImageType, NUI_IMAGE_RESOLUTION_640x480);
-		default:
-			// FIXME error log
-			throw XnStatusException(XN_STATUS_BAD_PARAM);
+		if (!pStream) {
+			pStream = new MSRKinectImageStreamManager(eImageType, eResolution);
+			m_streamManagerMap[eImageType] = pStream;
+		} else {
+			if (eResolution != pStream->GetReader()->GetImageResolution()) {
+				throw new XnStatusException(XN_STATUS_BAD_PARAM); // attempt to reinitialize with inconsistent parameters
+			}
+			// OK
 		}
+
+		return pStream;
 	}
+
 
 	MSRKinectSkeletonManager* GetSkeletonManager() // throws XnStatusException
 	{
@@ -76,18 +79,4 @@ public:
 
 		NuiShutdown();
 	}
-
-private:
-	MSRKinectImageStreamManager* GetDepthStreamByTypeAndResolution(NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION eResolution)
-	{
-		MSRKinectImageStreamManager* pStream = m_streamManagerMap[eImageType];
-
-		if (!pStream) {
-			pStream = new MSRKinectImageStreamManager(eImageType, eResolution);
-			m_streamManagerMap[eImageType] = pStream;
-		}
-
-		return pStream;
-	}
-
 };

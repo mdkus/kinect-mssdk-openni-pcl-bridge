@@ -2,8 +2,8 @@
 #include "base.h"
 #include "AbstractMSRKinectImageStreamGenerator.h"
 
-template <class ParentMapGeneratorClass, class SourcePixelType, class TargetPixelType, NUI_IMAGE_TYPE eImageType>
-class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType, eImageType>
+template <class ParentMapGeneratorClass, class SourcePixelType, class TargetPixelType, class ImageConfigurationClass>
+class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType, ImageConfigurationClass>
 {
 protected:
 	AbstractMSRKinectMapGenerator() {}
@@ -18,34 +18,26 @@ public:
 
 	virtual XnStatus GetSupportedMapOutputModes(XnMapOutputMode aModes[], XnUInt32& nCount)
 	{
-		if (nCount < 1) {
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
+		for (XnUInt32 i = 0; i < nCount && i < m_imageConfig.GetNumberOfSupportedModes(); i++) {
+			aModes[i] = m_imageConfig.GetSupportedModeAt(i)->outputMode;
 		}
-		getSupportedMapOutputMode(&aModes[0]);
 		return XN_STATUS_OK;
-	}
-
-	void getSupportedMapOutputMode(XnMapOutputMode* pMode)
-	{
-		pMode->nXRes = X_RES;
-		pMode->nYRes = Y_RES;
-		pMode->nFPS = FPS;
 	}
 
 	virtual XnStatus SetMapOutputMode(const XnMapOutputMode& mode)
 	{
-		XnMapOutputMode supportedMode;
-		getSupportedMapOutputMode(&supportedMode);
-		if (supportedMode.nXRes == mode.nXRes && supportedMode.nYRes == mode.nYRes && supportedMode.nFPS == mode.nFPS) {
+		try {
+			CHECK_XN_STATUS(m_imageConfig.Select(mode));
+			m_pReader->SetResolution(m_imageConfig.GetSelectedMode()->eResolution);
 			return XN_STATUS_OK;
-		} else {
-			return XN_STATUS_BAD_PARAM;
+		} catch (XnStatusException& e) {
+			return e.nStatus;
 		}
 	}
 
 	virtual XnStatus GetMapOutputMode(XnMapOutputMode& mode)
 	{
-		getSupportedMapOutputMode(&mode);
+		mode = m_imageConfig.GetSelectedMode()->outputMode;
 		return XN_STATUS_OK;
 	}
 
