@@ -19,37 +19,39 @@ public:
 		}
 	};
 
+	class Desc
+	{
+	public:
+		NUI_IMAGE_TYPE eImageType;
+		const Mode* supportedModes;
+		XnUInt32 numberOfSupportedModes;
+
+		Desc(NUI_IMAGE_TYPE _eImageType, const Mode* _supportedModes, XnUInt32 _numberOfSupportedModes) :
+			eImageType(_eImageType), supportedModes(_supportedModes), numberOfSupportedModes(_numberOfSupportedModes) {}
+	};
+
 protected:
-	NUI_IMAGE_TYPE m_eImageType;
-	Mode* m_supportedModes;
-	XnUInt32 m_numberOfSuppotedModes;
+	const Desc* m_pDesc;
 	XnUInt32 m_selectedModeIndex;
 
 public:
-	virtual ~ImageConfiguration() {}
-
-	NUI_IMAGE_TYPE GetImageType() const { return m_eImageType; }
-	const Mode* GetSupportedModes() const { return m_supportedModes; }
-	XnUInt32 GetNumberOfSupportedModes() const { return m_numberOfSuppotedModes; }
+	NUI_IMAGE_TYPE GetImageType() const { return m_pDesc->eImageType; }
+	const Mode* GetSupportedModes() const { return m_pDesc->supportedModes; }
+	XnUInt32 GetNumberOfSupportedModes() const { return m_pDesc->numberOfSupportedModes; }
 
 	XnUInt32 GetSelectedModeIndex() const { return m_selectedModeIndex; }
 	void SetSelectedModeIndex(XnUInt32 index) { m_selectedModeIndex = index; }
 	const Mode* GetSelectedMode() const { return GetSupportedModeAt(m_selectedModeIndex); }
-	const Mode* GetSupportedModeAt(XnUInt32 index) const { return m_supportedModes + index; }
+	const Mode* GetSupportedModeAt(XnUInt32 index) const { return GetSupportedModes() + index; }
 
-protected:
-	ImageConfiguration(NUI_IMAGE_TYPE eImageType) : m_selectedModeIndex(0), m_eImageType(eImageType) {}
-
-	void Init(Mode* supportedModes, XnUInt32 numberOfSupportedModes)
-	{
-		m_supportedModes = supportedModes;
-		m_numberOfSuppotedModes = numberOfSupportedModes;
-	}
+	void SetDesc(const Desc* pDesc) { m_pDesc = pDesc; }
 
 public:
+	ImageConfiguration(const Desc* pDesc = NULL) : m_pDesc(pDesc), m_selectedModeIndex(0) {}
+
 	XnStatus Select(const XnMapOutputMode& mode)
 	{
-		for (XnUInt32 i = 0; i < m_numberOfSuppotedModes; i++) {
+		for (XnUInt32 i = 0; i < GetNumberOfSupportedModes(); i++) {
 			// check resolution. ignore FPS.
 			if (GetSupportedModeAt(i)->outputMode.nXRes == mode.nXRes &&
 					GetSupportedModeAt(i)->outputMode.nYRes == mode.nYRes) {

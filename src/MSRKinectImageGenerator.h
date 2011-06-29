@@ -4,25 +4,21 @@
 #include "MSRKinectMirrorCap.h"
 #include "MSRKinectGeneratorControls.h"
 
-class ColorImageConfiguration : public ImageConfiguration
-{
-public:
-	ColorImageConfiguration() : ImageConfiguration(NUI_IMAGE_TYPE_COLOR)
-	{
-		static Mode s_modes[] = {
-			Mode(640, 480, 30, NUI_IMAGE_RESOLUTION_640x480),
-			Mode(1280, 1024, 15, NUI_IMAGE_RESOLUTION_1280x1024)
-		};
-		Init(s_modes, 2);
-	}
-};
-
 class MSRKinectImageGenerator :
-	public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel, ColorImageConfiguration>,
+	public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel>,
 	public virtual MSRKinectMirrorCap
 {
 public:
-	MSRKinectImageGenerator() {}
+	MSRKinectImageGenerator()
+	{
+		static ImageConfiguration::Mode s_modes[] = {
+			ImageConfiguration::Mode(640, 480, 30, NUI_IMAGE_RESOLUTION_640x480),
+			ImageConfiguration::Mode(1280, 1024, 15, NUI_IMAGE_RESOLUTION_1280x1024)
+		};
+		static ImageConfiguration::Desc s_desc(NUI_IMAGE_TYPE_COLOR, s_modes, 2);
+		SetImageConfigurationDesc(&s_desc);
+	}
+
 	virtual ~MSRKinectImageGenerator() {}
 
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)

@@ -4,20 +4,20 @@
 #include "MSRKinectManager.h"
 #include "ImageConfiguration.h"
 
-template <class ParentModuleGeneratorClass, class SourcePixelType, class TargetPixelType, class ImageConfigurationClass>
+template <class ParentModuleGeneratorClass, class SourcePixelType, class TargetPixelType>
 class AbstractMSRKinectImageStreamGenerator :
 	public virtual ParentModuleGeneratorClass,
 	public virtual MSRKinectImageStreamReader::Listener
 {
 private:
-	typedef AbstractMSRKinectImageStreamGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType, ImageConfigurationClass> ThisClass;
+	typedef AbstractMSRKinectImageStreamGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType> ThisClass;
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 private:
 	ChangeEvent m_dataAvailableEvent;
 
 protected:
-	ImageConfigurationClass m_imageConfig;
+	ImageConfiguration m_imageConfig;
 	MSRKinectImageStreamReader* m_pReader;
 	BOOL m_bNewDataAvailable;
 	TargetPixelType* m_pBuffer;
@@ -30,6 +30,11 @@ protected:
 		m_pBuffer(NULL),
 		m_bNewDataAvailable(FALSE)
 	{
+	}
+
+	void SetImageConfigurationDesc(const ImageConfiguration::Desc* pDesc)
+	{
+		m_imageConfig.SetDesc(pDesc);
 	}
 
 public:

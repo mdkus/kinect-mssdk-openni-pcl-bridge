@@ -2,28 +2,27 @@
 #include "base.h"
 #include "AbstractMSRKinectMapGenerator.h"
 
-class DepthImageConfiguration : public ImageConfiguration
-{
-public:
-	DepthImageConfiguration() : ImageConfiguration(NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX)
-	{
-		static Mode s_modes[] = { Mode(640, 480, 30, NUI_IMAGE_RESOLUTION_320x240) };
-		Init(s_modes, 1);
-	}
-};
-
 template<class ParentMapGeneratorClass, class DepthPixelProcessor>
 class MSRKinectDepthGeneratorBase :
-	public virtual AbstractMSRKinectMapGenerator<ParentMapGeneratorClass, USHORT, XnDepthPixel, DepthImageConfiguration>
+	public virtual AbstractMSRKinectMapGenerator<ParentMapGeneratorClass, USHORT, XnDepthPixel>
 {
 private:
-	typedef AbstractMSRKinectMapGenerator<xn::ModuleDepthGenerator, USHORT, XnDepthPixel, DepthImageConfiguration> SuperClass;
+	typedef AbstractMSRKinectMapGenerator<xn::ModuleDepthGenerator, USHORT, XnDepthPixel> SuperClass;
 
 public:
-	MSRKinectDepthGeneratorBase() {}
+	MSRKinectDepthGeneratorBase()
+	{
+		static ImageConfiguration::Mode s_modes[] = {
+			ImageConfiguration::Mode(640, 480, 30, NUI_IMAGE_RESOLUTION_320x240)
+		};
+		static ImageConfiguration::Desc s_desc(NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX, s_modes, 1);
+		SetImageConfigurationDesc(&s_desc);
+	}
+
 	virtual ~MSRKinectDepthGeneratorBase() {}
 
 protected:
+
 	XnStatus UpdateDepthData(DepthPixelProcessor& proc, const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
 		// todo flexible resolution
