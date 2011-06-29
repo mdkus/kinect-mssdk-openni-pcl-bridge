@@ -3,6 +3,8 @@ Kinect-mssdk-openni-bridge License Terms
 Copyright (c) 2011, Tomoto S. Washio
 All rights reserved.
 
+NOTICE: This software is an application of Kinect SDK Beta from Microsoft, and distributed under the license below which is demanded by Microsoft to apply for any Kinect SDK Beta applications. I hope and plan to replace the license with the BSD style open source license when Microsoft opens up a way for me to do so.
+
 This document ("End User License Agreement" or "EULA") is a contract between you and the person who (or company that) provided you this software ("Software Provider"). The EULA defines your rights and responsibilities related to the software. 
 
 By downloading, installing, accessing, or using the software, you accept all terms in this EULA. If you do not accept them, you have no right to download, install, access, or use the software.
