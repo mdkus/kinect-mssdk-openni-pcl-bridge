@@ -67,6 +67,18 @@ nodes. For User node, you need to specify <Query> as below.
     </ProductionNodes>
 </OpenNI>
 
+Image node supports 640x480 (default) and 1280x1024 resolution.
+This example configures the Image node in the high resolution mode.
+
+		<Node type="Image" name="Image1">
+			<Configuration>
+				<MapOutputMode xRes="1280" yRes="1024" FPS="15"/>
+			</Configuration>
+		</Node>
+
+Depth node only supports 640x480 resolution, but internally
+320x240 resolution is used.
+
 4. License
 
 See LICENSE.TXT.

@@ -4,8 +4,21 @@
 #include "MSRKinectMirrorCap.h"
 #include "MSRKinectGeneratorControls.h"
 
+class ColorImageConfiguration : public ImageConfiguration
+{
+public:
+	ColorImageConfiguration() : ImageConfiguration(NUI_IMAGE_TYPE_COLOR)
+	{
+		static Mode s_modes[] = {
+			Mode(640, 480, 30, NUI_IMAGE_RESOLUTION_640x480),
+			Mode(1280, 1024, 15, NUI_IMAGE_RESOLUTION_1280x1024)
+		};
+		Init(s_modes, 2);
+	}
+};
+
 class MSRKinectImageGenerator :
-	public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel, NUI_IMAGE_TYPE_COLOR>,
+	public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel, ColorImageConfiguration>,
 	public virtual MSRKinectMirrorCap
 {
 public:
@@ -46,21 +59,21 @@ public:
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const DWORD* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
-		// todo support mirror
-		// todo flexible resolution
-
-		assert(lockedRect.Pitch == 640 * sizeof(DWORD));
+		assert(lockedRect.Pitch == GetXRes() * sizeof(DWORD));
 
 		const DWORD* sp = data;
 		XnRGB24Pixel* dp = m_pBuffer;
 
+		XnUInt32 xRes = GetXRes();
+		XnUInt32 yRes = GetYRes();
 		int step = m_pReader->GetMirrorFactor();
-		for (XnUInt y = 0; y < 480; y++) {
-			sp = data + y * 640 + (step < 0 ? 640-1 : 0);
-			for (XnUInt x = 0; x < 640; x++) {
-				dp->nRed = XnUInt8(*sp >> 16);
-				dp->nGreen = XnUInt8(*sp >> 8);
-				dp->nBlue = XnUInt8(*sp >> 0);
+		for (XnUInt y = 0; y < yRes; y++) {
+			sp = data + y * xRes + (step < 0 ? xRes-1 : 0);
+			for (XnUInt x = 0; x < xRes; x++) {
+				DWORD c = *sp;
+				dp->nRed = XnUInt8(c >> 16);
+				dp->nGreen = XnUInt8(c >> 8);
+				dp->nBlue = XnUInt8(c >> 0);
 
 				sp += step;
 				dp++;

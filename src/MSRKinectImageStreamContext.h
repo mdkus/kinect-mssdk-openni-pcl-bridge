@@ -9,16 +9,22 @@ private:
 
 protected:
 	HANDLE m_hStreamHandle;
+	NUI_IMAGE_TYPE m_eImageType;
+	NUI_IMAGE_RESOLUTION m_eImageResolution;
+
+public:
+	NUI_IMAGE_RESOLUTION GetImageResolution() const { return m_eImageResolution; }
 
 protected:
 	MSRKinectImageStreamContext() : m_hStreamHandle(NULL)
 	{
 	}
 
-	void InitContext(HANDLE hStreamHandle, HANDLE hNextFrameEvent)
+	void InitContext(HANDLE hNextFrameEvent, NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION eImageResolution)
 	{
 		SuperClass::InitContext(hNextFrameEvent);
-		m_hStreamHandle = hStreamHandle;
+		m_eImageType = eImageType;
+		m_eImageResolution = eImageResolution;
 	}
 
 	virtual HRESULT GetNextFrameImpl()

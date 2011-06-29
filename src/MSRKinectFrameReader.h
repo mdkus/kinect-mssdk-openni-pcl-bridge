@@ -63,6 +63,8 @@ public:
 		}
 
 		try {
+			Setup();
+
 			m_bRunning = TRUE;
 			CHECK_XN_STATUS(xnOSCreateThread(ReaderThread, this, &m_hReaderThread));
 			m_generatingEvent.Raise();
@@ -80,6 +82,9 @@ public:
 			m_generatingEvent.Raise();
 		}
 	}
+
+protected:
+	virtual void Setup() {};
 
 private:
 	void StopImpl()

@@ -102,11 +102,12 @@ public:
 		if (user == 0) {
 			pScene->pData = m_pBuffer;
 		} else {
+			XnUInt32 dataSize = GetXRes() * GetYRes();
 			if (!m_pFilteredBuffer) {
-				m_pFilteredBuffer = new XnLabel[X_RES * Y_RES];
+				m_pFilteredBuffer = new XnLabel[dataSize];
 			}
-			for (int i = 0; i < X_RES * Y_RES; i++) {
-				m_pFilteredBuffer[i] = m_pBuffer[i] == user ? user : 0;
+			for (XnUInt32 i = 0; i < dataSize; i++) {
+				m_pFilteredBuffer[i] = (m_pBuffer[i] == user) ? user : 0;
 			}
 			pScene->pData = m_pFilteredBuffer;
 		}

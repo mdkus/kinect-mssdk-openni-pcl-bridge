@@ -42,9 +42,6 @@
     <ClInclude Include="..\src\MSRKinectGeneratorControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectImageGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -91,6 +88,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectImageGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ImageConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
