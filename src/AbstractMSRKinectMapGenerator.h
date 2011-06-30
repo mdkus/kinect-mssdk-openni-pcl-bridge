@@ -51,4 +51,24 @@ public:
 	{
 		// ignore, maybe someday
 	}
+
+protected:
+	void PopulateMapMetaData(XnMapMetaData* pMetaData)
+	{
+		XnMapOutputMode mode;
+		GetMapOutputMode(mode);
+
+		// assume we don't support cropping
+		pMetaData->FullRes.X = pMetaData->Res.X = mode.nXRes;
+		pMetaData->FullRes.Y = pMetaData->Res.Y = mode.nYRes;
+		pMetaData->nFPS = mode.nFPS;
+		pMetaData->Offset.X = pMetaData->Offset.Y = 0;
+
+		// get the data for frame
+		XnUInt64 dummyTimestamp;
+		pMetaData->pOutput->bIsNew = IsNewDataAvailable(dummyTimestamp); // I don't know if this is OK
+		pMetaData->pOutput->nDataSize = GetDataSize();
+		pMetaData->pOutput->nFrameID = GetFrameID();
+		pMetaData->pOutput->nTimestamp = GetTimestamp();
+	}
 };

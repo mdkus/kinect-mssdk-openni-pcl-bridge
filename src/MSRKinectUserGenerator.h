@@ -99,6 +99,7 @@ public:
 
 	virtual XnStatus GetUserPixels(XnUserID user, XnSceneMetaData *pScene)
 	{
+		PopulateMapMetaData(pScene->pMap);
 		if (user == 0) {
 			pScene->pData = m_pBuffer;
 		} else {
