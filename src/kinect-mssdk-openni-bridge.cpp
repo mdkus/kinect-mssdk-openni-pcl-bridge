@@ -5,8 +5,8 @@
 
 XN_EXPORT_MODULE(Module)
 
-#include "MSRKinectDepthGenerator.h"
-SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
+//#include "MSRKinectDepthGenerator.h"
+//SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
 
 #include "MSRKinectDepthGeneratorCompatibleWithPrimeSense.h"
 SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGeneratorCompatibleWithPrimeSense, DEPTH);

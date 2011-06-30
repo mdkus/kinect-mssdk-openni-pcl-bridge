@@ -93,6 +93,21 @@
     <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MSRKinectImageGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ImageConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PrimeSenseProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PrimeSenseBinaryPropertyDef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">
