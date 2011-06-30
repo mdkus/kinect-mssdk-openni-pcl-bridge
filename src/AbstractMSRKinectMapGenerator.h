@@ -13,7 +13,7 @@ public:
 
 	virtual XnUInt32 GetSupportedMapOutputModesCount()
 	{
-		return 1; // 640x480x30fps only
+		return m_imageConfig.GetNumberOfSupportedModes();
 	}
 
 	virtual XnStatus GetSupportedMapOutputModes(XnMapOutputMode aModes[], XnUInt32& nCount)
