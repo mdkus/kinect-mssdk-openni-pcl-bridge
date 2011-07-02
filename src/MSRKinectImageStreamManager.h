@@ -13,15 +13,15 @@ public:
 	MSRKinectImageStreamReader* GetReader() { return m_pReader; }
 
 public:
-	MSRKinectImageStreamManager(NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION eResolution) :
-		m_hNextFrameEvent(NULL), m_hStreamHandle(NULL), m_pReader(NULL)
+	MSRKinectImageStreamManager(MSRKinectImageStreamResolutionStrategy* pResolutionStrategy) :
+	  m_hNextFrameEvent(NULL), m_hStreamHandle(NULL), m_pReader(NULL)
 		// throws XnStatusException
 	{
 		try {
 			CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
 
-			m_pReader = new MSRKinectImageStreamReader();
-			m_pReader->Init(m_hNextFrameEvent, eImageType, eResolution);
+			m_pReader = new MSRKinectImageStreamReader(pResolutionStrategy);
+			m_pReader->Init(m_hNextFrameEvent);
 
 		} catch (XnStatusException&) {
 			if (m_pReader) delete m_pReader;

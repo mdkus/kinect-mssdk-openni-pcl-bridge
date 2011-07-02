@@ -26,9 +26,11 @@
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamManager.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectImageStreamResolutionStrategy.h" />
     <ClInclude Include="..\src\MSRKinectJointMap.h" />
     <ClInclude Include="..\src\MSRKinectManager.h" />
     <ClInclude Include="..\src\MSRKinectMirrorCap.h" />
+    <ClInclude Include="..\src\MSRKinectRequirement.h" />
     <ClInclude Include="..\src\MSRKinectSkeletonContext.h" />
     <ClInclude Include="..\src\MSRKinectSkeletonManager.h" />
     <ClInclude Include="..\src\MSRKinectSkeletonReader.h" />
