@@ -25,38 +25,52 @@ protected:
 
 	XnStatus UpdateDepthData(DepthPixelProcessor& proc, const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
-		// todo flexible resolution
-
-		assert(lockedRect.Pitch == 320 * sizeof(USHORT));
-
 		const USHORT* sp = data;
 		XnDepthPixel* dp = m_pBuffer;
 
+		XnUInt32 destXRes = GetXRes();
+		XnUInt32 destYRes = GetYRes();
+		DWORD sourceXRes;
+		DWORD sourceYRes;
+		NuiImageResolutionToSize(pFrame->eResolution, sourceXRes, sourceYRes);
+		int ratio = destXRes / sourceXRes;
+		assert(ratio != 0);
 		int step = m_pReader->GetMirrorFactor();
+
+		BOOL hasPlayerIndex = m_pReader->GetImageType() == NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX;
+
 		if (!m_pReader->IsCalibrateViewPoint()) {
-			for (XnUInt y = 0; y < 240; y++) {
-				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
-				for (XnUInt x = 0; x < 320; x++) {
-					proc.Process(sp, dp);
+			for (XnUInt32 y = 0; y < sourceYRes; y++) {
+				sp = data + y * sourceXRes + (step < 0 ? sourceXRes-1 : 0);
+				for (XnUInt32 x = 0; x < sourceXRes; x++) {
+					USHORT d = hasPlayerIndex ? (*sp) : (*sp << 3);
+					proc.Process(d, dp, ratio);
 					sp += step;
-					dp += 2;
+					dp += ratio;
 				}
-				dp += 640;
+				dp += destXRes * (ratio-1);
 			}
 		} else {
-			XnUInt32 xRes = GetXRes();
-			XnUInt32 yRes = GetYRes();
-			memset(m_pBuffer, 0, xRes * yRes);
+			// NuiImageGetColorPixelCoordinatesFromDepthPixel only supports Image@640x480 and Depth@320x240
 
-			for (int y = 0; y < 240; y++) {
-				sp = data + y * 320 + (step < 0 ? 320-1 : 0);
-				for (int x = 0; x < 320; x++) {
+			assert(destXRes == 640 && destYRes == 480);
+			memset(m_pBuffer, 0, destXRes * destYRes);
+
+			const XnUInt32 convXRes = 320;
+			const XnUInt32 convYRes = 240;
+			const XnUInt32 convRatio = sourceXRes / convXRes;
+			assert(convRatio != 0);
+
+			for (XnUInt32 y = 0; y < convYRes; y++) {
+				sp = data + y * sourceXRes * convRatio + (step < 0 ? sourceXRes-1 : 0);
+				for (XnUInt32 x = 0; x < convXRes; x++) {
 					LONG ix, iy;
-					NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, *sp &  ~NUI_IMAGE_PLAYER_INDEX_MASK, &ix, &iy);
-					if (ix >= 0 && ix < LONG(xRes-1) && iy >= 0 && iy < LONG(yRes-1)) {
-						proc.Process(sp, m_pBuffer + iy * xRes + ix);
+					USHORT d = hasPlayerIndex ? (*sp) : (*sp << 3);
+					NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, (d & ~NUI_IMAGE_PLAYER_INDEX_MASK), &ix, &iy);
+					if (ix >= 0 && ix < LONG(destXRes-1) && iy >= 0 && iy < LONG(destYRes-1)) {
+						proc.Process(d, m_pBuffer + iy * destXRes + ix, 2);
 					}
-					sp += step;
+					sp += convRatio * step;
 				}
 			}
 		}

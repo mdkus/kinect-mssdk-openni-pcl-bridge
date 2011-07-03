@@ -7,9 +7,13 @@
 class MSRKinectDepthGeneratorDepthPixelProcessor
 {
 public:
-	static void Process(const USHORT* sp, XnDepthPixel* dp)
+	void Process(USHORT d, XnDepthPixel* dp, XnInt32 ratio)
 	{
-		*dp = *(dp+1) = *(dp+640) = *(dp+641) = (*sp >> NUI_IMAGE_PLAYER_INDEX_SHIFT);
+		d >>= NUI_IMAGE_PLAYER_INDEX_SHIFT;
+		*dp = d;
+		if (ratio == 2) {
+			*(dp+1) = *(dp+640) = *(dp+641) = d;
+		}
 	}
 };
 

@@ -14,6 +14,13 @@ protected:
 
 public:
 	NUI_IMAGE_RESOLUTION GetImageResolution() const { return m_eImageResolution; }
+	NUI_IMAGE_TYPE GetImageType() const { return m_eImageType; }
+
+	int GetMirrorFactor() const
+	{
+		// Weird... Only NUI_IMAGE_TYPE_DEPTH comes with flipped data
+		return m_bMirror ^ (m_eImageType == NUI_IMAGE_TYPE_DEPTH) ? 1 : -1;
+	}
 
 protected:
 	MSRKinectImageStreamContext() : m_hStreamHandle(NULL)

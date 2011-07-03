@@ -5,15 +5,18 @@
 class MSRKinectUserGeneratorDepthPixelProcessor
 {
 public:
-	XnUInt16 m_nUsersMask;
-	MSRKinectUserGeneratorDepthPixelProcessor() : m_nUsersMask(0) {}
+	XnUInt16 nUsersMask;
+	MSRKinectUserGeneratorDepthPixelProcessor() : nUsersMask(0) {}
 
-	void Process(const USHORT* sp, XnDepthPixel* dp)
+	void Process(USHORT d, XnDepthPixel* dp, XnUInt32 ratio)
 	{
-		XnLabel label = *sp & NUI_IMAGE_PLAYER_INDEX_MASK;
-		*dp = *(dp+1) = *(dp+640) = *(dp+641) = label;
+		XnLabel label = d & NUI_IMAGE_PLAYER_INDEX_MASK;
+		*dp = label;
+		if (ratio == 2) {
+			*(dp+1) = *(dp+640) = *(dp+641) = label;
+		}
 		if (label) {
-			m_nUsersMask |= 1 << (label-1);
+			nUsersMask |= 1 << (label-1);
 		}
 	}
 };
@@ -37,7 +40,7 @@ private:
 	static const int MAX_USERS = 8;
 
 	XnUInt16 m_nNumberOfUsers;
-	XnUInt16 m_nUsersMask;
+	XnUInt16 nUsersMask;
 	XnLabel* m_pFilteredBuffer;
 
 	UserCallbackHandleSetList m_userCallbackHandleSets;
@@ -46,7 +49,7 @@ private:
 	UserEvent m_lostUserEvent;
 
 public:
-	MSRKinectUserGenerator() : m_nNumberOfUsers(0), m_nUsersMask(0), m_pFilteredBuffer(NULL)
+	MSRKinectUserGenerator() : m_nNumberOfUsers(0), nUsersMask(0), m_pFilteredBuffer(NULL)
 	{
 		SetActiveGeneratorControl(FALSE);
 	}
@@ -76,7 +79,7 @@ public:
 			return XN_STATUS_OK;
 		}
 
-		XnUInt16 usersMask = m_nUsersMask;
+		XnUInt16 usersMask = nUsersMask;
 		XnUserID userID = 1;
 		XnUserID actualNumberOfUsers = 0;
 
@@ -141,16 +144,15 @@ protected:
 
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
-		// todo flexible resolution
-		XnUInt32 previousUsersMask = m_nUsersMask;
+		XnUInt32 previousUsersMask = nUsersMask;
 
 		MSRKinectUserGeneratorDepthPixelProcessor proc;
 		UpdateDepthData(proc, pFrame, data, lockedRect);
-		m_nUsersMask = proc.m_nUsersMask;
-		m_nNumberOfUsers = CountBits(m_nUsersMask);
+		nUsersMask = proc.nUsersMask;
+		m_nNumberOfUsers = CountBits(nUsersMask);
 
-		CheckLostUsers(previousUsersMask & ~m_nUsersMask);
-		CheckNewUsers(~previousUsersMask & m_nUsersMask);
+		CheckLostUsers(previousUsersMask & ~nUsersMask);
+		CheckNewUsers(~previousUsersMask & nUsersMask);
 
 		return XN_STATUS_OK;
 	}
