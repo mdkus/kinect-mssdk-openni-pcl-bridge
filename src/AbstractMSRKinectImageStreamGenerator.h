@@ -17,6 +17,7 @@ private:
 	ChangeEvent m_dataAvailableEvent;
 
 protected:
+	XnPredefinedProductionNodeType m_nodeType;
 	ImageConfiguration m_imageConfig;
 	BOOL m_bActiveGeneratorControl;
 	MSRKinectImageStreamReader* m_pReader;
@@ -32,6 +33,11 @@ protected:
 		m_bNewDataAvailable(FALSE),
 		m_bActiveGeneratorControl(TRUE)
 	{
+	}
+
+	void SetNodeType(XnPredefinedProductionNodeType nodeType)
+	{
+		m_nodeType = nodeType;
 	}
 
 	void SetImageConfigurationDesc(const ImageConfiguration::Desc* pDesc)
@@ -55,9 +61,10 @@ public:
 	virtual XnStatus Init()
 	{
 		try {
-			MSRKinectManager* pMan = MSRKinectManager::getInstance();
+			MSRKinectManager* pMan = MSRKinectManager::GetInstance();
 
-			m_pReader = pMan->GetImageStreamManager(m_imageConfig.GetImageType(), m_imageConfig.GetSelectedMode()->eResolution)->GetReader();
+			m_pReader = pMan->GetImageStreamManager(m_nodeType)->GetReader();
+			m_pReader->SetOutputMode(m_nodeType,  m_imageConfig.GetSelectedMode()->outputMode);
 
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
@@ -99,15 +106,6 @@ public:
 
 	virtual XnStatus UpdateData()
 	{
-		if (!m_pBuffer) {
-			// lazily initialize the buffer because the size is unknown at Init
-			m_pBuffer = new TargetPixelType[GetXRes() * GetYRes()];
-			if (m_pBuffer == NULL) {
-				return XN_STATUS_ALLOC_FAILED;
-			}
-			xnOSMemSet(m_pBuffer, 0, GetXRes() * GetYRes() * sizeof(TargetPixelType));
-		}
-
 		if (!m_bNewDataAvailable) {
 			return XN_STATUS_OK;
 		}
@@ -174,6 +172,15 @@ public:
 	virtual XnStatus StartGenerating()
 	{
 		try {
+			if (!m_pBuffer) {
+				// lazily initialize the buffer because the size is unknown at Init
+				m_pBuffer = new TargetPixelType[GetXRes() * GetYRes()];
+				if (m_pBuffer == NULL) {
+					return XN_STATUS_ALLOC_FAILED;
+				}
+				xnOSMemSet(m_pBuffer, 0, GetXRes() * GetYRes() * sizeof(TargetPixelType));
+			}
+
 			m_pReader->AddListener(this);
 			if (m_bActiveGeneratorControl) {
 				CHECK_XN_STATUS(m_pReader->Start());

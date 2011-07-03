@@ -1,5 +1,6 @@
 #pragma once
 #include "base.h"
+#include "MSRKinectRequirement.h"
 
 class MSRKinectFrameContextBase
 {
@@ -18,6 +19,8 @@ protected:
 	ChangeEvent m_mirrorChangeEvent;
 	BOOL m_bCalibrateViewPoint; // Note: flag only
 	ChangeEvent m_calibrateViewPointChangeEvent;
+
+	MSRKinectRequirement* m_pRequirement;
 
 public:
 	XnUInt32 GetFrameID() const { return m_nFrameID; }
@@ -41,8 +44,9 @@ protected:
 	{
 	}
 
-	void InitContext(HANDLE hNextFrameEvent)
+	void InitContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent)
 	{
+		m_pRequirement = pRequirement;
 		m_hNextFrameEvent = hNextFrameEvent;
 	}
 

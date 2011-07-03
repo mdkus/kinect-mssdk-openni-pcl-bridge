@@ -8,26 +8,23 @@ public:
 	{
 	public:
 		XnMapOutputMode outputMode;
-		NUI_IMAGE_RESOLUTION eResolution;
 
-		Mode(XnUInt32 nXRes, XnUInt32 nYRes, XnUInt32 nFPS, NUI_IMAGE_RESOLUTION eRes)
+		Mode(XnUInt32 nXRes, XnUInt32 nYRes, XnUInt32 nFPS)
 		{
 			outputMode.nXRes = nXRes;
 			outputMode.nYRes = nYRes;
 			outputMode.nFPS = nFPS;
-			eResolution = eRes;
 		}
 	};
 
 	class Desc
 	{
 	public:
-		NUI_IMAGE_TYPE eImageType;
 		const Mode* supportedModes;
 		XnUInt32 numberOfSupportedModes;
 
-		Desc(NUI_IMAGE_TYPE _eImageType, const Mode* _supportedModes, XnUInt32 _numberOfSupportedModes) :
-			eImageType(_eImageType), supportedModes(_supportedModes), numberOfSupportedModes(_numberOfSupportedModes) {}
+		Desc(Mode* _supportedModes, XnUInt32 _numberOfSupportedModes) :
+			supportedModes(_supportedModes), numberOfSupportedModes(_numberOfSupportedModes) {}
 	};
 
 protected:
@@ -35,7 +32,6 @@ protected:
 	XnUInt32 m_selectedModeIndex;
 
 public:
-	NUI_IMAGE_TYPE GetImageType() const { return m_pDesc->eImageType; }
 	const Mode* GetSupportedModes() const { return m_pDesc->supportedModes; }
 	XnUInt32 GetNumberOfSupportedModes() const { return m_pDesc->numberOfSupportedModes; }
 

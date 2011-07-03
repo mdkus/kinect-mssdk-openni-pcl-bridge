@@ -13,9 +13,9 @@ public:
 	MSRKinectDepthGeneratorBase()
 	{
 		static ImageConfiguration::Mode s_modes[] = {
-			ImageConfiguration::Mode(640, 480, 30, NUI_IMAGE_RESOLUTION_320x240)
+			ImageConfiguration::Mode(640, 480, 30)
 		};
-		static ImageConfiguration::Desc s_desc(NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX, s_modes, 1);
+		static ImageConfiguration::Desc s_desc(s_modes, 1);
 		SetImageConfigurationDesc(&s_desc);
 	}
 

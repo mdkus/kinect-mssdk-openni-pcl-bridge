@@ -40,7 +40,7 @@ public:
 		try {
 			CHECK_XN_STATUS(SuperClass::Init());
 
-			MSRKinectManager* pMan = MSRKinectManager::getInstance();
+			MSRKinectManager* pMan = MSRKinectManager::GetInstance();
 
 			m_pSkeletonReader = pMan->GetSkeletonManager()->GetReader();
 			m_pSkeletonReader->Start();

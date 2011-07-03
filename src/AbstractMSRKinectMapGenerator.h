@@ -28,7 +28,7 @@ public:
 	{
 		try {
 			CHECK_XN_STATUS(m_imageConfig.Select(mode));
-			m_pReader->SetResolution(m_imageConfig.GetSelectedMode()->eResolution);
+			m_pReader->SetOutputMode(m_nodeType, m_imageConfig.GetSelectedMode()->outputMode);
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			return e.nStatus;

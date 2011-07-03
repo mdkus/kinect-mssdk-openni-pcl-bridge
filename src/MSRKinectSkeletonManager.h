@@ -15,17 +15,13 @@ public:
 	MSRKinectSkeletonReader* GetReader() { return m_pReader; }
 
 public:
-	MSRKinectSkeletonManager() : m_hNextFrameEvent(NULL), m_pReader(NULL) // throws XnStatusException
+	MSRKinectSkeletonManager(MSRKinectRequirement* pRequirement) : m_hNextFrameEvent(NULL), m_pReader(NULL) // throws XnStatusException
 	{
 		try {
 			CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
 
-			if (FAILED(NuiSkeletonTrackingEnable(m_hNextFrameEvent, 0))) {
-				throw XnStatusException(XN_STATUS_INVALID_OPERATION);
-			}
-
 			m_pReader = new MSRKinectSkeletonReader();
-			m_pReader->Init(m_hNextFrameEvent);
+			m_pReader->Init(pRequirement, m_hNextFrameEvent);
 		} catch (XnStatusException&) {
 			if (m_pReader) delete m_pReader;
 			if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);

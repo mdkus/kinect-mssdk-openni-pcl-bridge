@@ -6,8 +6,16 @@
 class MSRKinectSkeletonReader : public MSRKinectFrameReader<MSRKinectSkeletonContext>
 {
 public:
-	void Init(HANDLE hNextFrameEvent)
+	void Init(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent)
 	{
-		InitContext(hNextFrameEvent);
+		InitContext(pRequirement, hNextFrameEvent);
+		m_pRequirement->AddCapabilityRequirement(XN_CAPABILITY_SKELETON);
+	}
+
+	virtual void Setup()
+	{
+		m_pRequirement->DoInitialize();
+
+		CHECK_HRESULT(NuiSkeletonTrackingEnable(m_hNextFrameEvent, 0));
 	}
 };

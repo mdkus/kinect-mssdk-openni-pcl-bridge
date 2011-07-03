@@ -28,6 +28,7 @@ private:
 public:
 	MSRKinectDepthGenerator()
 	{
+		SetNodeType(XN_NODE_TYPE_DEPTH);
 		SetActiveGeneratorControl(TRUE);
 	}
 

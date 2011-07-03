@@ -2,21 +2,20 @@
 #include "base.h"
 #include "MSRKinectImageStreamManager.h"
 #include "MSRKinectSkeletonManager.h"
-#include <map>
+#include "MSRKinectRequirement.h"
 
 class MSRKinectManager
 {
 private:
-	typedef std::map<NUI_IMAGE_TYPE, MSRKinectImageStreamManager*> MSRKinectImageStreamManagerMap;
-
-private:
 	static MSRKinectManager* cs_pInstance;
 
-	MSRKinectImageStreamManagerMap m_streamManagerMap;
+	MSRKinectRequirement m_requirement;
+	MSRKinectImageStreamManager* m_pColorImageStreamManager;
+	MSRKinectImageStreamManager* m_pDepthImageStreamManager;
 	MSRKinectSkeletonManager* m_pSkeletonManager;
 
 public:
-	static MSRKinectManager* getInstance() // throws XnStatusException
+	static MSRKinectManager* GetInstance() // throws XnStatusException
 	{
 		if (!cs_pInstance) {
 			cs_pInstance = new MSRKinectManager();
@@ -25,14 +24,8 @@ public:
 		return cs_pInstance;
 	}
 
-	MSRKinectManager() : m_pSkeletonManager(NULL) // throws XnStatusException
+	MSRKinectManager() : m_pColorImageStreamManager(NULL), m_pDepthImageStreamManager(NULL), m_pSkeletonManager(NULL)
 	{
-		const DWORD nuiInitFlags =
-			NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX |
-			NUI_INITIALIZE_FLAG_USES_SKELETON |
-			NUI_INITIALIZE_FLAG_USES_COLOR;
-
-		CHECK_HRESULT(NuiInitialize(nuiInitFlags));
 	}
 
 	virtual ~MSRKinectManager()
@@ -40,41 +33,50 @@ public:
 		Shutdown();
 	}
 
-	MSRKinectImageStreamManager* GetImageStreamManager(NUI_IMAGE_TYPE eImageType, NUI_IMAGE_RESOLUTION eResolution) // throws XnStatusException
+	MSRKinectRequirement* GetRequirement()
 	{
-		MSRKinectImageStreamManager* pStream = m_streamManagerMap[eImageType];
-
-		if (!pStream) {
-			pStream = new MSRKinectImageStreamManager(eImageType, eResolution);
-			m_streamManagerMap[eImageType] = pStream;
-		} else {
-			if (eResolution != pStream->GetReader()->GetImageResolution()) {
-				throw new XnStatusException(XN_STATUS_BAD_PARAM); // attempt to reinitialize with inconsistent parameters
-			}
-			// OK
-		}
-
-		return pStream;
+		return &m_requirement;
 	}
 
+	MSRKinectImageStreamManager* GetImageStreamManager(XnPredefinedProductionNodeType nodeType) // throws XnStatusException
+	{
+		switch (nodeType) {
+		case XN_NODE_TYPE_IMAGE:
+			if (!m_pColorImageStreamManager) {
+				m_pColorImageStreamManager = new MSRKinectColorImageStreamManager();
+				m_pColorImageStreamManager->Init(&m_requirement);
+			}
+			return m_pColorImageStreamManager;
+		case XN_NODE_TYPE_DEPTH:
+		case XN_NODE_TYPE_USER:
+			if (!m_pDepthImageStreamManager) {
+				m_pDepthImageStreamManager = new MSRKinectDepthImageStreamManager();
+				m_pDepthImageStreamManager->Init(&m_requirement);
+			}
+			return m_pDepthImageStreamManager;
+		default:
+			throw new XnStatusException(XN_STATUS_BAD_PARAM);
+		}
+	}
 
 	MSRKinectSkeletonManager* GetSkeletonManager() // throws XnStatusException
 	{
 		if (!m_pSkeletonManager) {
-			m_pSkeletonManager = new MSRKinectSkeletonManager();
+			m_pSkeletonManager = new MSRKinectSkeletonManager(&m_requirement);
 		}
 		return m_pSkeletonManager;
 	}
 
 	void Shutdown()
 	{
-		for (MSRKinectImageStreamManagerMap::iterator i = m_streamManagerMap.begin(); i != m_streamManagerMap.end(); i++) {
-			delete i->second;
-		}
-		m_streamManagerMap.clear();
-
 		if (m_pSkeletonManager) {
 			delete m_pSkeletonManager;
+		}
+		if (m_pColorImageStreamManager) {
+			delete m_pColorImageStreamManager;
+		}
+		if (m_pDepthImageStreamManager) {
+			delete m_pDepthImageStreamManager;
 		}
 
 		NuiShutdown();

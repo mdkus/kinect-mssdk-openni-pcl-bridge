@@ -25,7 +25,7 @@ inline void printHResult(HRESULT hr, const char* statement)
 {
 	LPTSTR message;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&message, 0, NULL);
-	fprintf(stderr, "%s (HRESULT=%08x): %s", message, hr, statement);
+	fprintf(stderr, "%s (HRESULT=%08x): %s\n", message, hr, statement);
 	LocalFree(message);
 }
 

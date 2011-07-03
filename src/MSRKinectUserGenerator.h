@@ -51,6 +51,7 @@ private:
 public:
 	MSRKinectUserGenerator() : m_nNumberOfUsers(0), nUsersMask(0), m_pFilteredBuffer(NULL)
 	{
+		SetNodeType(XN_NODE_TYPE_USER);
 		SetActiveGeneratorControl(FALSE);
 	}
 
