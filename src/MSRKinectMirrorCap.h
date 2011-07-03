@@ -2,7 +2,8 @@
 #include "base.h"
 #include "MSRKinectFrameContextBase.h"
 
-class MSRKinectMirrorCap : public virtual xn::ModuleMirrorInterface
+class MSRKinectMirrorCap :
+	public virtual xn::ModuleMirrorInterface
 {
 protected:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)

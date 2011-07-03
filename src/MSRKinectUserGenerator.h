@@ -21,10 +21,11 @@ public:
 	}
 };
 
-class MSRKinectUserGenerator : public virtual MSRKinectDepthGeneratorBase<xn::ModuleUserGenerator, MSRKinectUserGeneratorDepthPixelProcessor>
+class MSRKinectUserGenerator :
+	public MSRKinectDepthGeneratorBase<xn::ModuleUserGenerator, MSRKinectUserGeneratorDepthPixelProcessor>
 {
 private:
-	typedef MSRKinectDepthGeneratorBase<xn::ModuleUserGenerator, MSRKinectUserGeneratorDepthPixelProcessor> SuperClass;
+	typedef MSRKinectDepthGeneratorBase SuperClass;
 
 	struct UserCallbackHandleSet {
 		XnCallbackHandle hNewUser;
@@ -49,10 +50,10 @@ private:
 	UserEvent m_lostUserEvent;
 
 public:
-	MSRKinectUserGenerator() : m_nNumberOfUsers(0), nUsersMask(0), m_pFilteredBuffer(NULL)
+	MSRKinectUserGenerator() :
+		MSRKinectDepthGeneratorBase(XN_NODE_TYPE_USER, FALSE),
+		m_nNumberOfUsers(0), nUsersMask(0), m_pFilteredBuffer(NULL)
 	{
-		SetNodeType(XN_NODE_TYPE_USER);
-		SetActiveGeneratorControl(FALSE);
 	}
 
 	virtual ~MSRKinectUserGenerator()

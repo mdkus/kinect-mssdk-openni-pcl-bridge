@@ -10,7 +10,6 @@ class AbstractMSRKinectImageStreamGenerator :
 	public virtual MSRKinectImageStreamReader::Listener
 {
 private:
-	typedef AbstractMSRKinectImageStreamGenerator<ParentModuleGeneratorClass, SourcePixelType, TargetPixelType> ThisClass;
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 private:
@@ -18,8 +17,9 @@ private:
 
 protected:
 	XnPredefinedProductionNodeType m_nodeType;
-	ImageConfiguration m_imageConfig;
 	BOOL m_bActiveGeneratorControl;
+	ImageConfiguration m_imageConfig;
+
 	MSRKinectImageStreamReader* m_pReader;
 	BOOL m_bNewDataAvailable;
 	TargetPixelType* m_pBuffer;
@@ -28,26 +28,16 @@ protected:
 	XnUInt32 GetYRes() const { return m_imageConfig.GetSelectedMode()->outputMode.nYRes; }
 
 protected:
-	AbstractMSRKinectImageStreamGenerator() :
+	AbstractMSRKinectImageStreamGenerator(XnPredefinedProductionNodeType nodeType, BOOL bActiveGeneratorControl, const ImageConfiguration::Desc* pImageConfigDesc) :
+		m_nodeType(nodeType),
+		m_bActiveGeneratorControl(bActiveGeneratorControl),
+		m_imageConfig(pImageConfigDesc),
 		m_pBuffer(NULL),
-		m_bNewDataAvailable(FALSE),
-		m_bActiveGeneratorControl(TRUE)
+		m_bNewDataAvailable(FALSE)
 	{
-	}
-
-	void SetNodeType(XnPredefinedProductionNodeType nodeType)
-	{
-		m_nodeType = nodeType;
-	}
-
-	void SetImageConfigurationDesc(const ImageConfiguration::Desc* pDesc)
-	{
-		m_imageConfig.SetDesc(pDesc);
-	}
-
-	void SetActiveGeneratorControl(BOOL value)
-	{
-		m_bActiveGeneratorControl = value;
+		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
+		m_pReader = pMan->GetImageStreamManager(nodeType)->GetReader();
+		m_pReader->SetOutputMode(nodeType,  m_imageConfig.GetSelectedMode()->outputMode);
 	}
 
 public:
@@ -58,27 +48,15 @@ public:
 		}
 	}
 
-	virtual XnStatus Init()
-	{
-		try {
-			MSRKinectManager* pMan = MSRKinectManager::GetInstance();
-
-			m_pReader = pMan->GetImageStreamManager(m_nodeType)->GetReader();
-			m_pReader->SetOutputMode(m_nodeType,  m_imageConfig.GetSelectedMode()->outputMode);
-
-			return XN_STATUS_OK;
-		} catch (XnStatusException& e) {
-			m_pReader->RemoveListener(this);
-			return e.nStatus;
-		}
-	}
-
 	virtual void OnUpdateFrame() {
 		m_bNewDataAvailable = TRUE;
 		m_dataAvailableEvent.Raise();
 	}
 
+	//
 	// Generator methods
+	//
+
 	virtual XnStatus RegisterToNewDataAvailable(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback)
 	{
 		return m_dataAvailableEvent.Register(handler, pCookie, &hCallback);
@@ -110,7 +88,6 @@ public:
 			return XN_STATUS_OK;
 		}
 
-		// fprintf(stderr, "X");
 		const NUI_IMAGE_FRAME *pFrame = m_pReader->LockFrame();
 		if (pFrame) {
 			KINECT_LOCKED_RECT lockedRect;
@@ -118,18 +95,6 @@ public:
 
 			// FIXME check status code
 			UpdateImageData(pFrame, (SourcePixelType*)lockedRect.pBits, lockedRect);
-
-			//if (m_pReader->GetMirrorFactor() < 0) {
-			//	// slow but works
-			//	for (int y = 0; y < Y_RES; y++) {
-			//		TargetPixelType* p = m_pBuffer + y * X_RES;
-			//		for (int x = 0; x < X_RES / 2; x++) {
-			//			TargetPixelType a = *(p + x);
-			//			*(p + x) = *(p + X_RES - 1 - x);
-			//			*(p + X_RES - 1 - x) = a;
-			//		}
-			//	}
-			//}
 
 			m_bNewDataAvailable = FALSE;
 		} else {

@@ -4,21 +4,26 @@
 #include "MSRKinectMirrorCap.h"
 
 class MSRKinectImageGenerator :
-	public virtual AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel>,
+	public AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel>,
 	public virtual MSRKinectMirrorCap
 {
-public:
-	MSRKinectImageGenerator()
+private:
+	typedef AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel> SuperClass;
+
+private:
+	static ImageConfiguration::Desc* GetImageConfigDesc()
 	{
 		static ImageConfiguration::Mode s_modes[] = {
 			ImageConfiguration::Mode(640, 480, 30),
 			ImageConfiguration::Mode(1280, 1024, 15)
 		};
 		static ImageConfiguration::Desc s_desc(s_modes, 2);
-		SetImageConfigurationDesc(&s_desc);
+		return &s_desc;
+	}
 
-		SetNodeType(XN_NODE_TYPE_IMAGE);
-		SetActiveGeneratorControl(TRUE);
+public:
+	MSRKinectImageGenerator() : SuperClass(XN_NODE_TYPE_IMAGE, TRUE, GetImageConfigDesc())
+	{
 	}
 
 	virtual ~MSRKinectImageGenerator() {}

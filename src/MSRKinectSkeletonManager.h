@@ -19,9 +19,7 @@ public:
 	{
 		try {
 			CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
-
-			m_pReader = new MSRKinectSkeletonReader();
-			m_pReader->Init(pRequirement, m_hNextFrameEvent);
+			m_pReader = new MSRKinectSkeletonReader(pRequirement, m_hNextFrameEvent);
 		} catch (XnStatusException&) {
 			if (m_pReader) delete m_pReader;
 			if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);

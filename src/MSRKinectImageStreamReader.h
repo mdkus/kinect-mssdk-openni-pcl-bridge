@@ -4,20 +4,21 @@
 #include "ImageConfiguration.h"
 #include "MSRKinectRequirement.h"
 
-class MSRKinectImageStreamReader : public MSRKinectFrameReader<MSRKinectImageStreamContext>
+class MSRKinectImageStreamReader :
+	public MSRKinectFrameReader<MSRKinectImageStreamContext>
 {
+private:
+	typedef MSRKinectFrameReader<MSRKinectImageStreamContext> SuperClass;
+
 public:
-	MSRKinectImageStreamReader()
+	MSRKinectImageStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
+		SuperClass(pRequirement, hNextFrameEvent)
 	{
 	}
 
 	void SetOutputMode(XnPredefinedProductionNodeType nodeType, const XnMapOutputMode& mode)
 	{
 		m_pRequirement->AddRequirement(nodeType, mode);
-	}
-
-	void Init(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) {
-		InitContext(pRequirement, hNextFrameEvent);
 	}
 
 protected:
@@ -36,6 +37,13 @@ protected:
 
 class MSRKinectColorImageStreamReader : public MSRKinectImageStreamReader
 {
+public:
+	MSRKinectColorImageStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
+		MSRKinectImageStreamReader(pRequirement, hNextFrameEvent)
+	{
+	}
+
+protected:
 	virtual void SetupStreamInfo()
 	{
 		m_eImageType = NUI_IMAGE_TYPE_COLOR;
@@ -45,6 +53,13 @@ class MSRKinectColorImageStreamReader : public MSRKinectImageStreamReader
 
 class MSRKinectDepthImageStreamReader : public MSRKinectImageStreamReader
 {
+public:
+	MSRKinectDepthImageStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
+		MSRKinectImageStreamReader(pRequirement, hNextFrameEvent)
+	{
+	}
+
+protected:
 	virtual void SetupStreamInfo()
 	{
 		m_eImageType = m_pRequirement->GetDepthImageType();

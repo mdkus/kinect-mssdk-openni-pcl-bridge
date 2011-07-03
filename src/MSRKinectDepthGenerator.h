@@ -18,20 +18,17 @@ public:
 };
 
 class MSRKinectDepthGenerator :
-	public virtual MSRKinectDepthGeneratorBase<xn::ModuleDepthGenerator, MSRKinectDepthGeneratorDepthPixelProcessor>,
+	public MSRKinectDepthGeneratorBase<xn::ModuleDepthGenerator, MSRKinectDepthGeneratorDepthPixelProcessor>,
 	public virtual MSRKinectMirrorCap,
 	public virtual MSRKinectAlternativeViewPointCap
 {
 private:
-	typedef MSRKinectDepthGeneratorBase<xn::ModuleDepthGenerator, MSRKinectDepthGeneratorDepthPixelProcessor> SuperClass;
+	typedef MSRKinectDepthGeneratorBase SuperClass;
 
 public:
-	MSRKinectDepthGenerator()
+	MSRKinectDepthGenerator() : SuperClass(XN_NODE_TYPE_DEPTH, TRUE)
 	{
-		SetNodeType(XN_NODE_TYPE_DEPTH);
-		SetActiveGeneratorControl(TRUE);
 	}
-
 
 	virtual ~MSRKinectDepthGenerator() {}
 

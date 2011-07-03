@@ -3,24 +3,20 @@
 #include "ProductionNodeExporter.h"
 
 template <class ProductionNodeClass>
-class SimpleProductionNodeExporter : public ProductionNodeExporter<ProductionNodeClass>
+class SimpleProductionNodeExporter :
+	public ProductionNodeExporter<ProductionNodeClass>
 {
 protected:
 	SimpleProductionNodeExporter(const XnChar* strName, XnPredefinedProductionNodeType nodeType) : ProductionNodeExporter(strName, nodeType) {}
 
 	virtual XnStatus InitImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
 	{
-		ProductionNodeClass* pGen = new ProductionNodeClass();
-
-		XnStatus nRetVal = pGen->Init(); // ProductionNodeClass must have Init method that returns XnStatus
-		if (nRetVal != XN_STATUS_OK) {
-			delete pGen;
-			return nRetVal;
+		try {
+			*ppInstance = new ProductionNodeClass();
+			return XN_STATUS_OK;
+		} catch (XnStatusException e) {
+			return e.nStatus;
 		}
-
-		*ppInstance = pGen;
-	
-		return XN_STATUS_OK;
 
 	}
 };

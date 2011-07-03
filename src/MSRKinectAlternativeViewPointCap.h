@@ -2,7 +2,8 @@
 #include "base.h"
 #include "MSRKinectFrameContextBase.h"
 
-class MSRKinectAlternativeViewPointCap : public virtual xn::ModuleAlternativeViewPointInterface
+class MSRKinectAlternativeViewPointCap :
+	public virtual xn::ModuleAlternativeViewPointInterface
 {
 protected:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)

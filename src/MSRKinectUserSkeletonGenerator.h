@@ -4,7 +4,9 @@
 #include "MSRKinectSkeletonReader.h"
 #include "MSRKinectJointMap.h"
 
-class MSRKinectUserSkeletonGenerator : public virtual MSRKinectUserGenerator, public virtual xn::ModuleSkeletonInterface
+class MSRKinectUserSkeletonGenerator :
+	public MSRKinectUserGenerator,
+	public virtual xn::ModuleSkeletonInterface
 {
 private:
 	typedef MSRKinectUserGenerator SuperClass;
@@ -31,24 +33,26 @@ protected:
 	CalibrationEndtEvent m_calibrationEndEvent;
 
 public:
-	MSRKinectUserSkeletonGenerator()
+	MSRKinectUserSkeletonGenerator() // throws XnStatusException
 	{
+		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
+		m_pSkeletonReader = pMan->GetSkeletonManager()->GetReader();
 	}
 
-	virtual XnStatus Init()
+	virtual XnStatus StartGenerating()
 	{
 		try {
-			CHECK_XN_STATUS(SuperClass::Init());
-
-			MSRKinectManager* pMan = MSRKinectManager::GetInstance();
-
-			m_pSkeletonReader = pMan->GetSkeletonManager()->GetReader();
-			m_pSkeletonReader->Start();
-
-			return XN_STATUS_OK;
+			CHECK_XN_STATUS(SuperClass::StartGenerating());
+			return m_pSkeletonReader->Start();
 		} catch (XnStatusException& e) {
 			return e.nStatus;
 		}
+	}
+
+	virtual void StopGenerating()
+	{
+		m_pSkeletonReader->Stop();
+		SuperClass::StopGenerating();
 	}
 
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)

@@ -3,7 +3,8 @@
 #include "MSRKinectDepthGenerator.h"
 
 // experimental
-class MSRKinectDepthGeneratorCompatibleWithPrimeSense : public virtual MSRKinectDepthGenerator
+class MSRKinectDepthGeneratorCompatibleWithPrimeSense :
+	public MSRKinectDepthGenerator
 {
 public:
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const

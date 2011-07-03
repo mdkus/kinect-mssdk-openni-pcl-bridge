@@ -2,8 +2,12 @@
 #include "base.h"
 #include "MSRKinectFrameContext.h"
 
-class MSRKinectSkeletonContext : public MSRKinectFrameContext<NUI_SKELETON_FRAME>
+class MSRKinectSkeletonContext :
+	public MSRKinectFrameContext<NUI_SKELETON_FRAME>
 {
+private:
+	typedef MSRKinectFrameContext<NUI_SKELETON_FRAME> SuperClass;
+
 private:
 	BOOL m_bSmooth;
 	NUI_SKELETON_FRAME m_frame;
@@ -13,7 +17,10 @@ public:
 	void SetSmooth(BOOL value) { m_bSmooth = value; }
 
 public:
-	MSRKinectSkeletonContext() : m_bSmooth(FALSE) {}
+	MSRKinectSkeletonContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
+		SuperClass(pRequirement, hNextFrameEvent), m_bSmooth(FALSE)
+	{
+	}
 
 	virtual HRESULT GetNextFrameImpl()
 	{

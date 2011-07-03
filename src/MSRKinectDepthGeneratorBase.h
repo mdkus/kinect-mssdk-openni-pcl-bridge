@@ -4,25 +4,28 @@
 
 template<class ParentMapGeneratorClass, class DepthPixelProcessor>
 class MSRKinectDepthGeneratorBase :
-	public virtual AbstractMSRKinectMapGenerator<ParentMapGeneratorClass, USHORT, XnDepthPixel>
+	public AbstractMSRKinectMapGenerator<ParentMapGeneratorClass, USHORT, XnDepthPixel>
 {
 private:
-	typedef AbstractMSRKinectMapGenerator<xn::ModuleDepthGenerator, USHORT, XnDepthPixel> SuperClass;
-
-public:
-	MSRKinectDepthGeneratorBase()
+	static const ImageConfiguration::Desc* GetImageConfigDesc()
 	{
 		static ImageConfiguration::Mode s_modes[] = {
 			ImageConfiguration::Mode(640, 480, 30)
 		};
 		static ImageConfiguration::Desc s_desc(s_modes, 1);
-		SetImageConfigurationDesc(&s_desc);
+		return &s_desc;
 	}
 
+protected:
+	MSRKinectDepthGeneratorBase(XnPredefinedProductionNodeType nodeType, BOOL bActiveGeneratorControl) :
+		 AbstractMSRKinectMapGenerator(nodeType, bActiveGeneratorControl, GetImageConfigDesc())
+	{
+	}
+
+public:
 	virtual ~MSRKinectDepthGeneratorBase() {}
 
 protected:
-
 	XnStatus UpdateDepthData(DepthPixelProcessor& proc, const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
 		const USHORT* sp = data;

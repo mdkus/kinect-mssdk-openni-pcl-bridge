@@ -5,7 +5,7 @@
 
 class MSRKinectImageStreamManager
 {
-private:
+protected:
 	HANDLE m_hNextFrameEvent;
 	HANDLE m_hStreamHandle;
 	MSRKinectImageStreamReader* m_pReader;
@@ -18,21 +18,7 @@ public:
 	  m_hNextFrameEvent(NULL), m_hStreamHandle(NULL), m_pReader(NULL)
 		// throws XnStatusException
 	{
-	}
-
-	void Init(MSRKinectRequirement* pRequirement)
-	{
-		try {
-			CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
-
-			m_pReader = CreateReader();
-			m_pReader->Init(pRequirement, m_hNextFrameEvent);
-
-		} catch (XnStatusException&) {
-			if (m_pReader) delete m_pReader;
-			if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
-			throw;
-		}
+		CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
 	}
 
 	virtual ~MSRKinectImageStreamManager()
@@ -50,23 +36,22 @@ public:
 	{
 		m_pReader->RemoveListener(listener);
 	}
-
-protected:
-	virtual MSRKinectImageStreamReader* CreateReader() = 0;
 };
 
 class MSRKinectColorImageStreamManager : public MSRKinectImageStreamManager
 {
-	virtual MSRKinectImageStreamReader* CreateReader()
+public:
+	MSRKinectColorImageStreamManager(MSRKinectRequirement* pRequirement)
 	{
-		return new MSRKinectColorImageStreamReader();
+		m_pReader = new MSRKinectColorImageStreamReader(pRequirement, m_hNextFrameEvent);
 	}
 };
 
 class MSRKinectDepthImageStreamManager : public MSRKinectImageStreamManager
 {
-	virtual MSRKinectImageStreamReader* CreateReader()
+public:
+	MSRKinectDepthImageStreamManager(MSRKinectRequirement* pRequirement)
 	{
-		return new MSRKinectDepthImageStreamReader();
+		m_pReader = new MSRKinectDepthImageStreamReader(pRequirement, m_hNextFrameEvent);
 	}
 };

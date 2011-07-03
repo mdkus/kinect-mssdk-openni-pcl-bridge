@@ -27,7 +27,7 @@ public:
 			supportedModes(_supportedModes), numberOfSupportedModes(_numberOfSupportedModes) {}
 	};
 
-protected:
+private:
 	const Desc* m_pDesc;
 	XnUInt32 m_selectedModeIndex;
 
@@ -40,10 +40,8 @@ public:
 	const Mode* GetSelectedMode() const { return GetSupportedModeAt(m_selectedModeIndex); }
 	const Mode* GetSupportedModeAt(XnUInt32 index) const { return GetSupportedModes() + index; }
 
-	void SetDesc(const Desc* pDesc) { m_pDesc = pDesc; }
-
 public:
-	ImageConfiguration(const Desc* pDesc = NULL) : m_pDesc(pDesc), m_selectedModeIndex(0) {}
+	ImageConfiguration(const Desc* pDesc) : m_pDesc(pDesc), m_selectedModeIndex(0) {}
 
 	XnStatus Select(const XnMapOutputMode& mode)
 	{

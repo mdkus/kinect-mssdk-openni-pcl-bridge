@@ -5,7 +5,8 @@
 #include <algorithm>
 
 template <class ContextClass>
-class MSRKinectFrameReader : public ContextClass
+class MSRKinectFrameReader :
+	public ContextClass
 {
 private:
 	typedef MSRKinectFrameReader<ContextClass> ThisClass;
@@ -30,7 +31,7 @@ public:
 	ChangeEvent* GetGeneratingEvent() { return &m_generatingEvent; }
 
 public:
-	MSRKinectFrameReader() : m_hReaderThread(NULL)
+	MSRKinectFrameReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : ContextClass(pRequirement, hNextFrameEvent), m_hReaderThread(NULL)
 	{
 	}
 

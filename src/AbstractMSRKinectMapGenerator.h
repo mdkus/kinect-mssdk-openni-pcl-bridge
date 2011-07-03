@@ -3,10 +3,14 @@
 #include "AbstractMSRKinectImageStreamGenerator.h"
 
 template <class ParentMapGeneratorClass, class SourcePixelType, class TargetPixelType>
-class AbstractMSRKinectMapGenerator : public virtual AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType>
+class AbstractMSRKinectMapGenerator :
+	public AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType>
 {
 protected:
-	AbstractMSRKinectMapGenerator() {}
+	AbstractMSRKinectMapGenerator(XnPredefinedProductionNodeType nodeType, BOOL bActiveGeneratorControl, const ImageConfiguration::Desc* pImageConfigDesc) :
+		 AbstractMSRKinectImageStreamGenerator(nodeType, bActiveGeneratorControl, pImageConfigDesc)
+	{
+	}
 
 public:
 	// MapGenerator methods

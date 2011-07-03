@@ -3,14 +3,18 @@
 #include "MSRKinectFrameContextBase.h"
 
 template <class FrameClass>
-class MSRKinectFrameContext : public MSRKinectFrameContextBase
+class MSRKinectFrameContext :
+	public MSRKinectFrameContextBase
 {
+private:
+	typedef MSRKinectFrameContextBase SuperClass;
+
 protected:
 	FrameClass* m_pFrame;
 	CRITICAL_SECTION m_csFrameAccess;
 
 public:
-	MSRKinectFrameContext() : m_pFrame(NULL)
+	MSRKinectFrameContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent), m_pFrame(NULL)
 	{
 		InitializeCriticalSection(&m_csFrameAccess);
 	}

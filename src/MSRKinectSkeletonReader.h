@@ -3,12 +3,15 @@
 #include "MSRKinectFrameReader.h"
 #include "MSRKinectSkeletonContext.h"
 
-class MSRKinectSkeletonReader : public MSRKinectFrameReader<MSRKinectSkeletonContext>
+class MSRKinectSkeletonReader :
+	public MSRKinectFrameReader<MSRKinectSkeletonContext>
 {
+private:
+	 typedef MSRKinectFrameReader<MSRKinectSkeletonContext> SuperClass;
+
 public:
-	void Init(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent)
+	MSRKinectSkeletonReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent)
 	{
-		InitContext(pRequirement, hNextFrameEvent);
 		m_pRequirement->AddCapabilityRequirement(XN_CAPABILITY_SKELETON);
 	}
 

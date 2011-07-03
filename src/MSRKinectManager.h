@@ -43,15 +43,13 @@ public:
 		switch (nodeType) {
 		case XN_NODE_TYPE_IMAGE:
 			if (!m_pColorImageStreamManager) {
-				m_pColorImageStreamManager = new MSRKinectColorImageStreamManager();
-				m_pColorImageStreamManager->Init(&m_requirement);
+				m_pColorImageStreamManager = new MSRKinectColorImageStreamManager(&m_requirement);
 			}
 			return m_pColorImageStreamManager;
 		case XN_NODE_TYPE_DEPTH:
 		case XN_NODE_TYPE_USER:
 			if (!m_pDepthImageStreamManager) {
-				m_pDepthImageStreamManager = new MSRKinectDepthImageStreamManager();
-				m_pDepthImageStreamManager->Init(&m_requirement);
+				m_pDepthImageStreamManager = new MSRKinectDepthImageStreamManager(&m_requirement);
 			}
 			return m_pDepthImageStreamManager;
 		default:

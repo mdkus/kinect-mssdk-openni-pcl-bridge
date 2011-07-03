@@ -36,18 +36,13 @@ public:
 	ChangeEvent GetCalibrateViewPointChangeEvent() { return m_calibrateViewPointChangeEvent; }
 
 protected:
-	MSRKinectFrameContextBase() :
-		m_hNextFrameEvent(NULL),
+	MSRKinectFrameContextBase(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
+		m_pRequirement(pRequirement),
+		m_hNextFrameEvent(hNextFrameEvent),
 		m_bRunning(FALSE),
 		m_nFrameID(0), m_lTimestamp(0),
 		m_bMirror(FALSE), m_bCalibrateViewPoint(FALSE)
 	{
-	}
-
-	void InitContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent)
-	{
-		m_pRequirement = pRequirement;
-		m_hNextFrameEvent = hNextFrameEvent;
 	}
 
 public:
