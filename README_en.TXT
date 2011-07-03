@@ -1,6 +1,6 @@
 kinect-mssdk-openni-bridge V0.0
 Author: Tomoto S. Washio
-Release Date: 6/26/2011
+Release Date: 7/2/2011
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. What is this?
@@ -76,8 +76,9 @@ This example configures the Image node in the high resolution mode.
 			</Configuration>
 		</Node>
 
-Depth node only supports 640x480 resolution, but internally
-320x240 resolution is used.
+Depth node only supports 640x480 resolution. When User node is
+used or AlternativeViewPointCap is used, it falls back to
+320x240 internally to workaround Kinect SDK's limitation.
 
 4. License
 

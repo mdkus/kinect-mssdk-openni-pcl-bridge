@@ -1,6 +1,6 @@
 kinect-mssdk-openni-bridge V0.0
 Author: Tomoto S. Washio
-Release Date: 2011/6/26
+Release Date: 2011/7/2
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. これは何？
@@ -81,7 +81,9 @@ Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
 		</Node>
 
 Depthノードは640x480の解像度のみサポートしています。
-これは内部的には320x240の解像度で動作しています。
+Userノードを使う、あるいはAlternativeViewPointCapを使うと、
+内部的に320x240の解像度で動作します。(Kinect SDKの制限を
+回避するため)
 
 
 4. ライセンス
