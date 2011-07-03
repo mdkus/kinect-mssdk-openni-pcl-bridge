@@ -18,13 +18,21 @@ struct XnStatusException {
 #define CHECK_XN_STATUS(statement) \
 { \
 	XnStatus __status = (statement); \
-	if (__status != XN_STATUS_OK) { fprintf(stderr, "%s", #statement); throw XnStatusException(__status); } \
+	if (__status != XN_STATUS_OK) { xnPrintError(__status, #statement); throw XnStatusException(__status); } \
+}
+
+inline void printHResult(HRESULT hr, const char* statement)
+{
+	LPTSTR message;
+	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&message, 0, NULL);
+	fprintf(stderr, "%s (HRESULT=%08x): %s", message, hr, statement);
+	LocalFree(message);
 }
 
 #define CHECK_HRESULT(statement) \
 { \
 	HRESULT __hr = (statement); \
-	if (FAILED(__hr)) { fprintf(stderr, "%s", #statement); throw XnStatusException(XN_STATUS_ERROR, __hr); } \
+	if (FAILED(__hr)) { printHResult(__hr, #statement); throw XnStatusException(XN_STATUS_ERROR, __hr); } \
 }
 
 #define LOG(format, ...) fprintf(stderr, format, __VA_ARGS__)
