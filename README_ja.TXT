@@ -1,6 +1,6 @@
 kinect-mssdk-openni-bridge V0.0
 Author: Tomoto S. Washio
-Release Date: 2011/7/2
+Release Date: 2011/7/4
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. これは何？
@@ -55,6 +55,8 @@ uninstall.batを実行してください。UACが有効になっている場合、
 
 3. 使い方
 
+3.1 基本
+
 DepthノードとImageノードは何もしなくても自動的に動作します。
 Userノードは設定XMLファイルに次のように<Query>を記述してください。
 
@@ -71,8 +73,10 @@ Userノードは設定XMLファイルに次のように<Query>を記述してください。
     </ProductionNodes>
 </OpenNI>
 
-Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
-次のように指定するとImageノードを高解像モードで使用できます。
+3.2 応用
+
+・Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
+  次のように指定するとImageノードを高解像モードで使用できます。
 
 		<Node type="Image" name="Image1">
 			<Configuration>
@@ -80,11 +84,15 @@ Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
 			</Configuration>
 		</Node>
 
-Depthノードは640x480の解像度のみサポートしています。
-Userノードを使う、あるいはAlternativeViewPointCapを使うと、
-内部的に320x240の解像度で動作します。(Kinect SDKの制限を
-回避するため)
+・Depthノードは640x480の解像度のみサポートしています。
+  Userノードを使う、あるいはAlternativeViewPointCapを使うと、
+  内部的に320x240の解像度で動作します。(Kinect SDKの制限を
+  回避するため)
 
+・ちょっと遊び心で「自動角度調整機能付きUserノード」を作ってあります。
+  "MSRKinectUserSkeletonGenerator" の代わりに
+  "MSRKinectUserSkeletonGeneratorWithAutoElevation" を指定すると、
+  プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
 
 4. ライセンス
 

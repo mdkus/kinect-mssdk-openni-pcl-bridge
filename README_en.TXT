@@ -51,6 +51,8 @@ Run uninstall.bat. If your Windows turns on UAC, run it
 
 3. Usage
 
+3.1 Basics
+
 This module will be automatically activated for Depth and Image
 nodes. For User node, you need to specify <Query> as below.
 
@@ -67,8 +69,10 @@ nodes. For User node, you need to specify <Query> as below.
     </ProductionNodes>
 </OpenNI>
 
-Image node supports 640x480 (default) and 1280x1024 resolution.
-This example configures the Image node in the high resolution mode.
+3.2 Tips
+
+* Image node supports 640x480 (default) and 1280x1024 resolution.
+  This example configures the Image node in the high resolution mode.
 
 		<Node type="Image" name="Image1">
 			<Configuration>
@@ -76,9 +80,14 @@ This example configures the Image node in the high resolution mode.
 			</Configuration>
 		</Node>
 
-Depth node only supports 640x480 resolution. When User node is
-used or AlternativeViewPointCap is used, it falls back to
-320x240 internally to workaround Kinect SDK's limitation.
+* Depth node only supports 640x480 resolution. When User node is
+  used or AlternativeViewPointCap is used, it falls back to
+  320x240 internally to workaround Kinect SDK's limitation.
+
+* There is a small fun stuff -- User node with auto elevation adjustment.
+  Specify "MSRKinectUserSkeletonGeneratorWithAutoElevation" instead of
+  "MSRKinectUserSkeletonGenerator", then the camera elevation will be
+  auto-adjusted so that the whole player body fits within the sight.
 
 4. License
 

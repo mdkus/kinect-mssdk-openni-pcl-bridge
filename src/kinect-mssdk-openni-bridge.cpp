@@ -13,3 +13,6 @@ SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectImageGenerator, IMAGE);
 
 #include "MSRKinectUserSkeletonGenerator.h"
 SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectUserSkeletonGenerator, USER);
+
+#include "MSRKinectUserSkeletonGeneratorWithAutoElevation.h"
+SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectUserSkeletonGeneratorWithAutoElevation, USER);

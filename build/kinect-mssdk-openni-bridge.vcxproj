@@ -35,6 +35,7 @@
     <ClInclude Include="..\src\MSRKinectSkeletonReader.h" />
     <ClInclude Include="..\src\MSRKinectUserGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h" />
+    <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithAutoElevation.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
     <ClInclude Include="..\src\version.h" />
