@@ -90,6 +90,12 @@
     <ClInclude Include="..\src\MSRKinectJointMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\vec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\JointOrientationCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">

@@ -37,6 +37,11 @@ public:
 		if (m_pBuffer) {
 			delete[] m_pBuffer;
 		}
+
+		if (m_pReader)
+		{
+			m_pReader->RemoveListener(this);
+		}
 	}
 
 	virtual XnStatus Init()
