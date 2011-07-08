@@ -3,6 +3,7 @@
 #include "MSRKinectUserGenerator.h"
 #include "MSRKinectSkeletonReader.h"
 #include "MSRKinectJointMap.h"
+#include "JointOrientationCalculator.h"
 
 class MSRKinectUserSkeletonGenerator :
 	public MSRKinectUserGenerator,
@@ -125,8 +126,25 @@ public:
 
 	virtual XnStatus GetSkeletonJointOrientation(XnUserID user, XnSkeletonJoint eJoint, XnSkeletonJointOrientation& jointOrientation)
 	{
-		xnOSMemSet(&jointOrientation, 0, sizeof(jointOrientation)); // not supported
-		return XN_STATUS_OK;
+		jointOrientation.fConfidence = 0;
+		
+		if(!IsTracking(user)) {
+			return XN_STATUS_OK;
+		}
+				
+		NUI_SKELETON_POSITION_INDEX index = MSRKinectJointMap::GetNuiIndexByXnJoint(eJoint);
+		if (index < 0) {
+			return XN_STATUS_OK;
+		}
+
+		NUI_SKELETON_POSITION_TRACKING_STATE spts = GetSkeletonData(user)->eSkeletonPositionTrackingState[index];
+		
+		jointOrientation.fConfidence =
+			(spts == NUI_SKELETON_POSITION_TRACKED) ? 1.0f :
+			(spts == NUI_SKELETON_POSITION_INFERRED) ? 0.5f : 0.0f;
+
+		JointOrientationCalculator joc(this); // fixme should be member
+		return joc.GetSkeletonJointOrientation(user, index, jointOrientation);
 	}
 
 	virtual XnBool IsTracking(XnUserID user)

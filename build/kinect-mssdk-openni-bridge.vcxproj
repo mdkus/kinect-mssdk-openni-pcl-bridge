@@ -15,6 +15,7 @@
     <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h" />
     <ClInclude Include="..\src\base.h" />
     <ClInclude Include="..\src\ImageConfiguration.h" />
+    <ClInclude Include="..\src\math.h" />
     <ClInclude Include="..\src\MSRKinectAlternativeViewPointCap.h" />
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h" />
     <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h" />
@@ -36,8 +37,10 @@
     <ClInclude Include="..\src\MSRKinectUserGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithAutoElevation.h" />
+    <ClInclude Include="..\src\JointOrientationCalculator.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
+    <ClInclude Include="..\src\vec.h" />
     <ClInclude Include="..\src\version.h" />
   </ItemGroup>
   <ItemGroup>
