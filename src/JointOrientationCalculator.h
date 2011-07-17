@@ -267,8 +267,8 @@ public:
 			
 		case NUI_SKELETON_POSITION_KNEE_LEFT:
 			{
-				vy = GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_KNEE_LEFT,NUI_SKELETON_POSITION_ANKLE_LEFT);
-				vz = GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_ANKLE_LEFT,NUI_SKELETON_POSITION_FOOT_LEFT);//this one could be off
+				vy = -GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_KNEE_LEFT,NUI_SKELETON_POSITION_ANKLE_LEFT);
+				vz = -GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_ANKLE_LEFT,NUI_SKELETON_POSITION_FOOT_LEFT);//this one could be off
 				XnSkeletonJointPosition footPos;
 				XnSkeletonJoint footJoint;
 				footJoint = MSRKinectJointMap::GetXnJointByNuiIndex(NUI_SKELETON_POSITION_FOOT_LEFT);
@@ -328,8 +328,8 @@ public:
 			break;
 			
 		case NUI_SKELETON_POSITION_KNEE_RIGHT:
-			vy = GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_KNEE_RIGHT,NUI_SKELETON_POSITION_ANKLE_RIGHT);
-			vz = GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_ANKLE_RIGHT,NUI_SKELETON_POSITION_FOOT_RIGHT);//this one could be off
+			vy = -GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_KNEE_RIGHT,NUI_SKELETON_POSITION_ANKLE_RIGHT);
+			vz = -GetPositionBetweenIndices(user,NUI_SKELETON_POSITION_ANKLE_RIGHT,NUI_SKELETON_POSITION_FOOT_RIGHT);//this one could be off
 			MakeMatrixFromYZ(vy,vz,jointOrientation);
 			break;
 			
