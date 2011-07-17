@@ -80,9 +80,15 @@ nodes. For User node, you need to specify <Query> as below.
 			</Configuration>
 		</Node>
 
-* Depth node only supports 640x480 resolution. When User node is
-  used or AlternativeViewPointCap is used, it falls back to
-  320x240 internally to workaround Kinect SDK's limitation.
+* Depth node supports 640x480 (default) and 320x240 resolution.
+  When User node is used or AlternativeViewPointCap is used,
+  the internal depth stream falls back to 320x240 transparently
+  and emulates 640x480 to workaround Kinect SDK's limitation.
+
+* If your application assumes Psi pose detection, specify
+  "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation" instead of
+  "MSRKinectUserSkeletonGenerator". You application will get
+  fake pose detection events.
 
 * There is a small fun stuff -- User node with auto elevation adjustment.
   Specify "MSRKinectUserSkeletonGeneratorWithAutoElevation" instead of

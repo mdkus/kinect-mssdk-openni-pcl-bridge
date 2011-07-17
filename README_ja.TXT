@@ -84,10 +84,15 @@ Userノードは設定XMLファイルに次のように<Query>を記述してください。
 			</Configuration>
 		</Node>
 
-・Depthノードは640x480の解像度のみサポートしています。
+・Depthノードは640x480(デフォルト)と320x240の解像度をサポートします。
   Userノードを使う、あるいはAlternativeViewPointCapを使うと、
-  内部的に320x240の解像度で動作します。(Kinect SDKの制限を
-  回避するため)
+  内部的に320x240の解像度で動作し640x480をエミュレートします。
+  (Kinect SDKの制限を 回避するため)
+
+・あなたのアプリケーションがPsiポーズ検出を前提としている場合、
+  "MSRKinectUserSkeletonGenerator" の代わりに
+  "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation" を指定してください。
+  偽者ですがポーズ検出イベントを受け取れるようになります。
 
 ・ちょっと遊び心で「自動角度調整機能付きUserノード」を作ってあります。
   "MSRKinectUserSkeletonGenerator" の代わりに
