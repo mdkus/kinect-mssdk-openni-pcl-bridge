@@ -59,7 +59,7 @@ public:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
 	{
 		return
-			MSRKinectUserGenerator::IsCapabilitySupported(strCapabilityName) ||
+			SuperClass::IsCapabilitySupported(strCapabilityName) ||
 			strcmp(strCapabilityName, XN_CAPABILITY_SKELETON) == 0;
 	}
 
@@ -194,7 +194,7 @@ public:
 
 	virtual XnStatus GetCalibrationPose(XnChar* strPose)
 	{
-		strPose = "";
+		strcpy(strPose, "");
 		return XN_STATUS_OK;
 	}
 
@@ -255,9 +255,25 @@ protected:
 		// raise new user event first
 		SuperClass::OnNewUser(userID);
 
+		// mimicks anything necessary before the calibration event
+		OnPreCalibration(userID);
+
 		// mimicks calibration event
 		m_calibrationStartEvent.Raise(userID);
 		m_calibrationEndEvent.Raise(userID, TRUE);
+
+		// mimicks anything necessary after the calibration event
+		OnPostCalibration(userID);
+	}
+
+	virtual void OnPreCalibration(XnUserID userID)
+	{
+		// nothing to do by default
+	}
+
+	virtual void OnPostCalibration(XnUserID userID)
+	{
+		// nothing to do by default
 	}
 
 	virtual void OnLostUser(XnUserID userID)

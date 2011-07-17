@@ -38,6 +38,7 @@
     <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithAutoElevation.h" />
     <ClInclude Include="..\src\JointOrientationCalculator.h" />
+    <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
     <ClInclude Include="..\src\vec.h" />
