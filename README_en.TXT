@@ -54,7 +54,10 @@ Run uninstall.bat. If your Windows turns on UAC, run it
 3.1 Basics
 
 This module will be automatically activated for Depth and Image
-nodes. For User node, you need to specify <Query> as below.
+nodes. If you want to use Kinect SDK's skeleton tracking to
+take advantage of its Psi-pose less tracking, specify <Query>
+to the User node in the configuration XML file as below.
+Without this, NITE's UserGenerator will be used.
 
 <OpenNI>
     ...
@@ -81,9 +84,10 @@ nodes. For User node, you need to specify <Query> as below.
 		</Node>
 
 * Depth node supports 640x480 (default) and 320x240 resolution.
-  When User node is used or AlternativeViewPointCap is used,
-  the internal depth stream falls back to 320x240 transparently
-  and emulates 640x480 to workaround Kinect SDK's limitation.
+  When MSRKinectUserSkeletonGenerator node is used or
+  AlternativeViewPointCap is used, the internal depth stream
+  falls back to 320x240 transparently and emulates 640x480.
+  This is to workaround Kinect SDK's limitation.
 
 * If your application assumes Psi pose detection, specify
   "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation" instead of

@@ -43,9 +43,7 @@ protected:
 public:
 	virtual ~AbstractMSRKinectImageStreamGenerator()
 	{
-		if (m_pBuffer) {
-			delete[] m_pBuffer;
-		}
+		clearBuffer();
 
 		if (m_pReader)
 		{
@@ -79,6 +77,7 @@ public:
 
 	virtual const void* GetData()
 	{
+		setupBuffer();
 		return m_pBuffer;
 	}
 
@@ -142,14 +141,7 @@ public:
 	virtual XnStatus StartGenerating()
 	{
 		try {
-			if (!m_pBuffer) {
-				// lazily initialize the buffer because the size is unknown at Init
-				m_pBuffer = new TargetPixelType[GetXRes() * GetYRes()];
-				if (m_pBuffer == NULL) {
-					return XN_STATUS_ALLOC_FAILED;
-				}
-				xnOSMemSet(m_pBuffer, 0, GetXRes() * GetYRes() * sizeof(TargetPixelType));
-			}
+			setupBuffer();
 
 			m_pReader->AddListener(this);
 			if (m_bActiveGeneratorControl) {
@@ -172,4 +164,25 @@ public:
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const KINECT_LOCKED_RECT& lockedRect) = 0;
 
+	void clearBuffer()
+	{
+		if (m_pBuffer) {
+			delete[] m_pBuffer;
+			m_pBuffer = NULL;
+		}
+	}
+
+	void setupBuffer()
+	{
+		if (!m_pBuffer) {
+			// lazily initialize the buffer because the size is unknown at Init
+			m_pBuffer = new TargetPixelType[GetXRes() * GetYRes()];
+			if (m_pBuffer == NULL) {
+				throw new XnStatusException(XN_STATUS_ALLOC_FAILED);
+			}
+			xnOSMemSet(m_pBuffer, 0, GetXRes() * GetYRes() * sizeof(TargetPixelType));
+		}
+	}
+
+	
 };

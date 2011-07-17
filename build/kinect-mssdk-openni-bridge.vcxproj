@@ -39,7 +39,9 @@
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithAutoElevation.h" />
     <ClInclude Include="..\src\JointOrientationCalculator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation.h" />
+    <ClInclude Include="..\src\PrimeSenseProperties.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
+    <ClInclude Include="..\src\Properties.h" />
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
     <ClInclude Include="..\src\vec.h" />
     <ClInclude Include="..\src\version.h" />

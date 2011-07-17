@@ -58,7 +58,10 @@ uninstall.batを実行してください。UACが有効になっている場合、
 3.1 基本
 
 DepthノードとImageノードは何もしなくても自動的に動作します。
-Userノードは設定XMLファイルに次のように<Query>を記述してください。
+Kinect SDKのスケルトントラッキングを使用するには設定XMLファイルの
+Userノードに箇所に次のように<Query>を指定してください。
+これでPsiポーズが不要になります。
+これを指定しない場合にはNITEの標準のUserGeneratorが動作します。
 
 <OpenNI>
     ...
@@ -85,7 +88,8 @@ Userノードは設定XMLファイルに次のように<Query>を記述してください。
 		</Node>
 
 ・Depthノードは640x480(デフォルト)と320x240の解像度をサポートします。
-  Userノードを使う、あるいはAlternativeViewPointCapを使うと、
+  MSRKinectUserSkeletonGeneratorノードを使う、
+  あるいはAlternativeViewPointCapを使うと、
   内部的に320x240の解像度で動作し640x480をエミュレートします。
   (Kinect SDKの制限を 回避するため)
 

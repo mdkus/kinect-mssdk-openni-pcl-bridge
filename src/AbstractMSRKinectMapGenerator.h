@@ -33,6 +33,7 @@ public:
 		try {
 			CHECK_XN_STATUS(m_imageConfig.Select(mode));
 			m_pReader->SetOutputMode(m_nodeType, m_imageConfig.GetSelectedMode()->outputMode);
+			clearBuffer();
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			return e.nStatus;

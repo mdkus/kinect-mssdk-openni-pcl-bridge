@@ -40,7 +40,11 @@ public:
 	}
 
 	// DepthGenerator methods
-	virtual XnDepthPixel* GetDepthMap() { return m_pBuffer; }
+	virtual XnDepthPixel* GetDepthMap()
+	{
+		setupBuffer();
+		return m_pBuffer;
+	}
 
 	virtual XnDepthPixel GetDeviceMaxDepth() { return NUI_IMAGE_DEPTH_MAXIMUM >> NUI_IMAGE_PLAYER_INDEX_SHIFT; }
 
