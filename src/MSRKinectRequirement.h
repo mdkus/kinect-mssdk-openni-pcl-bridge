@@ -6,10 +6,15 @@ class MSRKinectRequirement
 private:
 	DWORD m_nInitFlags;
 	NUI_IMAGE_RESOLUTION m_colorImageResolution;
+	NUI_IMAGE_RESOLUTION m_depthImageResolution;
 	BOOL m_bInitialized;
 
 public:
-	MSRKinectRequirement() : m_nInitFlags(0), m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID), m_bInitialized(FALSE)
+	MSRKinectRequirement() :
+		m_nInitFlags(0),
+		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
+		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
+		m_bInitialized(FALSE)
 	{
 	}
 
@@ -33,7 +38,12 @@ public:
 				m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_DEPTH;
 			}
 
-			// Ignore the resolution
+			// Lastly specified resolution wins
+			if (outputMode.nXRes == 640 && outputMode.nYRes == 480) {
+				m_depthImageResolution = NUI_IMAGE_RESOLUTION_640x480;
+			} else if (outputMode.nXRes ==  320 && outputMode.nYRes == 240) {
+				m_depthImageResolution = NUI_IMAGE_RESOLUTION_320x240;
+			}
 			break;
 
 		case XN_NODE_TYPE_USER:
@@ -70,7 +80,7 @@ public:
 
 	NUI_IMAGE_RESOLUTION GetDepthImageResolution() const
 	{
-		return IsUserNodeRequired() ? NUI_IMAGE_RESOLUTION_320x240 : NUI_IMAGE_RESOLUTION_640x480;
+		return IsUserNodeRequired() ? NUI_IMAGE_RESOLUTION_320x240 : m_depthImageResolution;
 	}
 
 	NUI_IMAGE_TYPE GetDepthImageType() const

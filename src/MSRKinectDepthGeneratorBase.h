@@ -10,9 +10,10 @@ private:
 	static const ImageConfiguration::Desc* GetImageConfigDesc()
 	{
 		static ImageConfiguration::Mode s_modes[] = {
-			ImageConfiguration::Mode(640, 480, 30)
+			ImageConfiguration::Mode(640, 480, 30),
+			ImageConfiguration::Mode(320, 240, 30)
 		};
-		static ImageConfiguration::Desc s_desc(s_modes, 1);
+		static ImageConfiguration::Desc s_desc(s_modes, 2);
 		return &s_desc;
 	}
 
@@ -56,13 +57,14 @@ protected:
 		} else {
 			// NuiImageGetColorPixelCoordinatesFromDepthPixel only supports Image@640x480 and Depth@320x240
 
-			assert(destXRes == 640 && destYRes == 480);
 			memset(m_pBuffer, 0, destXRes * destYRes);
 
 			const XnUInt32 convXRes = 320;
 			const XnUInt32 convYRes = 240;
 			const XnUInt32 convRatio = sourceXRes / convXRes;
 			assert(convRatio != 0);
+			const XnUInt32 destRatio = destXRes / convXRes;
+			assert(destRatio != 0);
 
 			for (XnUInt32 y = 0; y < convYRes; y++) {
 				sp = data + y * sourceXRes * convRatio + (step < 0 ? sourceXRes-1 : 0);
@@ -70,8 +72,12 @@ protected:
 					LONG ix, iy;
 					USHORT d = hasPlayerIndex ? (*sp) : (*sp << 3);
 					NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, (d & ~NUI_IMAGE_PLAYER_INDEX_MASK), &ix, &iy);
-					if (ix >= 0 && ix < LONG(destXRes-1) && iy >= 0 && iy < LONG(destYRes-1)) {
-						proc.Process(d, m_pBuffer + iy * destXRes + ix, 2);
+					if (ix >= 0 && ix <= LONG(640-2) && iy >= 0 && iy <= LONG(480-2)) {
+						if (destRatio == 1) {
+							ix >>= 1;
+							iy >>= 1;
+						}
+						proc.Process(d, m_pBuffer + iy * convXRes * destRatio + ix, destRatio);
 					}
 					sp += convRatio * step;
 				}
