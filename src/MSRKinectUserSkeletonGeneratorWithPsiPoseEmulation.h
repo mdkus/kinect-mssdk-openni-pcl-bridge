@@ -97,6 +97,39 @@ public:
 		}
 	}
 
+	XnStatus RegisterToPoseDetectionInProgress(XnModulePoseDetectionInProgressCallback cb, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromPoseDetectionInProgress(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
+	XnStatus RegisterToPoseDetected(XnModulePoseDetectionCallback cb, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromPoseDetected(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
+	XnStatus RegisterToOutOfPose(XnModulePoseDetectionCallback cb, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromOutOfPose(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
 protected:
 	virtual void OnPreCalibration(XnUserID userID)
 	{

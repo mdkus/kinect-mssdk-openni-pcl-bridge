@@ -21,7 +21,7 @@ private:
 	typedef std::vector<CalibrationCallbackHandleSet*> CalibrationCallbackHandleSetList;
 
 	XN_DECLARE_EVENT_1ARG(CalibrationStartEvent, CalibrationEventStartInterface, XnUserID, user);
-	XN_DECLARE_EVENT_2ARG(CalibrationEndtEvent, CalibrationEventEndInterface, XnUserID, user, XnBool, isSuccess);
+	XN_DECLARE_EVENT_2ARG(CalibrationEndEvent, CalibrationEventEndInterface, XnUserID, user, XnBool, isSuccess);
 
 protected:
 	MSRKinectSkeletonReader* m_pSkeletonReader;
@@ -31,13 +31,18 @@ protected:
 
 	CalibrationCallbackHandleSetList m_calibrationCallbackHandleSets;
 	CalibrationStartEvent m_calibrationStartEvent;
-	CalibrationEndtEvent m_calibrationEndEvent;
+	CalibrationEndEvent m_calibrationEndEvent;
 
 public:
 	MSRKinectUserSkeletonGenerator() // throws XnStatusException
 	{
 		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
 		m_pSkeletonReader = pMan->GetSkeletonManager()->GetReader();
+	}
+
+	virtual XnBool IsGenerating()
+	{
+		return SuperClass::IsGenerating() && m_pSkeletonReader->IsRunning();
 	}
 
 	virtual XnStatus StartGenerating()
@@ -226,6 +231,39 @@ public:
 		}
 	}
 
+	XnStatus RegisterToCalibrationInProgress(XnModuleCalibrationInProgress cb, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromCalibrationInProgress(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
+	XnStatus RegisterToCalibrationComplete(XnModuleCalibrationComplete cb, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromCalibrationComplete(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
+	XnStatus RegisterToCalibrationStart(XnModuleCalibrationStart cb, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromCalibrationStart(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
 	{
@@ -261,7 +299,7 @@ protected:
 		// mimicks calibration event
 		m_calibrationStartEvent.Raise(userID);
 		m_calibrationEndEvent.Raise(userID, TRUE);
-
+		
 		// mimicks anything necessary after the calibration event
 		OnPostCalibration(userID);
 	}

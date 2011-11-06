@@ -105,6 +105,7 @@ public:
 	virtual XnStatus GetUserPixels(XnUserID user, XnSceneMetaData *pScene)
 	{
 		PopulateMapMetaData(pScene->pMap);
+		setupBuffer();
 		if (user == 0) {
 			pScene->pData = m_pBuffer;
 		} else {
@@ -142,6 +143,28 @@ public:
 		}
 	}
 
+	XnStatus RegisterToUserExit(XnModuleUserHandler UserExitCB, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromUserExit(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
+	XnStatus RegisterToUserReEnter(XnModuleUserHandler UserReEnterCB, void* pCookie, XnCallbackHandle& hCallback)
+	{
+		// FIXME: ignore for the time being
+		return XN_STATUS_OK;
+	}
+
+	void UnregisterFromUserReEnter(XnCallbackHandle hCallback)
+	{
+		// FIXME: ignore for the time being
+	}
+
 protected:
 
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
@@ -155,7 +178,6 @@ protected:
 
 		CheckLostUsers(previousUsersMask & ~nUsersMask);
 		CheckNewUsers(~previousUsersMask & nUsersMask);
-
 		return XN_STATUS_OK;
 	}
 
