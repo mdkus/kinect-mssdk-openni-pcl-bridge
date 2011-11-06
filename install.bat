@@ -1,7 +1,9 @@
 @echo ----------
 @setlocal
+@SET BUILD_TYPE=Release
 @IF "%OPEN_NI_BIN64%" == "" (SET NIREG_PATH="%OPEN_NI_BIN%\niReg") ELSE (SET NIREG_PATH="%OPEN_NI_BIN64%\niReg64")
-%NIREG_PATH%  %0\..\bin\Release\kinect-mssdk-openni-bridge.dll
+@IF EXIST "%KINECTSDK_DIR%\lib" (SET KINECTSDK_VERSION=Beta2) ELSE (SET KINECTSDK_VERSION=Beta1)
+%NIREG_PATH%  %0\..\bin\kinect-mssdk-openni-bridge-%KINECTSDK_VERSION%%BUILD_TYPE%.dll
 @IF NOT "%ERRORLEVEL%" == "0" GOTO ERR
 @echo OK!
 @GOTO END
