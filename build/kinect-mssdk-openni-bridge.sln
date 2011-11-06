@@ -5,19 +5,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kinect-mssdk-openni-bridge"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
-		Z MSSDK Beta1 Debug|Win32 = Z MSSDK Beta1 Debug|Win32
-		Z MSSDK Beta1 Release|Win32 = Z MSSDK Beta1 Release|Win32
+		Beta1Debug|Win32 = Beta1Debug|Win32
+		Beta1Release|Win32 = Beta1Release|Win32
+		Beta2Debug|Win32 = Beta2Debug|Win32
+		Beta2Release|Win32 = Beta2Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Debug|Win32.ActiveCfg = Debug|Win32
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Debug|Win32.Build.0 = Debug|Win32
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Release|Win32.ActiveCfg = Release|Win32
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Release|Win32.Build.0 = Release|Win32
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Z MSSDK Beta1 Debug|Win32.ActiveCfg = Z MSSDK Beta1 Debug|Win32
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Z MSSDK Beta1 Debug|Win32.Build.0 = Z MSSDK Beta1 Debug|Win32
-		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Z MSSDK Beta1 Release|Win32.ActiveCfg = Z MSSDK Beta1 Release|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta1Debug|Win32.ActiveCfg = Beta1Debug|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta1Debug|Win32.Build.0 = Beta1Debug|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta1Release|Win32.ActiveCfg = Beta1Release|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta1Release|Win32.Build.0 = Beta1Release|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta2Debug|Win32.ActiveCfg = Beta2Debug|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta2Debug|Win32.Build.0 = Beta2Debug|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta2Release|Win32.ActiveCfg = Beta2Release|Win32
+		{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}.Beta2Release|Win32.Build.0 = Beta2Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
