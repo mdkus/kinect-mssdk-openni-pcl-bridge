@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge V0.0
+kinect-mssdk-openni-bridge V1.3.3.6
 Author: Tomoto S. Washio
-Release Date: 7/2/2011
+Release Date: 11/5/2011
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. What is this?
@@ -16,6 +16,8 @@ allowing the applications to use the offical SDK through OpenNI.
 
 If you install this module, Depth, Image, and User node can
 (a sort of) work with the official SDK installed.
+
+This module is compatible with OpenNI 1.3.3.6.
 
 2. Installation and Uninstallation
 

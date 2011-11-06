@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge V0.0
+kinect-mssdk-openni-bridge V1.3.3.6
 Author: Tomoto S. Washio
-Release Date: 2011/7/4
+Release Date: 2011/11/5
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. これは何？
@@ -15,6 +15,8 @@ Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 このモジュールをインストールすると、Depthノード、Imageノード、
 Userノードが公式SDK上で(なんとなく)動作するようになります。
+
+OpenNI 1.3.3.6に対応しています。
 
 2. インストールとアンインストール
 
