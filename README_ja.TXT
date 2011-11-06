@@ -17,6 +17,8 @@ Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 Userノードが公式SDK上で(なんとなく)動作するようになります。
 
 OpenNI 1.3.3.6に対応しています。
+KinectSDKはBeta1対応版とBeta2対応版の両方が含まれており、
+インストール時に自動的に選択されます。
 
 2. インストールとアンインストール
 

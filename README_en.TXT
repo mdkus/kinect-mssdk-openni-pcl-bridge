@@ -18,6 +18,8 @@ If you install this module, Depth, Image, and User node can
 (a sort of) work with the official SDK installed.
 
 This module is compatible with OpenNI 1.3.3.6.
+Both binaries for KinectSDK Beta and Beta2 are included and thex
+installer will choose the appropriate one for your environment.
 
 2. Installation and Uninstallation
 
