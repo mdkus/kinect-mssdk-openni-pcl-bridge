@@ -1,13 +1,19 @@
-@echo ----------
 @setlocal
 @IF "%OPEN_NI_BIN64%" == "" (SET NIREG_PATH="%OPEN_NI_BIN%\niReg") ELSE (SET NIREG_PATH="%OPEN_NI_BIN64%\niReg64")
-%NIREG_PATH% -u %0\..\bin\Release\kinect-mssdk-openni-bridge.dll
+@echo ----------
+%NIREG_PATH% -u %0\..\bin\kinect-mssdk-openni-bridge-Beta1Release.dll
 @IF NOT "%ERRORLEVEL%" == "0" GOTO ERR
 @echo OK!
 @echo ----------
-@setlocal
-@IF "%OPEN_NI_BIN64%" == "" (SET NIREG_PATH="%OPEN_NI_BIN%\niReg") ELSE (SET NIREG_PATH="%OPEN_NI_BIN64%\niReg64")
-%NIREG_PATH% -u %0\..\bin\Debug\kinect-mssdk-openni-bridge.dll
+%NIREG_PATH% -u %0\..\bin\kinect-mssdk-openni-bridge-Beta1Debug.dll
+@IF NOT "%ERRORLEVEL%" == "0" GOTO ERR
+@echo OK!
+@echo ----------
+%NIREG_PATH% -u %0\..\bin\kinect-mssdk-openni-bridge-Beta2Release.dll
+@IF NOT "%ERRORLEVEL%" == "0" GOTO ERR
+@echo OK!
+@echo ----------
+%NIREG_PATH% -u %0\..\bin\kinect-mssdk-openni-bridge-Beta2Debug.dll
 @IF NOT "%ERRORLEVEL%" == "0" GOTO ERR
 @echo OK!
 @GOTO END

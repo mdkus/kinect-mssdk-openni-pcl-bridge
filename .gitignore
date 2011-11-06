@@ -1,4 +1,6 @@
 
-/build/Debug
-/build/Release
 /tool/release
+/build/Beta2Release
+/build/Beta1Debug
+/build/Beta1Release
+/build/Beta2Debug
