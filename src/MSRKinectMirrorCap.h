@@ -35,10 +35,10 @@ public: \
 	\
 	virtual XnStatus RegisterToMirrorChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback) \
 	{ \
-		return pContext->GetMirrorChangeEvent().Register(handler, pCookie, &hCallback); \
+		return pContext->GetMirrorChangeEvent()->Register(handler, pCookie, &hCallback); \
 	} \
 	\
 	virtual void UnregisterFromMirrorChange(XnCallbackHandle hCallback) \
 	{ \
-		pContext->GetMirrorChangeEvent().Unregister(hCallback); \
+		pContext->GetMirrorChangeEvent()->Unregister(hCallback); \
 	}

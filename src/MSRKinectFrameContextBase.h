@@ -29,11 +29,11 @@ public:
 
 	BOOL IsMirror() const { return m_bMirror; }
 	void SetMirror(BOOL value) { m_bMirror = value; m_mirrorChangeEvent.Raise(); }
-	ChangeEvent GetMirrorChangeEvent() { return m_mirrorChangeEvent; }
+	ChangeEvent* GetMirrorChangeEvent() { return &m_mirrorChangeEvent; }
 
 	BOOL IsCalibrateViewPoint() const { return m_bCalibrateViewPoint; }
 	void SetCalibrateViewPoint(BOOL value) { m_bCalibrateViewPoint = value; m_calibrateViewPointChangeEvent.Raise(); }
-	ChangeEvent GetCalibrateViewPointChangeEvent() { return m_calibrateViewPointChangeEvent; }
+	ChangeEvent* GetCalibrateViewPointChangeEvent() { return &m_calibrateViewPointChangeEvent; }
 
 protected:
 	MSRKinectFrameContextBase(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :

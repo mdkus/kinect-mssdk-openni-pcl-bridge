@@ -48,10 +48,10 @@ public: \
 	\
 	virtual XnStatus RegisterToViewPointChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback) \
 	{ \
-		return pContext->GetCalibrateViewPointChangeEvent().Register(handler, pCookie, &hCallback); \
+		return pContext->GetCalibrateViewPointChangeEvent()->Register(handler, pCookie, &hCallback); \
 	} \
 	\
 	virtual void UnregisterFromViewPointChange(XnCallbackHandle hCallback) \
 	{ \
-		pContext->GetCalibrateViewPointChangeEvent().Unregister(hCallback); \
+		pContext->GetCalibrateViewPointChangeEvent()->Unregister(hCallback); \
 	}
