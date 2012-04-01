@@ -42,7 +42,7 @@ public:
 		HRESULT hr = GetNextFrameImpl();
 		if (SUCCEEDED(hr)) {
 			m_nFrameID++;
-			m_lTimestamp = m_pFrame->liTimeStamp.QuadPart;
+			m_lTimestamp = m_pFrame->liTimeStamp.QuadPart * 1000;
 		}
 		UnlockFrame();
 		return hr;

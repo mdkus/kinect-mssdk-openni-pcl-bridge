@@ -8,14 +8,14 @@ private:
 	typedef MSRKinectUserSkeletonGenerator SuperClass;
 
 private:
-	LONGLONG m_lTimestamp;
+	LONGLONG m_liTimestamp;
 
 public:
-	MSRKinectUserSkeletonGeneratorWithAutoElevation() : m_lTimestamp(0)
+	MSRKinectUserSkeletonGeneratorWithAutoElevation() : m_liTimestamp(0)
 	{
 	}
 
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const NUI_LOCKED_RECT& lockedRect)
 	{
 		XnStatus result = SuperClass::UpdateImageData(pFrame, data, lockedRect);
 		if (result != XN_STATUS_OK) return result;
@@ -28,7 +28,7 @@ public:
 private:
 	void changeElevation()
 	{
-		if (abs(m_skeletonFrame.liTimeStamp.QuadPart - m_lTimestamp) > 5000) {
+		if (abs(m_skeletonFrame.liTimeStamp.QuadPart - m_liTimestamp) > 5000) {
 			XnUserID userIDs[6];
 			XnUInt16 users = 6;
 			GetUsers(userIDs, users);
@@ -45,7 +45,7 @@ private:
 				}
 				NuiCameraElevationSetAngle(angle);
 			}
-			m_lTimestamp = m_skeletonFrame.liTimeStamp.QuadPart;
+			m_liTimestamp = m_skeletonFrame.liTimeStamp.QuadPart;
 		}
 	}
 
