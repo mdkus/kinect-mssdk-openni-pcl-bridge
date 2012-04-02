@@ -22,7 +22,9 @@ public: \
 	\
 	virtual XnBool IsViewPointSupported(xn::ProductionNode& other) \
 	{ \
-		return strcmp(other.GetInfo().GetDescription().strName, "MSRKinectImageGenerator") == 0; \
+		return \
+			strcmp(other.GetInfo().GetDescription().strName, "MSRKinectImageGenerator") == 0 || \
+			strcmp(other.GetInfo().GetDescription().strName, "KinectSDKImageGenerator") == 0 ; \
 	} \
 	\
 	virtual XnStatus SetViewPoint(xn::ProductionNode& other) \

@@ -19,8 +19,12 @@ public:
 
 	int GetMirrorFactor() const
 	{
+#if KINECTSDK_VER >= 100
+		return m_bMirror;
+#else
 		// Weird... Only NUI_IMAGE_TYPE_DEPTH comes with flipped data
 		return m_bMirror ^ (m_eImageType == NUI_IMAGE_TYPE_DEPTH) ? 1 : -1;
+#endif
 	}
 
 protected:

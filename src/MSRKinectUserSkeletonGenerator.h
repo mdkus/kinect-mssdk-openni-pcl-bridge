@@ -265,7 +265,7 @@ public:
 	}
 
 protected:
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const NUI_LOCKED_RECT& lockedRect)
 	{
 		const NUI_SKELETON_FRAME* pSkeletonFrame = NULL;
 
@@ -329,12 +329,21 @@ protected:
 		Vector4 sp2;
 		if (m_pReader->IsCalibrateViewPoint()) {
 			// FIXME tricky...
+#if KINECTSDK_VER >= 100
+			USHORT z;
+			LONG x, y;
+			LONG ix, iy;
+			NuiTransformSkeletonToDepthImage(*sp, &x, &y, &z, NUI_IMAGE_RESOLUTION_640x480);
+			NuiImageGetColorPixelCoordinatesFromDepthPixelAtResolution(NUI_IMAGE_RESOLUTION_640x480, NUI_IMAGE_RESOLUTION_640x480, NULL, x, y, z, &ix, &iy);
+			sp2 = NuiTransformDepthImageToSkeleton(ix, iy, z, NUI_IMAGE_RESOLUTION_640x480);
+#else
 			USHORT z = USHORT(sp->z * SCALE) << 3;
 			FLOAT x, y;
 			LONG ix, iy;
 			NuiTransformSkeletonToDepthImageF(*sp, &x, &y);
 			NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(x*320), LONG(y*240), z, &ix, &iy);
 			sp2 = NuiTransformDepthImageToSkeletonF(ix/640.0f, iy/480.f, z);
+#endif
 			sp = &sp2;
 		}
 

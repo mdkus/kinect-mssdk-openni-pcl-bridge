@@ -27,7 +27,7 @@ public:
 	virtual ~MSRKinectDepthGeneratorBase() {}
 
 protected:
-	XnStatus UpdateDepthData(DepthPixelProcessor& proc, const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
+	XnStatus UpdateDepthData(DepthPixelProcessor& proc, const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const NUI_LOCKED_RECT& lockedRect)
 	{
 		const USHORT* sp = data;
 		XnDepthPixel* dp = m_pBuffer;
@@ -47,7 +47,11 @@ protected:
 			for (XnUInt32 y = 0; y < sourceYRes; y++) {
 				sp = data + y * sourceXRes + (step < 0 ? sourceXRes-1 : 0);
 				for (XnUInt32 x = 0; x < sourceXRes; x++) {
+#if KINECTSDK_VER >= 100
+					USHORT d = (*sp);
+#else
 					USHORT d = hasPlayerIndex ? (*sp) : (*sp << 3);
+#endif
 					proc.Process(d, dp, ratio);
 					sp += step;
 					dp += ratio;
@@ -55,10 +59,27 @@ protected:
 				dp += destXRes * (ratio-1);
 			}
 		} else {
-			// NuiImageGetColorPixelCoordinatesFromDepthPixel only supports Image@640x480 and Depth@320x240
-
 			memset(m_pBuffer, 0, destXRes * destYRes);
 
+#if KINECTSDK_VER >= 100
+			const XnUInt32 pixelSize = max(1, destXRes / sourceXRes);
+
+			for (XnUInt32 y = 0; y < sourceYRes; y++) {
+				sp = data + y * sourceXRes + (step < 0 ? sourceXRes-1 : 0);
+				for (XnUInt32 x = 0; x < sourceXRes; x++) {
+					LONG ix, iy;
+					USHORT d = *sp;
+					NuiImageGetColorPixelCoordinatesFromDepthPixelAtResolution(
+						(destXRes == 640 ? NUI_IMAGE_RESOLUTION_640x480 : NUI_IMAGE_RESOLUTION_320x240), pFrame->eResolution, NULL,
+						x, y, (d & ~NUI_IMAGE_PLAYER_INDEX_MASK), &ix, &iy);
+					if (ix >= 0 && ix <= LONG(destXRes - pixelSize) && iy >= 0 && iy <= LONG(destYRes - pixelSize)) {
+						proc.Process(d, m_pBuffer + iy * destXRes + ix, pixelSize);
+					}
+					sp += step;
+				}
+			}
+#else
+			// NuiImageGetColorPixelCoordinatesFromDepthPixel only supports Image@640x480 and Depth@320x240
 			const XnUInt32 convXRes = 320;
 			const XnUInt32 convYRes = 240;
 			const XnUInt32 convRatio = sourceXRes / convXRes;
@@ -82,10 +103,11 @@ protected:
 					sp += convRatio * step;
 				}
 			}
+#endif
 		}
 
 		return XN_STATUS_OK;
 	}
 
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect) = 0;
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const NUI_LOCKED_RECT& lockedRect) = 0;
 };

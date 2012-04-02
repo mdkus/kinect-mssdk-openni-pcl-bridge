@@ -27,8 +27,13 @@ public:
 			// Lastly specified resolution wins
 			if (outputMode.nXRes == 640 && outputMode.nYRes == 480) {
 				m_colorImageResolution = NUI_IMAGE_RESOLUTION_640x480;
+#if KINECTSDK_VER >= 100
+			} else if (outputMode.nXRes ==  1280 && outputMode.nYRes == 960) {
+				m_colorImageResolution = NUI_IMAGE_RESOLUTION_1280x960;
+#else
 			} else if (outputMode.nXRes ==  1280 && outputMode.nYRes == 1024) {
 				m_colorImageResolution = NUI_IMAGE_RESOLUTION_1280x1024;
+#endif
 			}
 			break;
 
