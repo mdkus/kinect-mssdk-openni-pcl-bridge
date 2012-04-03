@@ -74,6 +74,7 @@ public:
 
 	XnStatus StartPoseDetection(const XnChar*, XnUserID) { return XN_STATUS_OK; } // ignore
 	XnStatus StopPoseDetection(XnUserID) { return XN_STATUS_OK; } // ignore
+	XnStatus StopSinglePoseDetection(XnUserID user, const XnChar* strPose) { return XN_STATUS_OK; } // ignore
 
 	XnStatus RegisterToPoseDetectionCallbacks(XnModulePoseDetectionCallback StartPoseCB, XnModulePoseDetectionCallback EndPoseCB, void* pCookie, XnCallbackHandle& hCallback)
 	{

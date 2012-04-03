@@ -59,7 +59,7 @@ public:
 	MSRKinectMirrorCap_IMPL(m_pReader);
 
 protected:
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const DWORD* data, const KINECT_LOCKED_RECT& lockedRect)
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const DWORD* data, const NUI_LOCKED_RECT& lockedRect)
 	{
 		assert(lockedRect.Pitch == GetXRes() * sizeof(DWORD));
 

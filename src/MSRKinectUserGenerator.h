@@ -167,7 +167,7 @@ public:
 
 protected:
 
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const KINECT_LOCKED_RECT& lockedRect)
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const NUI_LOCKED_RECT& lockedRect)
 	{
 		XnUInt32 previousUsersMask = nUsersMask;
 

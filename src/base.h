@@ -1,6 +1,13 @@
 #pragma once
 #include <Windows.h>
+
+#if KINECTSDK_VER >= 100
+#include <NuiApi.h>
+#else
 #include <MSR_NuiApi.h>
+typedef KINECT_LOCKED_RECT NUI_LOCKED_RECT;
+#endif
+
 #include <XnCppWrapper.h>
 #include <XnModuleCppInterface.h>
 #include <XnEvent.h>

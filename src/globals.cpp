@@ -2,4 +2,4 @@
 MSRKinectJointMap MSRKinectJointMap::cs_instance;
 
 #include "MSRKinectManager.h"
-MSRKinectManager* MSRKinectManager::cs_pInstance;
+MSRKinectManager MSRKinectManager::cs_instance;

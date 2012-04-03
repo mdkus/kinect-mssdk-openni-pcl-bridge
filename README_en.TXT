@@ -1,26 +1,27 @@
-kinect-mssdk-openni-bridge V1.3.3.6
+kinect-mssdk-openni-bridge V1.0-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 11/5/2011
+Release Date: 4/2/2012
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. What is this?
 
-Finally Microsoft's official Kinect SDK Beta is out!
-This is good news for Kinect Hackers. However, unfortunately,
-existing Kinect hacks built on OpenNI stop working if you
-install this official SDK because of the driver conflict.
+Finally Microsoft released Kinect for Windows and Kinect SDK (available
+for commercial use), but they are not compatible with OpenNI. This is
+unfortunate because even if you already had applications and know-hows
+on OpenNI, you would not be able to leverage them with Kinect for Windows.
 
-This kinect-mssdk-openni-bridge is an experimental module,
-the goal of which is to solve this tragedic situation by
-allowing the applications to use the offical SDK through OpenNI.
+This kinect-mssdk-openni-bridge is an experimental module, the goal of
+which is to solve this tragedic situation by connecting Kinect SDK to
+OpenNI and allowing the applications to use Kinect for Windows over
+OpenNI.
 
-If you install this module, Depth, Image, and User node can
-(a sort of) work with the official SDK installed.
+If you install this module, Depth, Image, and User node can (a sort of)
+work with Kinect SDK.
 
-This module is compatible with OpenNI 1.3.3.6 32bit.
-(Use 32bit version even though your OS may be 64 bit.)
-Both binaries for KinectSDK Beta and Beta2 are included and thex
-installer will choose the appropriate one for your environment.
+This module is compatible with OpenNI 1.5.2.23 32bit and Kinect SDK V1.0.
+- Note OpenNI must be 32bit even though your OS may be 64bit.
+- Kinect SDK Beta is not supported because the license is incompatible.
+  Use the previous version if you really want to use it with Beta SDK.
 
 2. Installation and Uninstallation
 
@@ -59,10 +60,10 @@ Run uninstall.bat. If your Windows turns on UAC, run it
 3.1 Basics
 
 This module will be automatically activated for Depth and Image
-nodes. If you want to use Kinect SDK's skeleton tracking to
-take advantage of its Psi-pose less tracking, specify <Query>
-to the User node in the configuration XML file as below.
-Without this, NITE's UserGenerator will be used.
+nodes. If you want to use Kinect SDK's skeleton tracking instead of
+NITE's UserGenerator, specify <Query> to the User node in the
+configuration XML file as below. (Note the node names has been
+changed from the previous version.)
 
 <OpenNI>
     ...
@@ -70,7 +71,7 @@ Without this, NITE's UserGenerator will be used.
         ...
         <Node type="User" name="User1">
             <Query>
-                <Name>MSRKinectUserSkeletonGenerator</Name>
+                <Name>KinectSDKUserSkeletonGenerator</Name>
             </Query>
         </Node>
         ...
@@ -89,24 +90,53 @@ Without this, NITE's UserGenerator will be used.
 		</Node>
 
 * Depth node supports 640x480 (default) and 320x240 resolution.
-  When MSRKinectUserSkeletonGenerator node is used or
-  AlternativeViewPointCap is used, the internal depth stream
-  falls back to 320x240 transparently and emulates 640x480.
-  This is to workaround Kinect SDK's limitation.
+  When KinectSDKUserSkeletonGenerator node is used, the internal
+  depth stream falls back to 320x240 transparently and emulates 640x480.
+  This is due to Kinect SDK's limitation.
 
 * If your application assumes Psi pose detection, specify
-  "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation" instead of
-  "MSRKinectUserSkeletonGenerator". You application will get
+  "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" instead of
+  "KinectSDKUserSkeletonGenerator". You application will get
   fake pose detection events.
 
 * There is a small fun stuff -- User node with auto elevation adjustment.
-  Specify "MSRKinectUserSkeletonGeneratorWithAutoElevation" instead of
-  "MSRKinectUserSkeletonGenerator", then the camera elevation will be
+  Specify "KinectSDKUserSkeletonGeneratorWithAutoElevation" instead of
+  "KinectSDKUserSkeletonGenerator", then the camera elevation will be
   auto-adjusted so that the whole player body fits within the sight.
 
 4. License
 
 See LICENSE.TXT.
+
+Notice:
+This module is intended to encourage the use of Kinect for Windows, but
+not intended to give any losses or damages to the providers of the
+related software and devices including Microsoft and PrimeSense.
+The user of this module is responsible for complying the license terms of
+the software and devices such as Kinect for Windows, Kinect SDK, OpenNI,
+NITE, etc. when the user combines them with this module. The author of
+this module is not liable for any consequences caused by failing to do so.
+
+5. Acknowledgments
+
+David Sherba kindly helped me to port the module from Beta to V1.0
+by contributing his study and mod. Thank you very much.
+
+6. Change History
+
+V1.0-1.5.2.23 (4/2/2012)
+- Supported Kinect SDK V1.0 and revised the license terms
+- Discontiuned Kinect SDK Beta support
+- Changed the custom node names from MSRKinect... to KinectSDK...
+- Changed the version number scheme: <Kinect SDK version>-<OpenNI version>
+- Bug fixes
+
+V1.3.3.6 (11/5/2011)
+- Recompiled on OpenNI 1.3.3.6
+- Supported Kinect SDK Beta2
+
+V0.0
+- First release for Kinect SDK Beta
 
 Enjoy!
 Tomoto

@@ -94,7 +94,7 @@ public:
 
 		const NUI_IMAGE_FRAME *pFrame = m_pReader->LockFrame();
 		if (pFrame) {
-			KINECT_LOCKED_RECT lockedRect;
+			NUI_LOCKED_RECT lockedRect;
 			pFrame->pFrameTexture->LockRect(0, &lockedRect, NULL, 0);
 
 			// FIXME check status code
@@ -162,7 +162,7 @@ public:
 	}
 
 protected:
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const KINECT_LOCKED_RECT& lockedRect) = 0;
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const NUI_LOCKED_RECT& lockedRect) = 0;
 
 	void clearBuffer()
 	{

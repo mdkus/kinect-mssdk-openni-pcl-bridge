@@ -7,7 +7,7 @@
 class MSRKinectManager
 {
 private:
-	static MSRKinectManager* cs_pInstance;
+	static MSRKinectManager cs_instance;
 
 	MSRKinectRequirement m_requirement;
 	MSRKinectImageStreamManager* m_pColorImageStreamManager;
@@ -17,11 +17,7 @@ private:
 public:
 	static MSRKinectManager* GetInstance() // throws XnStatusException
 	{
-		if (!cs_pInstance) {
-			cs_pInstance = new MSRKinectManager();
-		}
-
-		return cs_pInstance;
+		return &cs_instance;
 	}
 
 	MSRKinectManager() : m_pColorImageStreamManager(NULL), m_pDepthImageStreamManager(NULL), m_pSkeletonManager(NULL)

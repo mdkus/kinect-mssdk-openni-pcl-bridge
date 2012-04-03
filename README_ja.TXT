@@ -1,25 +1,27 @@
-kinect-mssdk-openni-bridge V1.3.3.6
+kinect-mssdk-openni-bridge V1.0-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2011/11/5
+Release Date: 2012/4/2
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. これは何？
 
-先日Microsoftから公式Kinect SDKのBeta版がリリースされました。
-これはKinectハッカーにはうれしいニュースですが、残念ながら、
-公式SDKをインストールすると、ドライバの衝突のため、OpenNI上で
-作られた従来のKinectハックが動かなくなってしまいます。
+先日Microsoftから商用利用可能なKinect for WindowsとKinect SDKが
+リリースされましたが、これらとOpenNIとの間には互換性がありません。
+すなわち、OpenNI上のアプリケーション資産やノウハウが既にあったとしても、
+Kinect for Windowsと組み合わせて活用することは不可能だったということです。
 
-この残念な状況を打開するため、公式SDKのドライバをOpenNI上から
-使えるようにする実験モジュールがこのkinect-mssdk-openni-bridgeです。
+この残念な状況を打開するため、Kinect SDKをOpenNIに接続することで、
+Kinect for WindowsをOpenNI上から使えるようにする実験モジュールが
+このkinect-mssdk-openni-bridgeです。
 
 このモジュールをインストールすると、Depthノード、Imageノード、
-Userノードが公式SDK上で(なんとなく)動作するようになります。
+UserノードがKinect SDK上で(なんとなく)動作するようになります。
 
-OpenNI 1.3.3.6 32bit版に対応しています。
-(OSが64bitであっても32bit版を使ってください。)
-KinectSDKはBeta1対応版とBeta2対応版の両方が含まれており、
-インストール時に自動的に選択されます。
+本モジュールはOpenNI 1.5.2.23 32bit版およびKinect SDK V1.0に
+対応しています
+・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
+・Kinect SDK Beta版はライセンスが異なるため対応していません。
+　Beta版で使用したい場合には以前のバージョンを使用してください。
 
 2. インストールとアンインストール
 
@@ -49,10 +51,6 @@ Windowsのユーザーアカウント制御(UAC)が有効になっている場合、
 -lオプションをつけて呼び出すことで確認できます。本モジュールの
 名前が表示されていれば成功です。
 
-なお、この手順をわかりやすく説明した記事をkaorun55さんに
-書いていただきました。合わせて参照してください。
-http://d.hatena.ne.jp/kaorun55/20110627/1309193339
-
 2.3. アンインストール
 
 uninstall.batを実行してください。UACが有効になっている場合、
@@ -63,10 +61,10 @@ uninstall.batを実行してください。UACが有効になっている場合、
 3.1 基本
 
 DepthノードとImageノードは何もしなくても自動的に動作します。
-Kinect SDKのスケルトントラッキングを使用するには設定XMLファイルの
-Userノードに箇所に次のように<Query>を指定してください。
-これでPsiポーズが不要になります。
-これを指定しない場合にはNITEの標準のUserGeneratorが動作します。
+
+NITEの標準のUserGeneratorの代わりにKinect SDKのスケルトントラッキングを
+使用するには設定XMLファイルのUserノードに箇所に次のように<Query>を
+指定してください。(ノード名が旧版から変わっているので注意してください。)
 
 <OpenNI>
     ...
@@ -74,7 +72,7 @@ Userノードに箇所に次のように<Query>を指定してください。
         ...
         <Node type="User" name="User1">
             <Query>
-                <Name>MSRKinectUserSkeletonGenerator</Name>
+                <Name>KinectSDKUserSkeletonGenerator</Name>
             </Query>
         </Node>
         ...
@@ -93,24 +91,53 @@ Userノードに箇所に次のように<Query>を指定してください。
 		</Node>
 
 ・Depthノードは640x480(デフォルト)と320x240の解像度をサポートします。
-  MSRKinectUserSkeletonGeneratorノードを使う、
-  あるいはAlternativeViewPointCapを使うと、
+  KinectSDKUserSkeletonGeneratorノードを使うと、
   内部的に320x240の解像度で動作し640x480をエミュレートします。
-  (Kinect SDKの制限を 回避するため)
+  (Kinect SDKの制限のため)
 
 ・あなたのアプリケーションがPsiポーズ検出を前提としている場合、
-  "MSRKinectUserSkeletonGenerator" の代わりに
-  "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation" を指定してください。
+  "KinectSDKUserSkeletonGenerator" の代わりに
+  "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" を指定してください。
   偽者ですがポーズ検出イベントを受け取れるようになります。
 
 ・ちょっと遊び心で「自動角度調整機能付きUserノード」を作ってあります。
-  "MSRKinectUserSkeletonGenerator" の代わりに
-  "MSRKinectUserSkeletonGeneratorWithAutoElevation" を指定すると、
+  "KinectSDKUserSkeletonGenerator" の代わりに
+  "KinectSDKUserSkeletonGeneratorWithAutoElevation" を指定すると、
   プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
 
 4. ライセンス
 
 LICENSE.TXTを見てください。
+
+注意:
+本モジュールはKinect for Windowsの利用促進を意図したものであり、
+MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者に
+いかなる不利益をも与えることを意図したものではありません。
+本モジュールの利用者は、Kinect for Windows、Kinect SDK、OpenNI、NITE等、
+利用者が本モジュールと組み合わせて使用する関連ソフトウェアやデバイスの
+ライセンスを遵守せねばなりません。利用者がこれに従わなかったために生じた
+いかなる結果に対しても、本モジュールの作者は責任を負いません。
+
+5. 謝辞
+
+Kinect SDK Beta版からV1.0版への移植にあたり、David Scherbaさんに
+調査結果とコードとを貢献して戴きました。この場で御礼申し上げます。
+
+6. 更新履歴
+
+V1.0-1.5.2.23
+- Kinect SDK V1.0をサポートしライセンスを変更
+- Kinect SDK Betaのサポートを打ち切り
+- カスタムノード名を MSRKinect... から KinectSDK... に変更
+- バージョンスキームを変更: <Kinect SDK version>-<OpenNI version>
+- バグ修正
+
+V1.3.3.6
+- OpenNI 1.3.3.6上で再コンパイル
+- Kinect SDK Beta2をサポート
+
+V0.0
+- Kinect SDK Beta向け初版
 
 Enjoy!
 Tomoto
