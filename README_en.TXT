@@ -1,6 +1,6 @@
 kinect-mssdk-openni-bridge V1.0-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 4/2/2012
+Release Date: 4/7/2012
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. What is this?
@@ -90,9 +90,29 @@ changed from the previous version.)
 		</Node>
 
 * Depth node supports 640x480 (default) and 320x240 resolution.
+  The resolution can be specified in the same way as Image node.
   When KinectSDKUserSkeletonGenerator node is used, the internal
   depth stream falls back to 320x240 transparently and emulates 640x480.
   This is due to Kinect SDK's limitation.
+  
+  Near mode is supported. Set nearMode int property to non-zero
+  to turn it on.
+
+		<Node type="Depth" name="Depth1">
+			<Configuration>
+				<Property type="int" name="nearMode" value="1"/>
+			</Configuration>
+		</Node>
+
+  Distinct overflow values (returns different values for too near, too far,
+  and unknown distances) is also supported. Set distinctOverflowDepthValues
+  int property to non-zero to turn it on.
+
+		<Node type="Depth" name="Depth1">
+			<Configuration>
+				<Property type="int" name="distinctOverflowDepthValues" value="1"/>
+			</Configuration>
+		</Node>
 
 * If your application assumes Psi pose detection, specify
   "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" instead of
@@ -126,6 +146,8 @@ by contributing his study and mod. Thank you very much.
 
 V1.0-1.5.2.23 (4/2/2012)
 - Supported Kinect SDK V1.0 and revised the license terms
+- Supported near mode
+- Supported distinct overflow values
 - Discontiuned Kinect SDK Beta support
 - Changed the custom node names from MSRKinect... to KinectSDK...
 - Changed the version number scheme: <Kinect SDK version>-<OpenNI version>

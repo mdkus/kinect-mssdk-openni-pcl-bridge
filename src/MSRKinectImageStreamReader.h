@@ -72,9 +72,10 @@ protected:
 	{
 		// Set flag on depth stream to set far points to non-zero.
 		// -> I decided to take it out eventually because it did not work well with NITE's user detector.
-
-		// DWORD depthImageStreamFlags;
-		// CHECK_HRESULT(NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &depthImageStreamFlags));
-		// CHECK_HRESULT(NuiImageStreamSetImageFrameFlags(m_hStreamHandle, depthImageStreamFlags | NUI_IMAGE_STREAM_FLAG_DISTINCT_OVERFLOW_DEPTH_VALUES));
+		
+		DWORD flags;
+		CHECK_HRESULT(NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &flags));
+		flags |= m_pRequirement->GetDepthImageFrameFlags();
+		CHECK_HRESULT(NuiImageStreamSetImageFrameFlags(m_hStreamHandle, flags));
 	}
 };

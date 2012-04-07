@@ -17,6 +17,9 @@ public:
 	}
 };
 
+#define PROP_DISTINCT_OVERFLOW_DEPTH_VALUES "distinctOverflowDepthValues"
+#define PROP_NEAR_MODE "nearMode"
+
 class MSRKinectDepthGenerator :
 	public MSRKinectDepthGeneratorBase<xn::ModuleDepthGenerator, MSRKinectDepthGeneratorDepthPixelProcessor>,
 	public virtual MSRKinectMirrorCap,
@@ -60,6 +63,32 @@ public:
 
 	MSRKinectAlternativeViewPointCap_IMPL(m_pReader);
 	MSRKinectMirrorCap_IMPL(m_pReader);
+
+	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
+	{
+		if (strcmp(strName, PROP_DISTINCT_OVERFLOW_DEPTH_VALUES) == 0) {
+			nValue = m_pReader->GetRequirement()->m_distinctDepthValues;
+			return XN_STATUS_OK;
+		} else if (strcmp(strName, PROP_NEAR_MODE) == 0) {
+			nValue = m_pReader->GetRequirement()->m_nearMode;
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::GetIntProperty(strName, nValue);
+		}
+	}
+
+	XnStatus SetIntProperty(const XnChar* strName, XnUInt64 nValue)
+	{
+		if (strcmp(strName, PROP_DISTINCT_OVERFLOW_DEPTH_VALUES) == 0) {
+			m_pReader->GetRequirement()->m_distinctDepthValues = !!nValue;
+			return XN_STATUS_OK;
+		} else if (strcmp(strName, PROP_NEAR_MODE) == 0) {
+			m_pReader->GetRequirement()->m_nearMode = !!nValue;
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::SetIntProperty(strName, nValue);
+		}
+	}
 
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const USHORT* data, const NUI_LOCKED_RECT& lockedRect)

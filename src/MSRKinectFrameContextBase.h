@@ -23,6 +23,8 @@ protected:
 	MSRKinectRequirement* m_pRequirement;
 
 public:
+	MSRKinectRequirement* GetRequirement() { return m_pRequirement; }
+
 	XnUInt32 GetFrameID() const { return m_nFrameID; }
 	XnUInt64 GetTimestamp() const { return m_lTimestamp; }
 	BOOL IsRunning() const { return m_bRunning; }

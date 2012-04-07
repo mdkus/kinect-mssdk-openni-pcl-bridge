@@ -1,6 +1,6 @@
 kinect-mssdk-openni-bridge V1.0-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/4/2
+Release Date: 2012/4/7
 Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
 
 1. これは何？
@@ -91,9 +91,29 @@ NITEの標準のUserGeneratorの代わりにKinect SDKのスケルトントラッキングを
 		</Node>
 
 ・Depthノードは640x480(デフォルト)と320x240の解像度をサポートします。
+　解像度の指定の仕方はImageノードと同じです。
   KinectSDKUserSkeletonGeneratorノードを使うと、
   内部的に320x240の解像度で動作し640x480をエミュレートします。
   (Kinect SDKの制限のため)
+
+  近接モードがサポートされています。近接モードを有効にするには次のように
+  nearMode整数プロパティにゼロ以外の値を設定します。
+
+		<Node type="Depth" name="Depth1">
+			<Configuration>
+				<Property type="int" name="nearMode" value="1"/>
+			</Configuration>
+		</Node>
+
+  またオーバーフロー値の区別(近すぎる、遠すぎる、不明な距離に対して
+  異なる値を返す)もサポートされています。これを有効にするには次のように
+  distinctOverflowDepthValues整数プロパティにゼロ以外の値を設定します。
+
+		<Node type="Depth" name="Depth1">
+			<Configuration>
+				<Property type="int" name="distinctOverflowDepthValues" value="1"/>
+			</Configuration>
+		</Node>
 
 ・あなたのアプリケーションがPsiポーズ検出を前提としている場合、
   "KinectSDKUserSkeletonGenerator" の代わりに
@@ -127,6 +147,8 @@ Kinect SDK Beta版からV1.0版への移植にあたり、David Scherbaさんに
 
 V1.0-1.5.2.23
 - Kinect SDK V1.0をサポートしライセンスを変更
+- 近接モードのサポート
+- オーバーフロー値の区別のサポート
 - Kinect SDK Betaのサポートを打ち切り
 - カスタムノード名を MSRKinect... から KinectSDK... に変更
 - バージョンスキームを変更: <Kinect SDK version>-<OpenNI version>
