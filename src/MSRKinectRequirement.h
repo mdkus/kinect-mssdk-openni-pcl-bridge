@@ -1,3 +1,32 @@
+//@COPYRIGHT@//
+//
+// Copyright (c) 2012, Tomoto S. Washio
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//   * Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in the
+//     documentation and/or other materials provided with the distribution.
+//   * Neither the name of the Tomoto S. Washio nor the names of his
+//     contributors may be used to endorse or promote products derived from
+//     this software without specific prior written permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL TOMOTO S. WASHIO BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//@COPYRIGHT@//
+
 #pragma once
 #include "base.h"
 
@@ -10,11 +39,18 @@ private:
 	BOOL m_bInitialized;
 
 public:
+	// I'm just lazy in writing getters/setters
+	BOOL m_distinctDepthValues;
+	BOOL m_nearMode;
+
+public:
 	MSRKinectRequirement() :
 		m_nInitFlags(0),
 		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
-		m_bInitialized(FALSE)
+		m_bInitialized(FALSE),
+		m_distinctDepthValues(FALSE),
+		m_nearMode(FALSE)
 	{
 	}
 
@@ -68,7 +104,7 @@ public:
 		}
 	}
 
-	DWORD GetInitiFlags() const
+	DWORD GetInitFlags() const
 	{
 		return m_nInitFlags;
 	}
@@ -91,6 +127,14 @@ public:
 	NUI_IMAGE_TYPE GetDepthImageType() const
 	{
 		return IsUserNodeRequired() ? NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX : NUI_IMAGE_TYPE_DEPTH;
+	}
+
+	DWORD GetDepthImageFrameFlags() const
+	{
+		DWORD flags = 0;
+		if (m_nearMode) flags |= NUI_IMAGE_STREAM_FLAG_ENABLE_NEAR_MODE;
+		if (m_distinctDepthValues) flags |= NUI_IMAGE_STREAM_FLAG_DISTINCT_OVERFLOW_DEPTH_VALUES;
+		return flags;
 	}
 
 	void DoInitialize() // throws XnStatusException

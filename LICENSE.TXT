@@ -1,29 +1,38 @@
-Kinect-mssdk-openni-bridge License Terms
+IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING
 
-Copyright (c) 2011, Tomoto S. Washio
-All rights reserved.
+kinect-mssdk-openni-bridge License Terms
 
-NOTICE: This software is an application of Kinect SDK Beta from Microsoft, and distributed under the license below which is demanded by Microsoft to apply for any Kinect SDK Beta applications. I hope and plan to replace the license with the BSD style open source license when Microsoft opens up a way for me to do so.
+  Copyright (c) 2012, Tomoto S. Washio
+  All rights reserved.
 
-This document ("End User License Agreement" or "EULA") is a contract between you and the person who (or company that) provided you this software ("Software Provider"). The EULA defines your rights and responsibilities related to the software. 
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the Tomoto S. Washio nor the names of his
+      contributors may be used to endorse or promote products derived from
+      this software without specific prior written permission.
 
-By downloading, installing, accessing, or using the software, you accept all terms in this EULA. If you do not accept them, you have no right to download, install, access, or use the software.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL TOMOTO S. WASHIO BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-1. RIGHTS. The software is licensed, not sold. You may distribute and use the software, in source and binary forms, with or without modification, but only if the following conditions are met:
-
-a. Distributions of source code must retain the above copyright notice, this list of conditions and the disclaimer below;
-
-b. Distributions in binary form must reproduce the above copyright notice, this list of conditions and the disclaimer below in the documentation or other materials provided with the distribution;
-
-c. Neither the name of the Software Provider nor the names of its licensors may be used to endorse or promote products derived from this software without specific prior written permission;
-
-d. The software may not be used or run on any software platform other than Microsoft Windows;
-
-e. The software may not be used for any commercial purpose;
-
-f. If you provide feedback, input, or suggestions ("Feedback") on the software, you grant to the Software Provider and its licensors, under all intellectual property rights, the right to make, use, modify, distribute, and otherwise commercialize your Feedback in any way and for any purpose; and
-
-g. You may not do anything with or to the software in any way that would subject it to the terms of an Excluded License. An Excluded License is a license that requires, as a condition of use, modification, or distribution of code subject to that license, that: (i) the code be disclosed or distributed in source code form; or (ii) others have the right to modify the code.
-
-2. DISCLAIMER. This software is provided by the Software Provider and its licensors "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event will the Software Provider or its licensors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage. You can recover from the Software Provider and its licensors only direct damages up to U.S. $5.00.
+  Additional Notice:
+  This software is intended to encourage the use of Kinect for Windows,
+  but never intended to give any losses or damages to Microsoft or any other
+  providers of the related software and devices. When this software is used,
+  the license terms of Kinect for Windors, Kinect SDK, and any other related
+  software and devices that are combined with this software must also be
+  complied, and Tomoto S. Washio shall not be liable for any consequences
+  caused by failing to do so.
 
