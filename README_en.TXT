@@ -1,7 +1,7 @@
 kinect-mssdk-openni-bridge v1.0.0.1-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 4/7/2012
-Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
+Release Date: 4/12/2012
+Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
 
@@ -15,8 +15,9 @@ which is to solve this tragedic situation by connecting Kinect SDK to
 OpenNI and allowing the applications to use Kinect for Windows over
 OpenNI.
 
-If you install this module, Depth, Image, and User node can (a sort of)
-work with Kinect SDK.
+This module plugs-in OpenNI framework with Depth, Image, and User node
+that works with Kinect for Windows + Kinect SDK. Especially, this Depth
+node works with NITE's skeleton tracking and gesture recognition algorithms.
 
 This module is compatible with OpenNI 1.5.2.23 32bit and Kinect SDK V1.0.
 * Note OpenNI must be 32bit even though your OS may be 64bit.
@@ -30,13 +31,9 @@ This module is compatible with OpenNI 1.5.2.23 32bit and Kinect SDK V1.0.
 If you already have a copy of the binary package or the source
 code repository, skip this section and go to Installation.
 
-If not, download the binary package from the URL below, and
-extract it somewhere in your computer.
-https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes/release/
-
-If you are interested in the source code, you can access to the
-entire repository by git at:
-https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
+If not, download the binary package from the URL below, and extract
+it somewhere in your computer. Source code is also available.
+http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 2.2 Installation
 
@@ -59,8 +56,12 @@ Run uninstall.bat. If your Windows turns on UAC, run it
 
 3.1 Basics
 
-This module will be automatically activated for Depth and Image
-nodes. If you want to use Kinect SDK's skeleton tracking instead of
+This module is automatically activated when you use Depth and
+Image node with Kinect SDK installed. You can use them with
+other algorithms such as NITE's skeleton tracking and gesture
+recognition.
+
+If you want to use Kinect SDK's skeleton tracking instead of
 NITE's UserGenerator, specify <Query> to the User node in the
 configuration XML file as below. (Note the node names has been
 changed from the previous version.)

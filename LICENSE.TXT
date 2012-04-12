@@ -28,11 +28,11 @@ kinect-mssdk-openni-bridge License Terms
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   Additional Notice:
-  This software is intended to encourage the use of Kinect for Windows,
-  but never intended to give any losses or damages to Microsoft or any other
-  providers of the related software and devices. When this software is used,
-  the license terms of Kinect for Windors, Kinect SDK, and any other related
-  software and devices that are combined with this software must also be
-  complied, and Tomoto S. Washio shall not be liable for any consequences
-  caused by failing to do so.
+  This software is intended to encourage the use of Kinect for Windows and
+  OpenNI, but never intended to give any losses or damages to Microsoft,
+  PrimeSense, or any other providers of the related software and devices.
+  When this software is used, the license terms of Kinect for Windors,
+  Kinect SDK, OpenNI, and any other related software and devices that are
+  combined with this software must also be complied, and Tomoto S. Washio
+  shall not be liable for any consequences caused by failing to do so.
 

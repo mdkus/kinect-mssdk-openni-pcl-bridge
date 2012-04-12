@@ -1,7 +1,7 @@
 kinect-mssdk-openni-bridge v1.0.0.1-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/4/7
-Project URL: https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
+Release Date: 2012/4/12
+Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
 
@@ -14,8 +14,10 @@ Kinect for Windowsと組み合わせて活用することは不可能だったということです。
 Kinect for WindowsをOpenNI上から使えるようにする実験モジュールが
 このkinect-mssdk-openni-bridgeです。
 
-このモジュールをインストールすると、Depthノード、Imageノード、
-UserノードがKinect SDK上で(なんとなく)動作するようになります。
+このモジュールをインストールすると、Kienct for Windows + Kinect SDK上で
+動作するDepthノード、Imageノード、UserノードがOpenNIにプラグインされます。
+このDepthノードの上でNITEのスケルトントラッキングやジェスチャー検出を
+使うこともできます。
 
 本モジュールはOpenNI 1.5.2.23 32bit版およびKinect SDK V1.0に
 対応しています
@@ -31,12 +33,8 @@ UserノードがKinect SDK上で(なんとなく)動作するようになります。
 入手しているならば、本節を飛ばしてインストールに進んでください。
 
 そうでなければ、バイナリパッケージを次のURLからダウンロードし、
-どこかに展開してください。
-https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes/release/
-
-もしソースコードに興味があるならば、次のURLにあるソースコード
-リポジトリにgitでアクセスすることができます。
-https://www.assembla.com/code/kinect-mssdk-openni-bridge/git/nodes
+どこかに展開してください。ソースコードもあります。
+http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 2.2 インストール
 
@@ -60,9 +58,12 @@ uninstall.batを実行してください。UACが有効になっている場合、
 
 3.1 基本
 
-DepthノードとImageノードは何もしなくても自動的に動作します。
+Kinect SDKが入った環境でDepthノードとImageノードを使うと、
+自動的に本モジュールが呼ばれるようになります。これらのノードは
+NITEのスケルトントラッキングやジェスチャー認識など他のアルゴリズムと
+組み合わせて使用することができます。
 
-NITEの標準のUserGeneratorの代わりにKinect SDKのスケルトントラッキングを
+NITEの標準のスケルトントラッキングの代わりにKinect SDKのものを
 使用するには設定XMLファイルのUserノードに箇所に次のように<Query>を
 指定してください。(ノード名が旧版から変わっているので注意してください。)
 
