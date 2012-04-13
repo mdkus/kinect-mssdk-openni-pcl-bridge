@@ -52,6 +52,7 @@ protected:
 	MSRKinectRequirement* m_pRequirement;
 
 public:
+	INuiSensor* GetSensor() { return m_pRequirement->GetSensor(); }
 	MSRKinectRequirement* GetRequirement() { return m_pRequirement; }
 
 	XnUInt32 GetFrameID() const { return m_nFrameID; }

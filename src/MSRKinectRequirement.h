@@ -38,6 +38,8 @@ private:
 	NUI_IMAGE_RESOLUTION m_depthImageResolution;
 	BOOL m_bInitialized;
 
+	INuiSensor* m_pSensor; // I don't like having state here, but I'm OK to accept this exception
+
 public:
 	// I'm just lazy in writing getters/setters
 	BOOL m_distinctDepthValues;
@@ -49,6 +51,7 @@ public:
 		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_bInitialized(FALSE),
+		m_pSensor(NULL),
 		m_distinctDepthValues(FALSE),
 		m_nearMode(FALSE)
 	{
@@ -141,8 +144,42 @@ public:
 	{
 		if (m_bInitialized) return;
 
-		CHECK_HRESULT(NuiInitialize(m_nInitFlags));
+		int count;
+		CHECK_HRESULT(NuiGetSensorCount(&count));
+		if (count == 0) {
+			throw XnStatusException(XN_STATUS_DEVICE_NOT_CONNECTED);
+		}
+
+		for (int i = 0; i < count; i++) {
+			CHECK_HRESULT(NuiCreateSensorByIndex(i, &m_pSensor));
+			HRESULT hr = m_pSensor->NuiInitialize(m_nInitFlags);
+			if (FAILED(hr)) {
+				m_pSensor->Release();
+				m_pSensor = NULL;
+				if (i < count - 1) {
+					continue; // retry
+				} else {
+					CHECK_HRESULT(hr); // throw an exception
+				}
+			}
+			break; // got one
+		}
+
 		m_bInitialized = TRUE;
+	}
+
+	void DoShutdown()
+	{
+		if (m_pSensor) {
+			m_pSensor->NuiShutdown();
+			m_pSensor->Release();
+			m_pSensor = NULL;
+		}
+	}
+
+	INuiSensor* GetSensor()
+	{
+		return m_pSensor;
 	}
 
 };

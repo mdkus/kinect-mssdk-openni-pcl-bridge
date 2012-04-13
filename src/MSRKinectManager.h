@@ -101,7 +101,6 @@ public:
 		if (m_pDepthImageStreamManager) {
 			delete m_pDepthImageStreamManager;
 		}
-
-		NuiShutdown();
+		m_requirement.DoShutdown();
 	}
 };

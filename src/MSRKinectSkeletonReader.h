@@ -48,6 +48,6 @@ public:
 	{
 		m_pRequirement->DoInitialize();
 
-		CHECK_HRESULT(NuiSkeletonTrackingEnable(m_hNextFrameEvent, 0));
+		CHECK_HRESULT(GetSensor()->NuiSkeletonTrackingEnable(m_hNextFrameEvent, 0));
 	}
 };

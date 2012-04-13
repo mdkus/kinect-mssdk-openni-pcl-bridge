@@ -54,9 +54,9 @@ public:
 	virtual HRESULT GetNextFrameImpl()
 	{
 		try {
-			CHECK_HRESULT(NuiSkeletonGetNextFrame(0, &m_frame));
+			CHECK_HRESULT(GetSensor()->NuiSkeletonGetNextFrame(0, &m_frame));
 			if (m_bSmooth) {
-				CHECK_HRESULT(NuiTransformSmooth(&m_frame, NULL));
+				CHECK_HRESULT(GetSensor()->NuiTransformSmooth(&m_frame, NULL));
 			}
 			m_pFrame = &m_frame;
 			return S_OK;

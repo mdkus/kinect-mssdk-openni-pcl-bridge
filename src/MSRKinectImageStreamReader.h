@@ -56,7 +56,7 @@ protected:
 		if (!m_hStreamHandle) {
 			m_pRequirement->DoInitialize();
 			SetupStreamInfo();
-			CHECK_HRESULT(NuiImageStreamOpen(m_eImageType, m_eImageResolution, 0, 2, m_hNextFrameEvent, &m_hStreamHandle));
+			CHECK_HRESULT(GetSensor()->NuiImageStreamOpen(m_eImageType, m_eImageResolution, 0, 2, m_hNextFrameEvent, &m_hStreamHandle));
 			PostStreamOpen();
 		}
 	}
@@ -103,8 +103,8 @@ protected:
 		// -> I decided to take it out eventually because it did not work well with NITE's user detector.
 		
 		DWORD flags;
-		CHECK_HRESULT(NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &flags));
+		CHECK_HRESULT(GetSensor()->NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &flags));
 		flags |= m_pRequirement->GetDepthImageFrameFlags();
-		CHECK_HRESULT(NuiImageStreamSetImageFrameFlags(m_hStreamHandle, flags));
+		CHECK_HRESULT(GetSensor()->NuiImageStreamSetImageFrameFlags(m_hStreamHandle, flags));
 	}
 };
