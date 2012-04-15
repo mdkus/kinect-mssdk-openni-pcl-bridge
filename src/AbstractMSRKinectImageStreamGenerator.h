@@ -39,6 +39,7 @@ class AbstractMSRKinectImageStreamGenerator :
 	public virtual MSRKinectImageStreamReader::Listener
 {
 private:
+	typedef ParentModuleGeneratorClass SuperClass;
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 private:
@@ -190,6 +191,29 @@ public:
 		m_pReader->RemoveListener(this);
 	}
 
+	// Custom Properties
+
+	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
+	{
+		if (strcmp(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE) == 0) {
+			return getCameraElevationAngle(&nValue);
+		} else if (strcmp(strName, PROP_COMMON_NUI_SENSOR_POINTER) == 0) {
+			nValue = (XnUInt64) m_pReader->GetSensor();
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::GetIntProperty(strName, nValue);
+		}
+	}
+
+	XnStatus SetIntProperty(const XnChar* strName, XnUInt64 nValue)
+	{
+		if (strcmp(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE) == 0) {
+			return setCameraElevationAngle(nValue);
+		} else {
+			return SuperClass::SetIntProperty(strName, nValue);
+		}
+	}
+
 protected:
 	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const NUI_LOCKED_RECT& lockedRect) = 0;
 
@@ -213,5 +237,32 @@ protected:
 		}
 	}
 
-	
+private:
+	XnStatus getCameraElevationAngle(XnUInt64* pValue) const
+	{
+		INuiSensor* pSensor = m_pReader->GetSensor();
+		if (pSensor) {
+			LONG angle;
+			HRESULT hr = pSensor->NuiCameraElevationGetAngle(&angle);
+			if (SUCCEEDED(hr)) {
+				*pValue = angle;
+				return XN_STATUS_OK;
+			} else {
+				return XN_STATUS_ERROR;
+			}
+		} else {
+			return XN_STATUS_NOT_INIT;
+		}
+	}
+
+	XnStatus setCameraElevationAngle(XnUInt64 value)
+	{
+		INuiSensor* pSensor = m_pReader->GetSensor();
+		if (pSensor) {
+			HRESULT hr = pSensor->NuiCameraElevationSetAngle((LONG) value);
+			return (SUCCEEDED(hr)) ? XN_STATUS_OK : XN_STATUS_ERROR;
+		} else {
+			return XN_STATUS_NOT_INIT;
+		}
+	}
 };

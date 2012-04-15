@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.1-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.2-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/4/12
+Release Date: 2012/4/14
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -126,6 +126,22 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのものを
   "KinectSDKUserSkeletonGeneratorWithAutoElevation" を指定すると、
   プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
 
+・本モジュールのImage、Depth、UserノードはcameraElevationAngleプロパティを
+  備えており、これを用いてプログラムからカメラの角度を取得・設定することが
+  できます。StartGeneratingを呼び出した後に使用することができます。
+
+  // angle = 水平線に対するカメラの角度(度)
+  imageGenerator.SetIntProperty("cameraElevationAngle", angle);
+
+  また、nuiSensorPointerプロパティでINuiSensorへのポインタを取得し、
+  Kinect SDKのAPI関数を直接使用することができます。StartGeneratingを
+  呼び出した後に使うことができます。
+
+  XnUInt64 i;
+  imageGenerator.GetIntProperty("nuiSensorPointer", i);
+  INuiSensor* pSensor = (INuiSensor*) i;
+  pSensor->NuiXxx(...);
+
 4. ライセンス
 
 LICENSE.TXTを見てください。
@@ -150,7 +166,11 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者に
 
 6. 更新履歴
 
-V1.0-1.5.2.23
+V1.0.0.2-1.5.2.23
+・複数センサーのサポート (未テスト)
+・カメラ角度とINuiSensorポインタへのアクセスをサポート
+
+V1.0.0.1-1.5.2.23
 ・Kinect SDK V1.0をサポートしライセンスを変更
 ・近接モードのサポート
 ・オーバーフロー値の区別のサポート

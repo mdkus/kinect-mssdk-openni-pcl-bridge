@@ -72,3 +72,13 @@ inline void printHResult(HRESULT hr, const char* statement)
 }
 
 #define LOG(format, ...) fprintf(stderr, format, __VA_ARGS__)
+
+// IntProperty for depth node: Set to non-zero to get distinct overflow depth values
+#define PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES "distinctOverflowDepthValues"
+// IntProperty for depth node: Set to non-zero to enable near mode
+#define PROP_DEPTH_NEAR_MODE "nearMode"
+
+// IntProperty for all node types: Camera angle in degrees relative to the gravity. Use after generation started.
+#define PROP_COMMON_CAMERA_ELEVATION_ANGLE "cameraElevationAngle"
+// IntProperty for all node types: Get pointer value to INuiSensor that is ast to XnUInt64. Use after generation started. Read-only.
+#define PROP_COMMON_NUI_SENSOR_POINTER "nuiSensorPointer"

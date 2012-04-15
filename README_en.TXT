@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.1-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.2-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 4/12/2012
+Release Date: 4/14/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -125,6 +125,22 @@ changed from the previous version.)
   "KinectSDKUserSkeletonGenerator", then the camera elevation will be
   auto-adjusted so that the whole player body fits within the sight.
 
+* You can programatically get and set the camera elevation angle by
+  cameraElevationAngle property of the Image, Depth, or User node
+  from this module. Use this only after StartGenerating.
+
+  // angle = camera elevation in degree relative to the horizon
+  imageGenerator.SetIntProperty("cameraElevationAngle", angle);
+
+  Also you can get the INuiSensor pointer associated with the node
+  by nuiSensorPointer property so that you can directly use the
+  Kinect SDK API functions. Use this only after StartGenerating.
+
+  XnUInt64 i;
+  imageGenerator.GetIntProperty("nuiSensorPointer", i);
+  INuiSensor* pSensor = (INuiSensor*) i;
+  pSensor->NuiXxx(...);
+
 4. License
 
 See LICENSE.TXT.
@@ -149,7 +165,11 @@ this module is not liable for any consequences caused by failing to do so.
 
 6. Change History
 
-V1.0-1.5.2.23 (4/2/2012)
+V1.0.0.2-1.5.2.23
+* Multiple sensor support (not completely tested)
+* Supported access to camera elevation angle and INuiSensor pointer
+
+V1.0.0.1-1.5.2.23
 * Supported Kinect SDK V1.0 and revised the license terms
 * Supported near mode
 * Supported distinct overflow values
@@ -159,7 +179,7 @@ V1.0-1.5.2.23 (4/2/2012)
   v<Kinect SDK version>.<Function version>-for-<OpenNI version>
 * Bug fixes
 
-V1.3.3.6 (11/5/2011)
+V1.3.3.6
 * Recompiled on OpenNI 1.3.3.6
 * Supported Kinect SDK Beta2
 

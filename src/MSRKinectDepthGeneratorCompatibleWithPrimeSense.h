@@ -37,24 +37,39 @@ class MSRKinectDepthGeneratorCompatibleWithPrimeSense :
 	public MSRKinectDepthGenerator
 {
 private:
+	typedef MSRKinectDepthGenerator SuperClass;
+
+private:
 	PrimeSenseProperties m_properties;
 
 public:
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
 	{
-		return m_properties.GetIntProperty(strName, nValue);
+		if (m_properties.GetIntProperty(strName, nValue) == XN_STATUS_OK) {
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::GetIntProperty(strName, nValue);
+		}
 	}
 
 
 	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const
 	{
-		return m_properties.GetRealProperty(strName, dValue);
+		if (m_properties.GetRealProperty(strName, dValue) == XN_STATUS_OK) {
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::GetRealProperty(strName, dValue);
+		}
 	}
 
 
 	XnStatus GetGeneralProperty(const XnChar* strName, XnUInt32 nBufferSize, void* pBuffer) const
 	{
-		return m_properties.GetGeneralProperty(strName, nBufferSize, pBuffer);
+		if (m_properties.GetGeneralProperty(strName, nBufferSize, pBuffer) == XN_STATUS_OK) {
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::GetGeneralProperty(strName, nBufferSize, pBuffer);
+		}
 	}
 
 	XnDepthPixel GetDeviceMaxDepth() { return 10000; }
