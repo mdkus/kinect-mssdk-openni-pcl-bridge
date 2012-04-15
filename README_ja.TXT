@@ -3,69 +3,69 @@ Author: Tomoto S. Washio
 Release Date: 2012/4/14
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
-1. ����͉��H
+1. これは何？
 
-���Microsoft���珤�p���p�\��Kinect for Windows��Kinect SDK��
-�����[�X����܂������A������OpenNI�Ƃ̊Ԃɂ͌݊���������܂���B
-���Ȃ킿�AOpenNI��̃A�v���P�[�V�������Y��m�E�n�E�����ɂ������Ƃ��Ă��A
-Kinect for Windows�Ƒg�ݍ��킹�Ċ��p���邱�Ƃ͕s�\�������Ƃ������Ƃł��B
+先日Microsoftから商用利用可能なKinect for WindowsとKinect SDKが
+リリースされましたが、これらとOpenNIとの間には互換性がありません。
+すなわち、OpenNI上のアプリケーション資産やノウハウが既にあったとしても、
+Kinect for Windowsと組み合わせて活用することは不可能だったということです。
 
-���̎c�O�ȏ󋵂�ŊJ���邽�߁AKinect SDK��OpenNI�ɐڑ����邱�ƂŁA
-Kinect for Windows��OpenNI�ォ��g����悤�ɂ���������W���[����
-����kinect-mssdk-openni-bridge�ł��B
+この残念な状況を打開するため、Kinect SDKをOpenNIに接続することで、
+Kinect for WindowsをOpenNI上から使えるようにする実験モジュールが
+このkinect-mssdk-openni-bridgeです。
 
-���̃��W���[�����C���X�g�[������ƁAKienct for Windows + Kinect SDK���
-���삷��Depth�m�[�h�AImage�m�[�h�AUser�m�[�h��OpenNI�Ƀv���O�C������܂��B
-����Depth�m�[�h�̏��NITE�̃X�P���g���g���b�L���O��W�F�X�`���[���o��
-�g�����Ƃ��ł��܂��B
+このモジュールをインストールすると、Kienct for Windows + Kinect SDK上で
+動作するDepthノード、Imageノード、UserノードがOpenNIにプラグインされます。
+このDepthノードの上でNITEのスケルトントラッキングやジェスチャー検出を
+使うこともできます。
 
-�{���W���[����OpenNI 1.5.2.23 32bit�ł����Kinect SDK V1.0��
-�Ή����Ă��܂�
-�EOpenNI�́AOS��64bit�ł����Ă��K��32bit�ł��g���Ă��������B
-�EKinect SDK Beta�ł̓��C�Z���X���قȂ邽�ߑΉ����Ă��܂���B
-  Beta�łŎg�p�������ꍇ�ɂ͈ȑO�̃o�[�W�������g�p���Ă��������B
+本モジュールはOpenNI 1.5.2.23 32bit版およびKinect SDK V1.0に
+対応しています
+・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
+・Kinect SDK Beta版はライセンスが異なるため対応していません。
+  Beta版で使用したい場合には以前のバージョンを使用してください。
 
-2. �C���X�g�[���ƃA���C���X�g�[��
+2. インストールとアンインストール
 
-2.1 �_�E�����[�h
+2.1 ダウンロード
 
-���Ƀo�C�i���p�b�P�[�W�܂��̓\�[�X�R�[�h���|�W�g���̃R�s�[��
-���肵�Ă���Ȃ�΁A�{�߂��΂��ăC���X�g�[���ɐi��ł��������B
+既にバイナリパッケージまたはソースコードリポジトリのコピーを
+入手しているならば、本節を飛ばしてインストールに進んでください。
 
-�����łȂ���΁A�o�C�i���p�b�P�[�W������URL����_�E�����[�h���A
-�ǂ����ɓW�J���Ă��������B�\�[�X�R�[�h������܂��B
+そうでなければ、バイナリパッケージを次のURLからダウンロードし、
+どこかに展開してください。ソースコードもあります。
 http://code.google.com/p/kinect-mssdk-openni-bridge/
 
-2.2 �C���X�g�[��
+2.2 インストール
 
-OpenNI��KinectSDK���C���X�g�[��������ŁAinstall.bat�����s���Ă��������B
-Windows�̃��[�U�[�A�J�E���g����(UAC)���L���ɂȂ��Ă���ꍇ�A
-�o�b�`�t�@�C�����E�N���b�N���āu�Ǘ��҂Ƃ��Ď��s�v���Ă��������B
+OpenNIとKinectSDKをインストールした上で、install.batを実行してください。
+Windowsのユーザーアカウント制御(UAC)が有効になっている場合、
+バッチファイルを右クリックして「管理者として実行」してください。
 
-�f�o�b�O�ł��C���X�g�[������ɂ͑����install-debug.bat��
-���s���Ă��������B
+デバッグ版をインストールするには代わりにinstall-debug.batを
+実行してください。
 
-�������C���X�g�[�����ꂽ���ǂ�����OpenNI�̃��[�e�B���e�BniReg��
--l�I�v�V���������ČĂяo�����ƂŊm�F�ł��܂��B�{���W���[����
-���O���\������Ă���ΐ����ł��B
+正しくインストールされたかどうかはOpenNIのユーティリティniRegを
+-lオプションをつけて呼び出すことで確認できます。本モジュールの
+名前が表示されていれば成功です。
 
-2.3. �A���C���X�g�[��
+2.3. アンインストール
 
-uninstall.bat�����s���Ă��������BUAC���L���ɂȂ��Ă���ꍇ�A
-��Ɠ��l�Ɂu�Ǘ��҂Ƃ��Ď��s�v���Ă��������B
+uninstall.batを実行してください。UACが有効になっている場合、
+上と同様に「管理者として実行」してください。
 
-3. �g����
+3. 使い方
 
-3.1 ��{
+3.1 基本
 
-Kinect SDK������������Depth�m�[�h��Image�m�[�h���g���ƁA
-�����I�ɖ{���W���[�����Ă΂��悤�ɂȂ�܂��B�����̃m�[�h��
-NITE�̃X�P���g���g���b�L���O��W�F�X�`���[�F���ȂǑ��̃A���S���Y����
-�g�ݍ��킹�Ďg�p���邱�Ƃ��ł��܂��B
+Kinect SDKが入った環境でDepthノードとImageノードを使うと、
+自動的に本モジュールが呼ばれるようになります。これらのノードは
+NITEのスケルトントラッキングやジェスチャー認識など他のアルゴリズムと
+組み合わせて使用することができます。
 
-NITE�̕W���̃X�P���g���g���b�L���O�̑����Kinect SDK�̂��̂�
-�g�p����ɂ͐ݒ�XML�t�@�C����User�m�[�h�ɉӏ��Ɏ��̂悤��<Query>��
-�w�肵�Ă��������B(�m�[�h�������ł���ς���Ă���̂Œ��ӂ��Ă��������B)
+NITEの標準のスケルトントラッキングの代わりにKinect SDKのものを
+使用するには設定XMLファイルのUserノードに箇所に次のように<Query>を
+指定してください。(ノード名が旧版から変わっているので注意してください。)
 
 <OpenNI>
     ...
@@ -80,10 +80,10 @@ NITE�̕W���̃X�P���g���g���b�L���O�̑����Kinect SDK�̂��̂�
     </ProductionNodes>
 </OpenNI>
 
-3.2 ���p
+3.2 応用
 
-�EImage�m�[�h��640x480(�f�t�H���g)��1280x1024�̉𑜓x���T�|�[�g���܂��B
-  ���̂悤�Ɏw�肷���Image�m�[�h�����𑜃��[�h�Ŏg�p�ł��܂��B
+・Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
+  次のように指定するとImageノードを高解像モードで使用できます。
 
 		<Node type="Image" name="Image1">
 			<Configuration>
@@ -91,14 +91,14 @@ NITE�̕W���̃X�P���g���g���b�L���O�̑����Kinect SDK�̂��̂�
 			</Configuration>
 		</Node>
 
-�EDepth�m�[�h��640x480(�f�t�H���g)��320x240�̉𑜓x���T�|�[�g���܂��B
-  �𑜓x�̎w��̎d����Image�m�[�h�Ɠ����ł��B
-  KinectSDKUserSkeletonGenerator�m�[�h���g���ƁA
-  �����I��320x240�̉𑜓x�œ��삵640x480���G�~�����[�g���܂��B
-  (Kinect SDK�̐����̂���)
+・Depthノードは640x480(デフォルト)と320x240の解像度をサポートします。
+  解像度の指定の仕方はImageノードと同じです。
+  KinectSDKUserSkeletonGeneratorノードを使うと、
+  内部的に320x240の解像度で動作し640x480をエミュレートします。
+  (Kinect SDKの制限のため)
 
-  �ߐڃ��[�h���T�|�[�g����Ă��܂��B�ߐڃ��[�h��L���ɂ���ɂ͎��̂悤��
-  nearMode�����v���p�e�B�Ƀ[���ȊO�̒l��ݒ肵�܂��B
+  近接モードがサポートされています。近接モードを有効にするには次のように
+  nearMode整数プロパティにゼロ以外の値を設定します。
 
 		<Node type="Depth" name="Depth1">
 			<Configuration>
@@ -106,9 +106,9 @@ NITE�̕W���̃X�P���g���g���b�L���O�̑����Kinect SDK�̂��̂�
 			</Configuration>
 		</Node>
 
-  �܂��I�[�o�[�t���[�l�̋��(�߂�����A��������A�s���ȋ����ɑ΂���
-  �قȂ�l��Ԃ�)���T�|�[�g����Ă��܂��B�����L���ɂ���ɂ͎��̂悤��
-  distinctOverflowDepthValues�����v���p�e�B�Ƀ[���ȊO�̒l��ݒ肵�܂��B
+  またオーバーフロー値の区別(近すぎる、遠すぎる、不明な距離に対して
+  異なる値を返す)もサポートされています。これを有効にするには次のように
+  distinctOverflowDepthValues整数プロパティにゼロ以外の値を設定します。
 
 		<Node type="Depth" name="Depth1">
 			<Configuration>
@@ -116,76 +116,76 @@ NITE�̕W���̃X�P���g���g���b�L���O�̑����Kinect SDK�̂��̂�
 			</Configuration>
 		</Node>
 
-�E���Ȃ��̃A�v���P�[�V������Psi�|�[�Y���o��O��Ƃ��Ă���ꍇ�A
-  "KinectSDKUserSkeletonGenerator" �̑����
-  "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" ���w�肵�Ă��������B
-  �U�҂ł����|�[�Y���o�C�x���g���󂯎���悤�ɂȂ�܂��B
+・あなたのアプリケーションがPsiポーズ検出を前提としている場合、
+  "KinectSDKUserSkeletonGenerator" の代わりに
+  "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" を指定してください。
+  偽者ですがポーズ検出イベントを受け取れるようになります。
 
-�E������ƗV�ѐS�Łu�����p�x�����@�\�t��User�m�[�h�v������Ă���܂��B
-  "KinectSDKUserSkeletonGenerator" �̑����
-  "KinectSDKUserSkeletonGeneratorWithAutoElevation" ���w�肷��ƁA
-  �v���C���[�S�̂����E�Ɏ��܂�悤�����I�ɃJ�����̊p�x����������܂��B
+・ちょっと遊び心で「自動角度調整機能付きUserノード」を作ってあります。
+  "KinectSDKUserSkeletonGenerator" の代わりに
+  "KinectSDKUserSkeletonGeneratorWithAutoElevation" を指定すると、
+  プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
 
-�E�{���W���[����Image�ADepth�AUser�m�[�h��cameraElevationAngle�v���p�e�B��
-  �����Ă���A�����p���ăv���O��������J�����̊p�x���擾�E�ݒ肷�邱�Ƃ�
-  �ł��܂��BStartGenerating���Ăяo������Ɏg�p���邱�Ƃ��ł��܂��B
+・本モジュールのImage、Depth、UserノードはcameraElevationAngleプロパティを
+  備えており、これを用いてプログラムからカメラの角度を取得・設定することが
+  できます。StartGeneratingを呼び出した後に使用することができます。
 
-  // angle = �������ɑ΂���J�����̊p�x(�x)
+  // angle = 水平線に対するカメラの角度(度)
   imageGenerator.SetIntProperty("cameraElevationAngle", angle);
 
-  �܂��AnuiSensorPointer�v���p�e�B��INuiSensor�ւ̃|�C���^���擾���A
-  Kinect SDK��API�֐��𒼐ڎg�p���邱�Ƃ��ł��܂��BStartGenerating��
-  �Ăяo������Ɏg�����Ƃ��ł��܂��B
+  また、nuiSensorPointerプロパティでINuiSensorへのポインタを取得し、
+  Kinect SDKのAPI関数を直接使用することができます。StartGeneratingを
+  呼び出した後に使うことができます。
 
   XnUInt64 i;
   imageGenerator.GetIntProperty("nuiSensorPointer", i);
   INuiSensor* pSensor = (INuiSensor*) i;
   pSensor->NuiXxx(...);
 
-4. ���C�Z���X
+4. ライセンス
 
-LICENSE.TXT�����Ă��������B
+LICENSE.TXTを見てください。
 
-����:
-�{���W���[����Kinect for Windows��OpenNI�̗��p���i���Ӑ}�������̂ł���A
-Microsoft��PrimeSense�ȂǊ֘A�\�t�g�E�F�A��f�o�C�X�̒񋟎҂�
-�����Ȃ�s���v�����^���邱�Ƃ��Ӑ}�������̂ł͂���܂���B
-�{���W���[���̗��p�҂́AKinect for Windows�AKinect SDK�AOpenNI�ANITE���A
-���p�҂��{���W���[���Ƒg�ݍ��킹�Ďg�p����֘A�\�t�g�E�F�A��f�o�C�X��
-���C�Z���X�����点�˂΂Ȃ�܂���B���p�҂�����ɏ]��Ȃ��������߂ɐ�����
-�����Ȃ錋�ʂɑ΂��Ă��A�{���W���[���̍�҂͐ӔC�𕉂��܂���B
+注意:
+本モジュールはKinect for WindowsやOpenNIの利用促進を意図したものであり、
+MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者に
+いかなる不利益をも与えることを意図したものではありません。
+本モジュールの利用者は、Kinect for Windows、Kinect SDK、OpenNI、NITE等、
+利用者が本モジュールと組み合わせて使用する関連ソフトウェアやデバイスの
+ライセンスを遵守せねばなりません。利用者がこれに従わなかったために生じた
+いかなる結果に対しても、本モジュールの作者は責任を負いません。
 
-5. ���̑�
+5. その他
 
-�EKinect SDK Beta�ł���V1.0�łւ̈ڐA�ɂ�����ADavid Scherba�����
-  �������ʂƃR�[�h�Ƃ�񋟂��đՂ��܂����B���̏�Ō��\���グ�܂��B
+・Kinect SDK Beta版からV1.0版への移植にあたり、David Scherbaさんに
+  調査結果とコードとを提供して戴きました。この場で御礼申し上げます。
 
-�E�Ȃ��S�R�[�h���w�b�_�ɏ����Ă���̂��A�e���v���[�g�g����������Ȃ��̂��A
-  �Ǝv�����l�ցB���ʂɃR�[�h�������̂ɖO�����̂ŁA������ƕς�������Ƃ�
-  ����Ă݂������������ł��B:-)
+・なぜ全コードをヘッダに書いているのか、テンプレート使いすぎじゃないのか、
+  と思った人へ。普通にコードを書くのに飽きたので、ちょっと変わったことを
+  やってみたかっただけです。:-)
 
-6. �X�V����
+6. 更新履歴
 
 V1.0.0.2-1.5.2.23
-�E�����Z���T�[�̃T�|�[�g (���e�X�g)
-�E�J�����p�x��INuiSensor�|�C���^�ւ̃A�N�Z�X���T�|�[�g
+・複数センサーのサポート (未テスト)
+・カメラ角度とINuiSensorポインタへのアクセスをサポート
 
 V1.0.0.1-1.5.2.23
-�EKinect SDK V1.0���T�|�[�g�����C�Z���X��ύX
-�E�ߐڃ��[�h�̃T�|�[�g
-�E�I�[�o�[�t���[�l�̋�ʂ̃T�|�[�g
-�EKinect SDK Beta�̃T�|�[�g��ł��؂�
-�E�J�X�^���m�[�h���� MSRKinect... ���� KinectSDK... �ɕύX
-�E�o�[�W�����X�L�[����ύX:
+・Kinect SDK V1.0をサポートしライセンスを変更
+・近接モードのサポート
+・オーバーフロー値の区別のサポート
+・Kinect SDK Betaのサポートを打ち切り
+・カスタムノード名を MSRKinect... から KinectSDK... に変更
+・バージョンスキームを変更:
   v<Kinect SDK version>.<Function version>-for-<OpenNI version>
-�E�o�O�C��
+・バグ修正
 
 V1.3.3.6
-�EOpenNI 1.3.3.6��ōăR���p�C��
-�EKinect SDK Beta2���T�|�[�g
+・OpenNI 1.3.3.6上で再コンパイル
+・Kinect SDK Beta2をサポート
 
 V0.0
-�EKinect SDK Beta��������
+・Kinect SDK Beta向け初版
 
 Enjoy!
 Tomoto S. Washio
