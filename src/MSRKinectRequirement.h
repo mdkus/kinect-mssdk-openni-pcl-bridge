@@ -143,28 +143,7 @@ public:
 	void DoInitialize() // throws XnStatusException
 	{
 		if (m_bInitialized) return;
-
-		int count;
-		CHECK_HRESULT(NuiGetSensorCount(&count));
-		if (count == 0) {
-			throw XnStatusException(XN_STATUS_DEVICE_NOT_CONNECTED);
-		}
-
-		for (int i = 0; i < count; i++) {
-			CHECK_HRESULT(NuiCreateSensorByIndex(i, &m_pSensor));
-			HRESULT hr = m_pSensor->NuiInitialize(m_nInitFlags);
-			if (FAILED(hr)) {
-				m_pSensor->Release();
-				m_pSensor = NULL;
-				if (i < count - 1) {
-					continue; // retry
-				} else {
-					CHECK_HRESULT(hr); // throw an exception
-				}
-			}
-			break; // got one
-		}
-
+		m_pSensor = findFirstAvailableSensor();
 		m_bInitialized = TRUE;
 	}
 
@@ -182,4 +161,47 @@ public:
 		return m_pSensor;
 	}
 
+private:
+	INuiSensor* findFirstAvailableSensor()
+	{
+		// TODO: move to somewhere else
+
+		// Register dummy device status callback to avoid freezing. Kinect SDK's bug.
+		NuiSetDeviceStatusCallback(dummyDeviceStatusCallback, this);
+
+		int count;
+		CHECK_HRESULT(NuiGetSensorCount(&count));
+		if (count == 0) {
+			throw XnStatusException(XN_STATUS_DEVICE_NOT_CONNECTED);
+		}
+
+		INuiSensor* pSensor = NULL;
+		for (int i = 0; i < count; i++) {
+			CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
+			HRESULT hr = pSensor->NuiInitialize(m_nInitFlags);
+			if (FAILED(hr)) {
+				pSensor->Release();
+				pSensor = NULL;
+				if (i < count - 1) {
+					continue; // retry
+				} else {
+					CHECK_HRESULT(hr); // throw an exception because this was the last one
+				}
+			}
+			break; // got one
+		}
+
+		HANDLE e = CreateEvent(NULL, TRUE, FALSE, NULL);
+		HANDLE h = NULL;
+		pSensor->NuiImageStreamOpen(NUI_IMAGE_TYPE_DEPTH, NUI_IMAGE_RESOLUTION_640x480, 0, 2, e, &h);
+
+		return pSensor;
+	}
+
+	static void CALLBACK dummyDeviceStatusCallback(HRESULT, const OLECHAR*, const OLECHAR*, void*)
+	{
+		// TODO: move to somewhere else
+
+		// dummy to avoid Kinect SDK's bug
+	}
 };

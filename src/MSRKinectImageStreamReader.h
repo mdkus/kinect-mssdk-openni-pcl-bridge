@@ -99,9 +99,6 @@ protected:
 
 	virtual void PostStreamOpen()
 	{
-		// Set flag on depth stream to set far points to non-zero.
-		// -> I decided to take it out eventually because it did not work well with NITE's user detector.
-		
 		DWORD flags;
 		CHECK_HRESULT(GetSensor()->NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &flags));
 		flags |= m_pRequirement->GetDepthImageFrameFlags();
