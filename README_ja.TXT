@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.2-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.3-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/4/14
+Release Date: 2012/4/17
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -165,6 +165,11 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.0.0.3-1.5.2.23
+・Issue #1 (mirrorをfalseにしたときにデータが取得できなくなるバグ)を修正
+・AudioノードとbeamAngle, sourceAngle, sourceAngleConfidenceプロパティの
+  試験実装を追加
 
 V1.0.0.2-1.5.2.23
 ・複数センサーのサポート (未テスト)

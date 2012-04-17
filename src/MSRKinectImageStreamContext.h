@@ -32,10 +32,10 @@
 #include "MSRKinectFrameContext.h"
 
 class MSRKinectImageStreamContext :
-	public MSRKinectFrameContext<const NUI_IMAGE_FRAME>
+	public MSRKinectFrameContext<NUI_IMAGE_FRAME>
 {
 private:
-	typedef MSRKinectFrameContext<const NUI_IMAGE_FRAME> SuperClass;
+	typedef MSRKinectFrameContext<NUI_IMAGE_FRAME> SuperClass;
 
 protected:
 	HANDLE m_hStreamHandle;
@@ -66,12 +66,12 @@ protected:
 
 	virtual HRESULT GetNextFrameImpl()
 	{
-		return NuiImageStreamGetNextFrame(m_hStreamHandle, 100, &m_pFrame);
+		return m_pRequirement->GetSensor()->NuiImageStreamGetNextFrame(m_hStreamHandle, 100, &m_frame);
 	}
 
 	virtual void ReleaseFrameImpl()
 	{
-		NuiImageStreamReleaseFrame(m_hStreamHandle, m_pFrame);
+		m_pRequirement->GetSensor()->NuiImageStreamReleaseFrame(m_hStreamHandle, &m_frame);
 	}
 
 };

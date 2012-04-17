@@ -44,23 +44,21 @@ public:
 	class Listener {
 	public:
 		virtual ~Listener() {}
+		virtual void OnStartReadingFrame() = 0;
+		virtual void OnStopReadingFrame() = 0;
 		virtual void OnUpdateFrame() = 0;
 	};
 	typedef std::vector<Listener*> ListenerList;
-
-	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
+	typedef void (Listener::*ListenerHandlerNoArg)();
 
 private:
 	XN_THREAD_HANDLE m_hReaderThread;
 	ListenerList m_listeners;
-
-	ChangeEvent m_generatingEvent;
-
-public:
-	ChangeEvent* GetGeneratingEvent() { return &m_generatingEvent; }
+	DWORD m_timeout;
 
 public:
-	MSRKinectFrameReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : ContextClass(pRequirement, hNextFrameEvent), m_hReaderThread(NULL)
+	MSRKinectFrameReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent, DWORD timeout) :
+		ContextClass(pRequirement, hNextFrameEvent), m_hReaderThread(NULL), m_timeout(timeout)
 	{
 	}
 
@@ -97,7 +95,7 @@ public:
 
 			m_bRunning = TRUE;
 			CHECK_XN_STATUS(xnOSCreateThread(ReaderThread, this, &m_hReaderThread));
-			m_generatingEvent.Raise();
+			RaiseEventNoArg(&Listener::OnStartReadingFrame);
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			m_bRunning = FALSE;
@@ -109,7 +107,7 @@ public:
 	{
 		if (m_bRunning) {
 			StopImpl();
-			m_generatingEvent.Raise();
+			RaiseEventNoArg(&Listener::OnStopReadingFrame);
 		}
 	}
 
@@ -117,6 +115,13 @@ protected:
 	virtual void Setup() {};
 
 private:
+	void RaiseEventNoArg(ListenerHandlerNoArg handler)
+	{
+		for (ListenerList::iterator i = m_listeners.begin(); i != m_listeners.end(); i++) {
+			((*i)->*handler)();
+		}
+	}
+
 	void StopImpl()
 	{
 		m_bRunning = FALSE;
@@ -129,13 +134,11 @@ private:
 		ThisClass* that = (ThisClass*)pCookie;
 
 		while (that->m_bRunning) {
-			XnStatus nStatus = xnOSWaitEvent(that->m_hNextFrameEvent, INFINITE);
-			if (nStatus == XN_STATUS_OK && that->m_bRunning) {
+			XnStatus nStatus = xnOSWaitEvent(that->m_hNextFrameEvent, that->m_timeout);
+			if ((nStatus == XN_STATUS_OK || nStatus == XN_STATUS_OS_EVENT_TIMEOUT) && that->m_bRunning) {
 				HRESULT hr = that->GetNextFrame();
 				if (SUCCEEDED(hr)) {
-					for (ListenerList::iterator i = that->m_listeners.begin(); i != that->m_listeners.end(); i++) {
-						(*i)->OnUpdateFrame();
-					}
+					that->RaiseEventNoArg(&Listener::OnUpdateFrame);
 				}
 			}
 		}

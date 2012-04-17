@@ -52,7 +52,6 @@ public:
 		}
 	}
 
-
 	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const
 	{
 		if (m_properties.GetRealProperty(strName, dValue) == XN_STATUS_OK) {
@@ -61,7 +60,6 @@ public:
 			return SuperClass::GetRealProperty(strName, dValue);
 		}
 	}
-
 
 	XnStatus GetGeneralProperty(const XnChar* strName, XnUInt32 nBufferSize, void* pBuffer) const
 	{

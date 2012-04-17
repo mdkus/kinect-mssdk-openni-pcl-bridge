@@ -39,7 +39,7 @@ private:
 	 typedef MSRKinectFrameReader<MSRKinectSkeletonContext> SuperClass;
 
 public:
-	MSRKinectSkeletonReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent)
+	MSRKinectSkeletonReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent, INFINITE)
 	{
 		m_pRequirement->AddCapabilityRequirement(XN_CAPABILITY_SKELETON);
 	}

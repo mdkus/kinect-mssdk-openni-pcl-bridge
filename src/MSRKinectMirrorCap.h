@@ -29,7 +29,7 @@
 
 #pragma once
 #include "base.h"
-#include "MSRKinectFrameContextBase.h"
+#include "MSRKinectGeometricFrameContextBase.h"
 
 class MSRKinectMirrorCap :
 	public virtual xn::ModuleMirrorInterface

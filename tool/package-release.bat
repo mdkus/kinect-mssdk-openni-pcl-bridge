@@ -1,7 +1,7 @@
 @rem Note: (1) Set VER to release version. (2) Install ActivePerl.
 
 setlocal
-set VER=v1.0.0.2-for-1.5.2.23
+set VER=v1.0.0.3-for-1.5.2.23
 set TARGET=release\kinect-mssdk-openni-bridge-%VER%
 rmdir /s /q %TARGET%
 mkdir %TARGET%

@@ -29,29 +29,22 @@
 
 #pragma once
 #include "base.h"
+#include "AbstractMultiThreadFrameGenerator.h"
 #include "MSRKinectImageStreamReader.h"
 #include "MSRKinectManager.h"
 #include "ImageConfiguration.h"
+#include "custom_properties.h"
 
 template <class ParentModuleGeneratorClass, class SourcePixelType, class TargetPixelType>
 class AbstractMSRKinectImageStreamGenerator :
-	public virtual ParentModuleGeneratorClass,
-	public virtual MSRKinectImageStreamReader::Listener
+	public AbstractMultiThreadFrameGenerator<ParentModuleGeneratorClass, MSRKinectImageStreamReader>
 {
 private:
-	typedef ParentModuleGeneratorClass SuperClass;
-	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
-
-private:
-	ChangeEvent m_dataAvailableEvent;
+	typedef AbstractMultiThreadFrameGenerator<ParentModuleGeneratorClass, MSRKinectImageStreamReader> SuperClass;
 
 protected:
 	XnPredefinedProductionNodeType m_nodeType;
-	BOOL m_bActiveGeneratorControl;
 	ImageConfiguration m_imageConfig;
-
-	MSRKinectImageStreamReader* m_pReader;
-	BOOL m_bNewDataAvailable;
 	TargetPixelType* m_pBuffer;
 
 	XnUInt32 GetXRes() const { return m_imageConfig.GetSelectedMode()->outputMode.nXRes; }
@@ -59,11 +52,10 @@ protected:
 
 protected:
 	AbstractMSRKinectImageStreamGenerator(XnPredefinedProductionNodeType nodeType, BOOL bActiveGeneratorControl, const ImageConfiguration::Desc* pImageConfigDesc) :
+		SuperClass(bActiveGeneratorControl),
 		m_nodeType(nodeType),
-		m_bActiveGeneratorControl(bActiveGeneratorControl),
 		m_imageConfig(pImageConfigDesc),
-		m_pBuffer(NULL),
-		m_bNewDataAvailable(FALSE)
+		m_pBuffer(NULL)
 	{
 		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
 		m_pReader = pMan->GetImageStreamManager(nodeType)->GetReader();
@@ -73,41 +65,16 @@ protected:
 public:
 	virtual ~AbstractMSRKinectImageStreamGenerator()
 	{
-		clearBuffer();
-
-		if (m_pReader)
-		{
-			m_pReader->RemoveListener(this);
-		}
-	}
-
-	virtual void OnUpdateFrame() {
-		m_bNewDataAvailable = TRUE;
-		m_dataAvailableEvent.Raise();
+		CleanUpBuffer();
 	}
 
 	//
 	// Generator methods
 	//
 
-	virtual XnStatus RegisterToNewDataAvailable(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback)
-	{
-		return m_dataAvailableEvent.Register(handler, pCookie, &hCallback);
-	}
-
-	virtual void UnregisterFromNewDataAvailable(XnCallbackHandle hCallback)
-	{
-		m_dataAvailableEvent.Unregister(hCallback);
-	}
-
-	virtual XnBool IsNewDataAvailable(XnUInt64& nTimestamp)
-	{
-		return m_bNewDataAvailable;
-	}
-
 	virtual const void* GetData()
 	{
-		setupBuffer();
+		SetUpBuffer();
 		return m_pBuffer;
 	}
 
@@ -139,58 +106,6 @@ public:
 		return XN_STATUS_OK;
 	}
 
-	virtual XnUInt64 GetTimestamp()
-	{
-		return m_pReader->GetTimestamp();
-	}
-
-	virtual XnUInt32 GetFrameID()
-	{
-		return m_pReader->GetFrameID();
-	}
-
-	//
-	// Generator Start/Stop
-	//
-
-	virtual XnBool IsGenerating()
-	{
-		return m_pReader->IsRunning();
-	}
-	
-	virtual XnStatus RegisterToGenerationRunningChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback)
-	{
-		return m_pReader->GetGeneratingEvent()->Register(handler, pCookie, &hCallback);
-	}
-	
-	virtual void UnregisterFromGenerationRunningChange(XnCallbackHandle hCallback)
-	{
-		m_pReader->GetGeneratingEvent()->Unregister(hCallback);
-	}
-
-	virtual XnStatus StartGenerating()
-	{
-		try {
-			setupBuffer();
-
-			m_pReader->AddListener(this);
-			if (m_bActiveGeneratorControl) {
-				CHECK_XN_STATUS(m_pReader->Start());
-			}
-			return XN_STATUS_OK;
-		} catch (XnStatusException& e) {
-			return e.nStatus;
-		}
-	}
-	
-	virtual void StopGenerating()
-	{
-		if (m_bActiveGeneratorControl) {
-			m_pReader->Stop();
-		}
-		m_pReader->RemoveListener(this);
-	}
-
 	// Custom Properties
 
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
@@ -215,17 +130,14 @@ public:
 	}
 
 protected:
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const NUI_LOCKED_RECT& lockedRect) = 0;
-
-	void clearBuffer()
+	virtual void PreStartGenerating()
 	{
-		if (m_pBuffer) {
-			delete[] m_pBuffer;
-			m_pBuffer = NULL;
-		}
+		SetUpBuffer();
 	}
 
-	void setupBuffer()
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const SourcePixelType* data, const NUI_LOCKED_RECT& lockedRect) = 0;
+
+	virtual void SetUpBuffer()
 	{
 		if (!m_pBuffer) {
 			// lazily initialize the buffer because the size is unknown at Init
@@ -234,6 +146,14 @@ protected:
 				throw new XnStatusException(XN_STATUS_ALLOC_FAILED);
 			}
 			xnOSMemSet(m_pBuffer, 0, GetXRes() * GetYRes() * sizeof(TargetPixelType));
+		}
+	}
+
+	virtual void CleanUpBuffer()
+	{
+		if (m_pBuffer) {
+			delete[] m_pBuffer;
+			m_pBuffer = NULL;
 		}
 	}
 

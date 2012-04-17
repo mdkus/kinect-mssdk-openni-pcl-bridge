@@ -60,3 +60,6 @@ DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGeneratorWithPsiPoseEmulation, 
 
 #include "MSRKinectUserSkeletonGeneratorWithAutoElevation.h"
 DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGeneratorWithAutoElevation, USER);
+
+#include "MSRKinectAudioGenerator.h"
+DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(AudioGenerator, AUDIO);

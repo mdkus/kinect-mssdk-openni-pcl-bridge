@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.2-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.3-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 4/14/2012
+Release Date: 4/17/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -164,6 +164,11 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.0.0.3-1.5.2.23
+ÅEFixed Issue #1: No data when mirro capability is set to false
+ÅEAdded first experimental implementation of Audio node with
+  beamAngle, sourceAngle, sourceAngleConfidence property
 
 V1.0.0.2-1.5.2.23
 * Multiple sensor support (not completely tested)

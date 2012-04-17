@@ -39,7 +39,6 @@ private:
 
 private:
 	BOOL m_bSmooth;
-	NUI_SKELETON_FRAME m_frame;
 
 public:
 	BOOL IsSmooth() const { return m_bSmooth; }
@@ -58,7 +57,6 @@ public:
 			if (m_bSmooth) {
 				CHECK_HRESULT(GetSensor()->NuiTransformSmooth(&m_frame, NULL));
 			}
-			m_pFrame = &m_frame;
 			return S_OK;
 		} catch (XnStatusException& e) {
 			return e.hResult;
@@ -67,7 +65,6 @@ public:
 
 	virtual void ReleaseFrameImpl()
 	{
-
 		// nothing to do
 	}
 

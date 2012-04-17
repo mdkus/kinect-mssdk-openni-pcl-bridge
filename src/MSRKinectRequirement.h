@@ -100,6 +100,15 @@ public:
 		}
 	}
 
+	void AddRequirement(XnPredefinedProductionNodeType nodeType)
+	{
+		switch (nodeType) {
+		case XN_NODE_TYPE_AUDIO:
+			m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_AUDIO;
+			break;
+		}
+	}
+
 	void AddCapabilityRequirement(const char* strCapability)
 	{
 		if (strcmp(strCapability, XN_CAPABILITY_SKELETON) == 0) {
@@ -193,7 +202,6 @@ private:
 
 		HANDLE e = CreateEvent(NULL, TRUE, FALSE, NULL);
 		HANDLE h = NULL;
-		pSensor->NuiImageStreamOpen(NUI_IMAGE_TYPE_DEPTH, NUI_IMAGE_RESOLUTION_640x480, 0, 2, e, &h);
 
 		return pSensor;
 	}

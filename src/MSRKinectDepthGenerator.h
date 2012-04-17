@@ -32,6 +32,7 @@
 #include "MSRKinectDepthGeneratorBase.h"
 #include "MSRKinectMirrorCap.h"
 #include "MSRKinectAlternativeViewPointCap.h"
+#include "custom_properties.h"
 
 class MSRKinectDepthGeneratorDepthPixelProcessor
 {
@@ -71,7 +72,7 @@ public:
 	// DepthGenerator methods
 	virtual XnDepthPixel* GetDepthMap()
 	{
-		setupBuffer();
+		SetUpBuffer();
 		return m_pBuffer;
 	}
 

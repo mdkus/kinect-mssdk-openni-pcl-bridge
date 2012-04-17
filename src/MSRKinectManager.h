@@ -31,6 +31,7 @@
 #include "base.h"
 #include "MSRKinectImageStreamManager.h"
 #include "MSRKinectSkeletonManager.h"
+#include "MSRKinectAudioStreamManager.h"
 #include "MSRKinectRequirement.h"
 
 class MSRKinectManager
@@ -39,9 +40,11 @@ private:
 	static MSRKinectManager cs_instance;
 
 	MSRKinectRequirement m_requirement;
+
 	MSRKinectImageStreamManager* m_pColorImageStreamManager;
 	MSRKinectImageStreamManager* m_pDepthImageStreamManager;
 	MSRKinectSkeletonManager* m_pSkeletonManager;
+	MSRKinectAudioStreamManager* m_pAudioStreamManager;
 
 public:
 	static MSRKinectManager* GetInstance() // throws XnStatusException
@@ -49,7 +52,7 @@ public:
 		return &cs_instance;
 	}
 
-	MSRKinectManager() : m_pColorImageStreamManager(NULL), m_pDepthImageStreamManager(NULL), m_pSkeletonManager(NULL)
+	MSRKinectManager() : m_pColorImageStreamManager(NULL), m_pDepthImageStreamManager(NULL), m_pSkeletonManager(NULL), m_pAudioStreamManager(NULL)
 	{
 	}
 
@@ -88,6 +91,14 @@ public:
 			m_pSkeletonManager = new MSRKinectSkeletonManager(&m_requirement);
 		}
 		return m_pSkeletonManager;
+	}
+
+	MSRKinectAudioStreamManager* GetAudioStreamManager() // throws XnStatusException
+	{
+		if (!m_pAudioStreamManager) {
+			m_pAudioStreamManager = new MSRKinectAudioStreamManager(&m_requirement);
+		}
+		return m_pAudioStreamManager;
 	}
 
 	void Shutdown()

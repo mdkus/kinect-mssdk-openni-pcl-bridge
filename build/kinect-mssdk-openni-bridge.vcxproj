@@ -27,17 +27,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\AbstractDeviceConfiguration.h" />
+    <ClInclude Include="..\src\AbstractModuleGenerator.h" />
     <ClInclude Include="..\src\AbstractMSRKinectImageStreamGenerator.h" />
     <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h" />
+    <ClInclude Include="..\src\AbstractMultiThreadFrameGenerator.h" />
+    <ClInclude Include="..\src\AudioConfiguration.h" />
     <ClInclude Include="..\src\base.h" />
+    <ClInclude Include="..\src\custom_properties.h" />
+    <ClInclude Include="..\src\DmoAudioReader.h" />
     <ClInclude Include="..\src\ImageConfiguration.h" />
     <ClInclude Include="..\src\math.h" />
     <ClInclude Include="..\src\MSRKinectAlternativeViewPointCap.h" />
+    <ClInclude Include="..\src\MSRKinectAudioGenerator.h" />
+    <ClInclude Include="..\src\MSRKinectAudioStreamContext.h" />
+    <ClInclude Include="..\src\MSRKinectAudioStreamManager.h" />
+    <ClInclude Include="..\src\MSRKinectAudioStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectFrameContextBase.h" />
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h" />
     <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h" />
     <ClInclude Include="..\src\MSRKinectDepthGeneratorCompatibleWithPrimeSense.h" />
     <ClInclude Include="..\src\MSRKinectFrameContext.h" />
-    <ClInclude Include="..\src\MSRKinectFrameContextBase.h" />
+    <ClInclude Include="..\src\MSRKinectGeometricFrameContextBase.h" />
     <ClInclude Include="..\src\MSRKinectFrameReader.h" />
     <ClInclude Include="..\src\MSRKinectImageGenerator.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h" />
@@ -213,7 +224,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Kinect10.lib;OpenNI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Kinect10.lib;OpenNI.lib;msdmo.lib;dmoguids.lib;amstrmid.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Beta1Release|Win32'">
@@ -265,7 +276,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Kinect10.lib;OpenNI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Kinect10.lib;OpenNI.lib;msdmo.lib;dmoguids.lib;amstrmid.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -29,21 +29,22 @@
 
 #pragma once
 #include "base.h"
-#include "MSRKinectFrameContextBase.h"
+#include "MSRKinectGeometricFrameContextBase.h"
 
 template <class FrameClass>
 class MSRKinectFrameContext :
-	public MSRKinectFrameContextBase
+	public MSRKinectGeometricFrameContextBase
 {
 private:
-	typedef MSRKinectFrameContextBase SuperClass;
+	typedef MSRKinectGeometricFrameContextBase SuperClass;
 
 protected:
-	FrameClass* m_pFrame;
+	FrameClass m_frame;
 	CRITICAL_SECTION m_csFrameAccess;
+	BOOL m_hasFrame;
 
 public:
-	MSRKinectFrameContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent), m_pFrame(NULL)
+	MSRKinectFrameContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent), m_hasFrame(FALSE)
 	{
 		InitializeCriticalSection(&m_csFrameAccess);
 	}
@@ -56,7 +57,7 @@ public:
 	const FrameClass* LockFrame()
 	{
 		EnterCriticalSection(&m_csFrameAccess);
-		return m_pFrame;
+		return &m_frame;
 	}
 
 	void UnlockFrame()
@@ -71,7 +72,8 @@ public:
 		HRESULT hr = GetNextFrameImpl();
 		if (SUCCEEDED(hr)) {
 			m_nFrameID++;
-			m_lTimestamp = m_pFrame->liTimeStamp.QuadPart * 1000;
+			m_lTimestamp = m_frame.liTimeStamp.QuadPart * 1000;
+			m_hasFrame = TRUE;
 		}
 		UnlockFrame();
 		return hr;
@@ -80,9 +82,9 @@ public:
 	void ReleaseFrame()
 	{
 		LockFrame();
-		if (m_pFrame) {
+		if (m_hasFrame) {
 			ReleaseFrameImpl();
-			m_pFrame = NULL;
+			m_hasFrame = FALSE;
 		}
 		UnlockFrame();
 	}

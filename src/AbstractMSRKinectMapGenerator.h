@@ -51,18 +51,15 @@ public:
 
 	virtual XnStatus GetSupportedMapOutputModes(XnMapOutputMode aModes[], XnUInt32& nCount)
 	{
-		for (XnUInt32 i = 0; i < nCount && i < m_imageConfig.GetNumberOfSupportedModes(); i++) {
-			aModes[i] = m_imageConfig.GetSupportedModeAt(i)->outputMode;
-		}
-		return XN_STATUS_OK;
+		return m_imageConfig.GetSupportedRawModes(aModes, nCount);
 	}
 
 	virtual XnStatus SetMapOutputMode(const XnMapOutputMode& mode)
 	{
 		try {
-			CHECK_XN_STATUS(m_imageConfig.Select(mode));
+			CHECK_XN_STATUS(m_imageConfig.SelectRawMode(mode));
 			m_pReader->SetOutputMode(m_nodeType, m_imageConfig.GetSelectedMode()->outputMode);
-			clearBuffer();
+			CleanUpBuffer();
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			return e.nStatus;

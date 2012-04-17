@@ -42,9 +42,6 @@
     <ClInclude Include="..\src\MSRKinectFrameContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\MSRKinectFrameContextBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\MSRKinectFrameReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +112,42 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectAudioGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AudioConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AbstractDeviceConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectAudioStreamReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectAudioStreamManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AbstractModuleGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AbstractMultiThreadFrameGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectGeometricFrameContextBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectFrameContextBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MSRKinectAudioStreamContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DmoAudioReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\custom_properties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
