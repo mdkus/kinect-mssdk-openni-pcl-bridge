@@ -305,7 +305,8 @@ protected:
 		}
 
 		try {
-			pSkeletonFrame = m_pSkeletonReader->LockFrame();
+			m_pSkeletonReader->LockFrame();
+			pSkeletonFrame = m_pSkeletonReader->GetFrame();
 			if (pSkeletonFrame) {
 				m_skeletonFrame = *pSkeletonFrame;
 			}

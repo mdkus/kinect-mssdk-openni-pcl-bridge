@@ -35,6 +35,7 @@ class MSRKinectFrameContextBase
 {
 protected:
 	HANDLE m_hNextFrameEvent;
+	CRITICAL_SECTION m_frameLock;
 
 	BOOL m_bRunning;
 
@@ -58,8 +59,23 @@ protected:
 		m_bRunning(FALSE),
 		m_nFrameID(0), m_lTimestamp(0)
 	{
+		InitializeCriticalSection(&m_frameLock);
 	}
 
 public:
-	virtual ~MSRKinectFrameContextBase() {}
+	virtual ~MSRKinectFrameContextBase()
+	{
+		DeleteCriticalSection(&m_frameLock);
+	}
+
+	void LockFrame()
+	{
+		EnterCriticalSection(&m_frameLock);
+	}
+
+	void UnlockFrame()
+	{
+		LeaveCriticalSection(&m_frameLock);
+	}
+
 };

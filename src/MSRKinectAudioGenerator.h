@@ -53,9 +53,11 @@ private:
 
 private:
 	AudioConfiguration m_audioConfig;
+	XnUInt32 m_dataSize;
+	XnUChar* m_data;
 
 public:
-	MSRKinectAudioGenerator() : SuperClass(TRUE), m_audioConfig(GetAudioConfigDesc())
+	MSRKinectAudioGenerator() : SuperClass(TRUE), m_audioConfig(GetAudioConfigDesc()), m_dataSize(0), m_data(NULL)
 	{
 		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
 		m_pReader = pMan->GetAudioStreamManager()->GetReader();
@@ -69,19 +71,23 @@ public:
 
 	XnStatus UpdateData()
 	{
-		// TODO: double buffering
+		m_pReader->LockFrame();
+		m_dataSize = m_pReader->GetDataSize();
+		m_data = m_pReader->GetData();
+		m_pReader->SwapBuffer();
 		m_bNewDataAvailable = FALSE;
+		m_pReader->UnlockFrame();
 		return XN_STATUS_OK;
 	}
 
 	XnUInt32 GetDataSize()
 	{
-		return m_pReader->GetDataSize();
+		return m_dataSize;
 	}
 
 	XnUChar* GetAudioBuffer()
 	{
-		return m_pReader->GetData();
+		return m_data;
 	}
 
 	XnUInt32 GetSupportedWaveOutputModesCount()

@@ -36,15 +36,33 @@ class MSRKinectAudioStreamReader :
 	public MSRKinectFrameReader<MSRKinectAudioStreamContext>
 {
 private:
-	static const int INTERVAL = 10; // tentative
+	typedef MSRKinectFrameReader<MSRKinectAudioStreamContext> SuperClass;
 
 private:
-	typedef MSRKinectFrameReader<MSRKinectAudioStreamContext> SuperClass;
+	static const int INTERVAL = 10; // tentative
+
+	CRITICAL_SECTION m_lock;
 
 public:
 	MSRKinectAudioStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent, INTERVAL)
 	{
+		InitializeCriticalSection(&m_lock);
 		m_pRequirement->AddRequirement(XN_NODE_TYPE_AUDIO);
+	}
+
+	~MSRKinectAudioStreamReader()
+	{
+		DeleteCriticalSection(&m_lock);
+	}
+
+	void Lock()
+	{
+		EnterCriticalSection(&m_lock);
+	}
+
+	void Unlock()
+	{
+		LeaveCriticalSection(&m_lock);
 	}
 
 protected:

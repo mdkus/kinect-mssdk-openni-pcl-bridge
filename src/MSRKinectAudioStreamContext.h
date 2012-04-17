@@ -30,37 +30,86 @@
 #include "base.h"
 #include "MSRKinectFrameContextBase.h"
 #include "DmoAudioReader.h"
+#include <vector>
 
 class MSRKinectAudioStreamContext : public MSRKinectFrameContextBase
 {
 private:
 	typedef MSRKinectFrameContextBase SuperClass;
+	typedef std::basic_string<BYTE> ByteBuffer;
 
 protected:
+	static const DWORD BUFFER_COUNT = 2;
+
 	DmoAudioReader* m_pDmoAudio;
+
+	ByteBuffer m_buffers[BUFFER_COUNT];
+	DWORD m_bufferSize;
+	DWORD m_currentBufferIndex;
+
+	BYTE* m_data;
+	DWORD m_dataSize;
+
+	double m_beamAngle;
+	double m_sourceAngle;
+	double m_sourceAngleConfidence;
 
 public:
 	MSRKinectAudioStreamContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
-		SuperClass(pRequirement, hNextFrameEvent), m_pDmoAudio(NULL)
+		SuperClass(pRequirement, hNextFrameEvent),
+		m_pDmoAudio(NULL),
+		m_bufferSize(DmoAudioReader::SAMPLE_PER_SEC * DmoAudioReader::BYTES_PER_SAMPLE), // 1 sec
+		m_currentBufferIndex(0),
+		m_data(NULL), m_dataSize(0),
+		m_beamAngle(0), m_sourceAngle(0), m_sourceAngleConfidence(0)
 	{
+		for (int i = 0; i < BUFFER_COUNT; i++) {
+			m_buffers[i].reserve(m_bufferSize);
+		}
 	}
 
 	HRESULT GetNextFrame()
 	{
-		// FIXME double buffering
-		HRESULT hr = m_pDmoAudio->Read();
-		if (hr == S_OK) {
-			m_nFrameID++;
-			m_lTimestamp = m_pDmoAudio->GetTimestamp();
-		}
+		HRESULT hr;
+		do {
+			hr = m_pDmoAudio->Read();
+
+			if (hr == S_OK) {
+				LockFrame();
+				ByteBuffer& buf = m_buffers[m_currentBufferIndex];
+				ByteBuffer::size_type room = buf.capacity() - buf.size();
+				ByteBuffer::size_type copySize = min(room, m_pDmoAudio->GetDataSize());
+				buf.append(m_pDmoAudio->GetData(), copySize);
+				UnlockFrame();
+			}
+		} while (hr == S_OK && m_pDmoAudio->HasMoreData());
+
 		return hr;
 	}
 
-	BYTE* GetData() { return m_pDmoAudio ? m_pDmoAudio->GetData() : NULL; }
-	DWORD GetDataSize() { return m_pDmoAudio ? m_pDmoAudio->GetDataSize() : 0; }
-	double GetBeamAngle() { return m_pDmoAudio ? m_pDmoAudio->GetBeamAngle() : 0; }
-	double GetSourceAngle() { return m_pDmoAudio ? m_pDmoAudio->GetSourceAngle() : 0; }
-	double GetSourceAngleConfidence() { return m_pDmoAudio ? m_pDmoAudio->GetSourceAngleConfidence() : 0; }
+	void SwapBuffer()
+	{
+		m_nFrameID++;
+		m_lTimestamp = m_pDmoAudio->GetTimestamp();
+
+		
+		ByteBuffer& buf = m_buffers[m_currentBufferIndex];
+		m_dataSize = buf.length();
+		m_data = const_cast<BYTE*>(buf.data());
+
+		m_beamAngle = m_pDmoAudio->GetBeamAngle();
+		m_sourceAngle = m_pDmoAudio->GetSourceAngle();
+		m_sourceAngleConfidence = m_pDmoAudio->GetSourceAngleConfidence();
+
+		m_currentBufferIndex = (m_currentBufferIndex + 1 ) % BUFFER_COUNT;
+		m_buffers[m_currentBufferIndex].clear();
+	}
+
+	BYTE* GetData() { return m_data; }
+	DWORD GetDataSize() { return m_dataSize; }
+	double GetBeamAngle() { return m_beamAngle; }
+	double GetSourceAngle() { return m_sourceAngle; }
+	double GetSourceAngleConfidence() { return m_sourceAngleConfidence; }
 
 protected:
 	void SetUpDmoAudio() {

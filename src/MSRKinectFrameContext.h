@@ -40,29 +40,15 @@ private:
 
 protected:
 	FrameClass m_frame;
-	CRITICAL_SECTION m_csFrameAccess;
 	BOOL m_hasFrame;
 
 public:
 	MSRKinectFrameContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent), m_hasFrame(FALSE)
 	{
-		InitializeCriticalSection(&m_csFrameAccess);
 	}
 	
 	virtual ~MSRKinectFrameContext()
 	{
-		DeleteCriticalSection(&m_csFrameAccess);
-	}
-
-	const FrameClass* LockFrame()
-	{
-		EnterCriticalSection(&m_csFrameAccess);
-		return &m_frame;
-	}
-
-	void UnlockFrame()
-	{
-		LeaveCriticalSection(&m_csFrameAccess);
 	}
 
 	HRESULT GetNextFrame()
@@ -87,6 +73,11 @@ public:
 			m_hasFrame = FALSE;
 		}
 		UnlockFrame();
+	}
+
+	FrameClass* GetFrame()
+	{
+		return &m_frame;
 	}
 
 protected:

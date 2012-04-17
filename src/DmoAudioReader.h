@@ -40,7 +40,7 @@ class CStaticMediaBuffer : public IMediaBuffer {
 public:
    CStaticMediaBuffer() {}
    CStaticMediaBuffer(BYTE *pData, ULONG ulSize, ULONG ulData) :
-      m_pData(pData), m_ulSize(ulSize), m_ulData(ulData), m_cRef(1) {}
+      m_pData(pData), m_ulSize(ulSize), m_ulData(ulData) {}
    STDMETHODIMP_(ULONG) AddRef() { return 2; }
    STDMETHODIMP_(ULONG) Release() { return 1; }
    STDMETHODIMP QueryInterface(REFIID riid, void **ppv) {
@@ -68,13 +68,12 @@ public:
         m_pData = pData;
         m_ulSize = ulSize;
         m_ulData = ulData;
-   }
+   }   
    ULONG GetDataSize() { return m_ulData; }
 protected:
    BYTE *m_pData;
    ULONG m_ulSize;
    ULONG m_ulData;
-   ULONG m_cRef;
 };
 
 
@@ -97,6 +96,7 @@ private:
 
 	REFERENCE_TIME m_timestamp;
 	REFERENCE_TIME m_timeLength;
+	BOOL m_hasMoreData;
 
 	double m_beamAngle;
 	double m_sourceAngle;
@@ -105,7 +105,8 @@ private:
 public:
 	DmoAudioReader(INuiSensor* pSensor) :
 		m_pSensor(pSensor), m_pAudioBeam(NULL), m_pDmo(NULL), m_pPropertyStore(NULL), m_byteBuffer(NULL),
-		m_timestamp(0), m_timeLength(0)
+		m_timestamp(0), m_timeLength(0), m_hasMoreData(0),
+		m_beamAngle(0), m_sourceAngle(0), m_sourceAngleConfidence(0)
 	{
 		try {
 			CHECK_HRESULT(CoInitialize(NULL));
@@ -135,6 +136,7 @@ public:
 	BYTE* GetData() { return m_byteBuffer; }
 
 	REFERENCE_TIME GetTimestamp() { return m_timestamp; }
+	BOOL HasMoreData() { return m_hasMoreData; }
 
 	double GetBeamAngle() { return m_beamAngle; }
 	double GetSourceAngle() { return m_sourceAngle; }
@@ -149,13 +151,22 @@ public:
 		out.rtTimestamp = 0;
 		DWORD status;
 		HRESULT hr = m_pDmo->ProcessOutput(0, 1, &out, &status);
-		if (hr == S_OK) {
+		if (hr == S_OK && m_mediaBuffer.GetDataSize() != 0) {
+			m_hasMoreData = !!(out.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
 			m_timestamp = out.rtTimestamp;
 			m_timeLength = out.rtTimelength;
 			CHECK_HRESULT(m_pAudioBeam->GetBeam(&m_beamAngle));
 			CHECK_HRESULT(m_pAudioBeam->GetPosition(&m_sourceAngle, &m_sourceAngleConfidence));
 		}
 		return hr;
+	}
+
+	void DiscardData()
+	{
+		DMO_OUTPUT_DATA_BUFFER out;
+		out.pBuffer = NULL;
+		DWORD status;
+		CHECK_HRESULT(m_pDmo->ProcessOutput(DMO_PROCESS_OUTPUT_DISCARD_WHEN_NO_BUFFER, 1, &out, &status));
 	}
 
 private:
@@ -169,12 +180,34 @@ private:
 
 	void SetUpSystemMode()
 	{
-		// Set AEC_SYSTEM_MODE to MFPKEY_WMAAECMA_SYSTEM_MODE
+		// MFPKEY_WMAAECMA_SYSTEM_MODE
 		PROPVARIANT var;
 		PropVariantInit(&var);
+
 		var.vt = VT_I4;
 		var.lVal = OPTIBEAM_ARRAY_AND_AEC;
+		// var.lVal = OPTIBEAM_ARRAY_ONLY;
 		CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_SYSTEM_MODE, var));
+
+		// Trying to set other properties, but no luck
+		//
+		// See MFPKEY_WMAAECMA_FEATURE_MODE properties for more information
+
+		//var.vt = VT_BOOL;
+		//var.bVal = VARIANT_TRUE;
+		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATURE_MODE, var));
+
+		//var.vt = VT_I4;
+		//var.lVal = 2;
+		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATR_AES, var));
+
+		//var.vt = VT_I4;
+		//var.lVal = 0;
+		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATR_NS, var));
+
+		//var.vt = VT_BOOL;
+		//var.bVal = VARIANT_TRUE;
+		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATR_AGC, var));
 	}
 
 	void SetUpMediaType()
@@ -195,7 +228,7 @@ private:
 
 	void SetUpMediaBuffer()
 	{
-		m_byteBufferSize = SAMPLE_PER_SEC * BYTES_PER_SAMPLE;
+		m_byteBufferSize = SAMPLE_PER_SEC * BYTES_PER_SAMPLE; // 1 sec is more than enough
 		m_byteBuffer = new BYTE[m_byteBufferSize];
 	}
 

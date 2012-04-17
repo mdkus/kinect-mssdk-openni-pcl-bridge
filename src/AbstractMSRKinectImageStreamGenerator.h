@@ -89,7 +89,8 @@ public:
 			return XN_STATUS_OK;
 		}
 
-		const NUI_IMAGE_FRAME *pFrame = m_pReader->LockFrame();
+		m_pReader->LockFrame();
+		NUI_IMAGE_FRAME *pFrame = m_pReader->GetFrame();
 		if (pFrame) {
 			NUI_LOCKED_RECT lockedRect;
 			pFrame->pFrameTexture->LockRect(0, &lockedRect, NULL, 0);
