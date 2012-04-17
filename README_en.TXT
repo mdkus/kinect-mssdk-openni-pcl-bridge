@@ -166,8 +166,8 @@ this module is not liable for any consequences caused by failing to do so.
 6. Change History
 
 V1.0.0.3-1.5.2.23
-ÅEFixed Issue #1: No data when mirro capability is set to false
-ÅEAdded first experimental implementation of Audio node with
+* Fixed Issue #1: No data when mirror capability is set to false
+* Added first experimental implementation of Audio node with
   beamAngle, sourceAngle, sourceAngleConfidence property
 
 V1.0.0.2-1.5.2.23
