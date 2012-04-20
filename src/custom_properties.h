@@ -27,9 +27,9 @@
 //
 //@COPYRIGHT@//
 
-// IntProperty for depth node: Set to non-zero to get distinct overflow depth values
+// IntProperty for depth node: Set to non-zero to get distinct overflow depth values.
 #define PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES "distinctOverflowDepthValues"
-// IntProperty for depth node: Set to non-zero to enable near mode
+// IntProperty for depth node: Set to non-zero to enable near mode.
 #define PROP_DEPTH_NEAR_MODE "nearMode"
 
 // IntProperty for all node types: Camera angle in degrees relative to the gravity. Use after generation started.
@@ -37,9 +37,21 @@
 // IntProperty for all node types: Get pointer value to INuiSensor that is ast to XnUInt64. Use after generation started. Read-only.
 #define PROP_COMMON_NUI_SENSOR_POINTER "nuiSensorPointer"
 
-// RealProperty for audio node: Beam angle. Use after generation started. Read-only.
+// RealProperty for audio node: Beam angle. Use after generation started.
 #define PROP_AUDIO_BEAM_ANGLE "beamAngle"
 // RealProperty for audio node: Audio source angle. Use after generation started. Read-only.
 #define PROP_AUDIO_SOURCE_ANGLE "sourceAngle"
 // RealProperty for audio node: Confidence of audio source angle. Use after generation started. Read-only.
 #define PROP_AUDIO_SOURCE_ANGLE_CONFIDENCE "sourceAngleConfidence"
+
+// IntProperty for audio node: Automatic gain control: 0(off), 1(on)
+#define PROP_AUDIO_AUTOMATIC_GAIN_CONTROL "automaticGainControl"
+// IntProperty for audio node: Beam angle forming mode: 0(adaptive), 1(automatic), 2(manual)
+#define PROP_AUDIO_BEAM_ANGLE_MODE "beamAngleMode"
+// IntProperty for audio node: Acoustic echo cancellation and additional suppression
+// 0(none), 1(AEC), 2(AEC+AES once), 3(AEC+AES twice)
+#define PROP_AUDIO_ECHO_CANCELLATION_MODE "echoCancellationMode"
+// IntProperty for audio node: Center clipping: 0(none), 1(center clipping), 2(center clipping+noise fill)
+#define PROP_AUDIO_CENTER_CLIPPING_MODE "centerClippingMode"
+// IntProperty for audio node: Noise supporession: 0(OFF), 1(ON)
+#define PROP_AUDIO_NOISE_SUPPRESSION "noiseSuppression"

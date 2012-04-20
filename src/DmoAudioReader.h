@@ -30,9 +30,8 @@
 #pragma once
 #include "base.h"
 
+#include "DmoAudioProperties.h"
 #include <dmo.h>
-#include <wmcodecdsp.h>
-#include <mmdeviceapi.h>
 #include <uuids.h>
 
 // Taken from Kinect SDK sample
@@ -89,13 +88,16 @@ private:
 	INuiAudioBeam* m_pAudioBeam;
 	IMediaObject* m_pDmo;
 	IPropertyStore* m_pPropertyStore;
+
+	DmoAudioProperties* m_pAudioProperties;
+
 	CStaticMediaBuffer m_mediaBuffer;
 
 	DWORD m_byteBufferSize;
 	BYTE* m_byteBuffer;
 
-	REFERENCE_TIME m_timestamp;
-	REFERENCE_TIME m_timeLength;
+	REFERENCE_TIME m_timestampInNs;
+	REFERENCE_TIME m_timeLengthInNs;
 	BOOL m_hasMoreData;
 
 	double m_beamAngle;
@@ -103,9 +105,11 @@ private:
 	double m_sourceAngleConfidence;
 
 public:
-	DmoAudioReader(INuiSensor* pSensor) :
-		m_pSensor(pSensor), m_pAudioBeam(NULL), m_pDmo(NULL), m_pPropertyStore(NULL), m_byteBuffer(NULL),
-		m_timestamp(0), m_timeLength(0), m_hasMoreData(0),
+	DmoAudioReader(INuiSensor* pSensor, DmoAudioProperties* pAudioProperties) :
+		m_pSensor(pSensor), m_pAudioBeam(NULL), m_pDmo(NULL), m_pPropertyStore(NULL),
+		m_pAudioProperties(pAudioProperties),
+		m_byteBuffer(NULL),
+		m_timestampInNs(0), m_timeLengthInNs(0), m_hasMoreData(0),
 		m_beamAngle(0), m_sourceAngle(0), m_sourceAngleConfidence(0)
 	{
 		try {
@@ -116,7 +120,8 @@ public:
 			CHECK_HRESULT(m_pAudioBeam->QueryInterface(IID_IMediaObject, (void**)&m_pDmo));
 			CHECK_HRESULT(m_pAudioBeam->QueryInterface(IID_IPropertyStore, (void**)&m_pPropertyStore));
 
-			SetUpSystemMode();
+			m_pAudioProperties->SetPropertyStore(m_pPropertyStore);
+			m_pAudioProperties->Update();
 			SetUpMediaType();
 			SetUpMediaBuffer();
 			CHECK_HRESULT(m_pDmo->AllocateStreamingResources());
@@ -135,12 +140,14 @@ public:
 	DWORD GetDataSize() { return m_mediaBuffer.GetDataSize(); }
 	BYTE* GetData() { return m_byteBuffer; }
 
-	REFERENCE_TIME GetTimestamp() { return m_timestamp; }
+	REFERENCE_TIME GetTimestampInNs() { return m_timestampInNs; }
+	REFERENCE_TIME GetTimeLengthInNs() { return m_timeLengthInNs; }
 	BOOL HasMoreData() { return m_hasMoreData; }
 
 	double GetBeamAngle() { return m_beamAngle; }
 	double GetSourceAngle() { return m_sourceAngle; }
 	double GetSourceAngleConfidence() { return m_sourceAngleConfidence; }
+	void SetBeamAngle(double value) { m_pAudioBeam->SetBeam(value); }
 
 	HRESULT Read()
 	{
@@ -153,20 +160,12 @@ public:
 		HRESULT hr = m_pDmo->ProcessOutput(0, 1, &out, &status);
 		if (hr == S_OK && m_mediaBuffer.GetDataSize() != 0) {
 			m_hasMoreData = !!(out.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
-			m_timestamp = out.rtTimestamp;
-			m_timeLength = out.rtTimelength;
+			m_timestampInNs = out.rtTimestamp;
+			m_timeLengthInNs = out.rtTimelength;
 			CHECK_HRESULT(m_pAudioBeam->GetBeam(&m_beamAngle));
 			CHECK_HRESULT(m_pAudioBeam->GetPosition(&m_sourceAngle, &m_sourceAngleConfidence));
 		}
 		return hr;
-	}
-
-	void DiscardData()
-	{
-		DMO_OUTPUT_DATA_BUFFER out;
-		out.pBuffer = NULL;
-		DWORD status;
-		CHECK_HRESULT(m_pDmo->ProcessOutput(DMO_PROCESS_OUTPUT_DISCARD_WHEN_NO_BUFFER, 1, &out, &status));
 	}
 
 private:
@@ -176,38 +175,6 @@ private:
 		if (m_pPropertyStore) m_pPropertyStore->Release();
 		if (m_pDmo) m_pDmo->Release();
 		if (m_pAudioBeam) m_pAudioBeam->Release();
-	}
-
-	void SetUpSystemMode()
-	{
-		// MFPKEY_WMAAECMA_SYSTEM_MODE
-		PROPVARIANT var;
-		PropVariantInit(&var);
-
-		var.vt = VT_I4;
-		var.lVal = OPTIBEAM_ARRAY_AND_AEC;
-		// var.lVal = OPTIBEAM_ARRAY_ONLY;
-		CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_SYSTEM_MODE, var));
-
-		// Trying to set other properties, but no luck
-		//
-		// See MFPKEY_WMAAECMA_FEATURE_MODE properties for more information
-
-		//var.vt = VT_BOOL;
-		//var.bVal = VARIANT_TRUE;
-		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATURE_MODE, var));
-
-		//var.vt = VT_I4;
-		//var.lVal = 2;
-		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATR_AES, var));
-
-		//var.vt = VT_I4;
-		//var.lVal = 0;
-		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATR_NS, var));
-
-		//var.vt = VT_BOOL;
-		//var.bVal = VARIANT_TRUE;
-		//CHECK_HRESULT(m_pPropertyStore->SetValue(MFPKEY_WMAAECMA_FEATR_AGC, var));
 	}
 
 	void SetUpMediaType()

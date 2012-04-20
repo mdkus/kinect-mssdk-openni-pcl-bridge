@@ -29,31 +29,84 @@
 
 #pragma once
 #include "base.h"
-#include "MSRKinectFrameReader.h"
-#include "MSRKinectAudioStreamContext.h"
 
-class MSRKinectAudioStreamReader :
-	public MSRKinectFrameReader<MSRKinectAudioStreamContext>
+#include <propsys.h>
+
+class PropVar : public PROPVARIANT
 {
-private:
-	typedef MSRKinectFrameReader<MSRKinectAudioStreamContext> SuperClass;
-
-private:
-	static const int INTERVAL = 10; // tentative
+public:
+	HRESULT lastResult;
 
 public:
-	MSRKinectAudioStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) : SuperClass(pRequirement, hNextFrameEvent, INTERVAL)
+	PropVar() : lastResult(S_OK)
 	{
-		m_pRequirement->AddRequirement(XN_NODE_TYPE_AUDIO);
+		PropVariantInit(this);
 	}
 
-protected:
-	virtual void Setup()
+	~PropVar()
 	{
-		if (!m_pDmoAudio) {
-			m_pRequirement->DoInitialize();
-			SetUpDmoAudio();
+		PropVariantClear(this);
+	}
+
+	PropVar* Pull(IPropertyStore* ps, const PROPERTYKEY& key)
+	{
+		lastResult = ps->GetValue(key, this);
+		return this;
+	}
+
+	bool Push(IPropertyStore* ps, const PROPERTYKEY& key)
+	{
+		if (vt == VT_EMPTY) {
+			lastResult = S_OK;
+			return true; // nothing to do
+		} else {
+			lastResult = ps->SetValue(key, *this);
+			return SUCCEEDED(lastResult);
 		}
 	}
 
+	bool PushIfChanged(IPropertyStore* ps, const PROPERTYKEY& key)
+	{
+		if (vt != VT_EMPTY) {
+			PropVar currentVar;
+			currentVar.Pull(ps, key);
+			if (!Equals(currentVar)) {
+				return Push(ps, key);
+			}
+		}
+		lastResult = S_OK;
+		return true;
+	}
+
+	bool Equals(const PropVar& other)
+	{
+		return memcmp((PROPVARIANT*)this, (PROPVARIANT*)&other, sizeof(PROPVARIANT)) == 0;
+	}
+
+	void SetInt32(LONG value)
+	{
+		vt = VT_I4;
+		lVal = value;
+	}
+
+	void SetBool(BOOL value)
+	{
+		vt = VT_BOOL;
+		boolVal = value ? VARIANT_TRUE : VARIANT_FALSE;
+	}
+};
+
+class Prop
+{
+public:
+	const PROPERTYKEY key;
+	PropVar var;
+
+public:
+	Prop(const PROPERTYKEY& _key) : key(_key) {}
+	~Prop() {}
+
+	bool Push(IPropertyStore* ps) { return var.Push(ps, key); }
+	bool PushIfChanged(IPropertyStore* ps) { return var.PushIfChanged(ps, key); }
+	PropVar* Pull(IPropertyStore* ps) { return var.Pull(ps, key); }
 };

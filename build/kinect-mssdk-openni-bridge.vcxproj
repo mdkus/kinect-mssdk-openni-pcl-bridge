@@ -40,6 +40,7 @@
     <ClInclude Include="..\src\math.h" />
     <ClInclude Include="..\src\MSRKinectAlternativeViewPointCap.h" />
     <ClInclude Include="..\src\MSRKinectAudioGenerator.h" />
+    <ClInclude Include="..\src\DmoAudioProperties.h" />
     <ClInclude Include="..\src\MSRKinectAudioStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectAudioStreamManager.h" />
     <ClInclude Include="..\src\MSRKinectAudioStreamReader.h" />
@@ -69,6 +70,7 @@
     <ClInclude Include="..\src\PrimeSenseProperties.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
     <ClInclude Include="..\src\Properties.h" />
+    <ClInclude Include="..\src\Prop.h" />
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
     <ClInclude Include="..\src\vec.h" />
     <ClInclude Include="..\src\version.h" />

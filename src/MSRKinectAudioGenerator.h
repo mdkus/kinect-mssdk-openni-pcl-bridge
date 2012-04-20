@@ -127,17 +127,78 @@ public:
 
 	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const
 	{
-		if (strcmp(strName, PROP_AUDIO_BEAM_ANGLE) == 0) {
-			dValue = m_pReader->GetBeamAngle();
+		try {
+			if (strcmp(strName, PROP_AUDIO_BEAM_ANGLE) == 0) {
+				dValue = m_pReader->GetBeamAngle();
+			} else if (strcmp(strName, PROP_AUDIO_SOURCE_ANGLE) == 0) {
+				dValue = m_pReader->GetSourceAngle();
+			} else if (strcmp(strName, PROP_AUDIO_SOURCE_ANGLE_CONFIDENCE) == 0) {
+				dValue = m_pReader->GetSourceAngleConfidence();
+			} else {
+				return SuperClass::GetRealProperty(strName, dValue);
+			}
 			return XN_STATUS_OK;
-		} else if (strcmp(strName, PROP_AUDIO_SOURCE_ANGLE) == 0) {
-			dValue = m_pReader->GetSourceAngle();
+		} catch (XnStatusException& e) {
+			return e.nStatus;
+		}
+	}
+
+	XnStatus SetRealProperty(const XnChar* strName, XnDouble dValue)
+	{
+		try {
+			if (streq(strName, PROP_AUDIO_BEAM_ANGLE)) {
+				m_pReader->SetBeamAngle(dValue);
+			} else {
+				return SuperClass::SetRealProperty(strName, dValue);
+			}
 			return XN_STATUS_OK;
-		} else if (strcmp(strName, PROP_AUDIO_SOURCE_ANGLE_CONFIDENCE) == 0) {
-			dValue = m_pReader->GetSourceAngleConfidence();
+		} catch (XnStatusException& e) {
+			return e.nStatus;
+		}
+	}
+
+	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
+	{
+		try {
+			if (streq(strName, PROP_AUDIO_AUTOMATIC_GAIN_CONTROL)) {
+				nValue = m_pReader->GetAudioProperties()->GetAutomaticGainControl();
+			} else if (streq(strName, PROP_AUDIO_BEAM_ANGLE_MODE)) {
+				nValue = m_pReader->GetAudioProperties()->GetBeamAngleMode();
+			} else if (streq(strName, PROP_AUDIO_ECHO_CANCELLATION_MODE)) {
+				nValue = m_pReader->GetAudioProperties()->GetEchoCancellationMode();
+			} else if (streq(strName, PROP_AUDIO_CENTER_CLIPPING_MODE)) {
+				nValue = m_pReader->GetAudioProperties()->GetCenterClippingMode();
+			} else if (streq(strName, PROP_AUDIO_NOISE_SUPPRESSION)) {
+				nValue = m_pReader->GetAudioProperties()->GetNoiseSuppression();
+			} else {
+				return SuperClass::GetIntProperty(strName, nValue);
+			}
 			return XN_STATUS_OK;
-		} else {
-			return SuperClass::GetRealProperty(strName, dValue);
+		} catch (XnStatusException& e) {
+			return e.nStatus;
+		}
+	}
+
+	XnStatus SetIntProperty(const XnChar* strName, XnUInt64 nValue)
+	{
+		try {
+			int iValue = (int)nValue;
+			if (streq(strName, PROP_AUDIO_AUTOMATIC_GAIN_CONTROL)) {
+				m_pReader->GetAudioProperties()->SetAutomaticGainControl(iValue);
+			} else if (streq(strName, PROP_AUDIO_BEAM_ANGLE_MODE)) {
+				m_pReader->GetAudioProperties()->SetBeamAngleMode(iValue);
+			} else if (streq(strName, PROP_AUDIO_ECHO_CANCELLATION_MODE)) {
+				m_pReader->GetAudioProperties()->SetEchoCancellationMode(iValue);
+			} else if (streq(strName, PROP_AUDIO_CENTER_CLIPPING_MODE)) {
+				m_pReader->GetAudioProperties()->SetCenterClippingMode(iValue);
+			} else if (streq(strName, PROP_AUDIO_NOISE_SUPPRESSION)) {
+				m_pReader->GetAudioProperties()->SetNoiseSuppression(iValue);
+			} else {
+				return SuperClass::GetIntProperty(strName, nValue);
+			}
+			return XN_STATUS_OK;
+		} catch (XnStatusException& e) {
+			return e.nStatus;
 		}
 	}
 
