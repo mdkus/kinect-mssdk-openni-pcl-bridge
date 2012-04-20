@@ -170,6 +170,8 @@ public:
 				nValue = m_pReader->GetAudioProperties()->GetCenterClippingMode();
 			} else if (streq(strName, PROP_AUDIO_NOISE_SUPPRESSION)) {
 				nValue = m_pReader->GetAudioProperties()->GetNoiseSuppression();
+			} else if (streq(strName, PROP_AUDIO_BUFFER_SIZE)) {
+				nValue = m_pReader->GetBufferSizeInMs();
 			} else {
 				return SuperClass::GetIntProperty(strName, nValue);
 			}
@@ -193,6 +195,8 @@ public:
 				m_pReader->GetAudioProperties()->SetCenterClippingMode(iValue);
 			} else if (streq(strName, PROP_AUDIO_NOISE_SUPPRESSION)) {
 				m_pReader->GetAudioProperties()->SetNoiseSuppression(iValue);
+			} else if (streq(strName, PROP_AUDIO_BUFFER_SIZE)) {
+				m_pReader->SetBufferSizeInMs(iValue);
 			} else {
 				return SuperClass::GetIntProperty(strName, nValue);
 			}

@@ -44,14 +44,17 @@
 // RealProperty for audio node: Confidence of audio source angle. Use after generation started. Read-only.
 #define PROP_AUDIO_SOURCE_ANGLE_CONFIDENCE "sourceAngleConfidence"
 
-// IntProperty for audio node: Automatic gain control: 0(off), 1(on)
+// IntProperty for audio node: Automatic gain control: [0](off), 1(on)
 #define PROP_AUDIO_AUTOMATIC_GAIN_CONTROL "automaticGainControl"
-// IntProperty for audio node: Beam angle forming mode: 0(adaptive), 1(automatic), 2(manual)
+// IntProperty for audio node: Beam angle forming mode: [0](adaptive), 1(automatic), 2(manual)
 #define PROP_AUDIO_BEAM_ANGLE_MODE "beamAngleMode"
 // IntProperty for audio node: Acoustic echo cancellation and additional suppression
-// 0(none), 1(AEC), 2(AEC+AES once), 3(AEC+AES twice)
+// 0(none), 1(AEC), [2](AEC+AES once), 3(AEC+AES twice)
 #define PROP_AUDIO_ECHO_CANCELLATION_MODE "echoCancellationMode"
-// IntProperty for audio node: Center clipping: 0(none), 1(center clipping), 2(center clipping+noise fill)
+// IntProperty for audio node: Center clipping: [0](none), 1(center clipping), 2(center clipping+noise fill)
 #define PROP_AUDIO_CENTER_CLIPPING_MODE "centerClippingMode"
-// IntProperty for audio node: Noise supporession: 0(OFF), 1(ON)
+// IntProperty for audio node: Noise supporession: 0(OFF), [1](ON)
 #define PROP_AUDIO_NOISE_SUPPRESSION "noiseSuppression"
+// IntProperty for audio node: Audio data buffer size in milliseconds [1000]. Set before generation starts.
+// You can set zero if you only need source angles but no audio data itself.
+#define PROP_AUDIO_BUFFER_SIZE "bufferSizeInMs"

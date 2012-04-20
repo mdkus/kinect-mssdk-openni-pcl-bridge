@@ -72,14 +72,12 @@ public:
 	MSRKinectAudioStreamContext(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
 		SuperClass(pRequirement, hNextFrameEvent),
 		m_pDmoAudio(NULL),
-		m_bufferSize(DmoAudioReader::SAMPLE_PER_SEC * DmoAudioReader::BYTES_PER_SAMPLE), // 1 sec
+		m_bufferSize(0),
 		m_currentBufferIndex(0),
 		m_data(NULL), m_dataSize(0),
 		m_beamAngle(0), m_sourceAngle(0), m_sourceAngleConfidence(0)
 	{
-		for (int i = 0; i < BUFFER_COUNT; i++) {
-			m_buffers[i].init(new BYTE[m_bufferSize]);
-		}
+		SetBufferSizeInMs(1000);
 	}
 	
 	HRESULT GetNextFrame()
@@ -141,10 +139,24 @@ public:
 		}
 	}
 
+	void SetBufferSizeInMs(DWORD millis)
+	{
+		m_bufferSize = DmoAudioReader::BYTES_PER_MILLISEC * millis;
+	}
+
+	DWORD GetBufferSizeInMs()
+	{
+		return m_bufferSize / DmoAudioReader::BYTES_PER_MILLISEC;
+	}
+
 	DmoAudioProperties* GetAudioProperties() { return &m_audioProperties; }
 
 protected:
 	void SetUpDmoAudio() {
+		for (int i = 0; i < BUFFER_COUNT; i++) {
+			m_buffers[i].init(new BYTE[m_bufferSize]);
+		}
+
 		m_pDmoAudio = new DmoAudioReader(m_pRequirement->GetSensor(), &m_audioProperties);
 	}
 };

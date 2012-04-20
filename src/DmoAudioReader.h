@@ -82,6 +82,8 @@ public:
 	static const DWORD SAMPLE_PER_SEC = 16000;
 	static const DWORD BITS_PER_SAMPLE = 16;
 	static const DWORD BYTES_PER_SAMPLE = BITS_PER_SAMPLE >> 3;
+	static const DWORD BYTES_PER_SEC = SAMPLE_PER_SEC * BYTES_PER_SAMPLE;
+	static const DWORD BYTES_PER_MILLISEC = BYTES_PER_SEC / 1000;
 
 private:
 	INuiSensor* m_pSensor;
@@ -179,7 +181,7 @@ private:
 
 	void SetUpMediaType()
 	{
-		WAVEFORMATEX wf = { WAVE_FORMAT_PCM, 1, SAMPLE_PER_SEC, SAMPLE_PER_SEC*BYTES_PER_SAMPLE, BYTES_PER_SAMPLE, BITS_PER_SAMPLE, 0 };
+		WAVEFORMATEX wf = { WAVE_FORMAT_PCM, 1, SAMPLE_PER_SEC, BYTES_PER_SEC, BYTES_PER_SAMPLE, BITS_PER_SAMPLE, 0 };
 		DMO_MEDIA_TYPE mt;
 		MoInitMediaType(&mt, sizeof(wf));
 		mt.majortype = MEDIATYPE_Audio;
