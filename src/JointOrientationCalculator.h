@@ -304,7 +304,7 @@ public:
 				m_pSkeleton->GetSkeletonJointPosition(user,footJoint,footPos);
 				XnFloat minConfidence = 0.9f;
 				if (footPos.fConfidence < minConfidence) {
-					printf("Knee position confidence was: %f\r\n",footPos.fConfidence);
+					//printf("Knee position confidence was: %f\r\n",footPos.fConfidence);
 					MakeMatrixFromY(vy,jointOrientation);
 				}else {
 					MakeMatrixFromYZ(vy,vz,jointOrientation);
