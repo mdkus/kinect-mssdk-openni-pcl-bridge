@@ -84,10 +84,37 @@ protected:
 
 class MSRKinectDepthImageStreamReader : public MSRKinectImageStreamReader
 {
+private:
+	BOOL m_nearMode;
+	BOOL m_distinctOverflowDepthValues;
+
 public:
 	MSRKinectDepthImageStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
-		MSRKinectImageStreamReader(pRequirement, hNextFrameEvent)
+		MSRKinectImageStreamReader(pRequirement, hNextFrameEvent),
+		m_nearMode(FALSE), m_distinctOverflowDepthValues(FALSE)
 	{
+	}
+
+	void SetNearMode(BOOL value)
+	{
+		m_nearMode = value;
+		UpdateImageFrameFlags();
+	}
+
+	void SetDistinctOverflowDepthValues(BOOL value)
+	{
+		m_distinctOverflowDepthValues = value;
+		UpdateImageFrameFlags();
+	}
+
+	BOOL GetNearMode()
+	{
+		return m_nearMode;
+	}
+
+	BOOL GetDistinctOverflowDepthValues()
+	{
+		return m_distinctOverflowDepthValues;
 	}
 
 protected:
@@ -99,9 +126,25 @@ protected:
 
 	virtual void PostStreamOpen()
 	{
-		DWORD flags;
-		CHECK_HRESULT(GetSensor()->NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &flags));
-		flags |= m_pRequirement->GetDepthImageFrameFlags();
-		CHECK_HRESULT(GetSensor()->NuiImageStreamSetImageFrameFlags(m_hStreamHandle, flags));
+		UpdateImageFrameFlags();
+	}
+
+	void UpdateImageFrameFlags()
+	{
+		if (m_hStreamHandle) {
+			DWORD flags;
+			CHECK_HRESULT(GetSensor()->NuiImageStreamGetImageFrameFlags(m_hStreamHandle, &flags));
+			flags = changeBit<DWORD>(flags, NUI_IMAGE_STREAM_FLAG_ENABLE_NEAR_MODE, m_nearMode);
+			flags = changeBit<DWORD>(flags, NUI_IMAGE_STREAM_FLAG_DISTINCT_OVERFLOW_DEPTH_VALUES, m_distinctOverflowDepthValues);
+			HRESULT hr = GetSensor()->NuiImageStreamSetImageFrameFlags(m_hStreamHandle, flags);
+			if (hr == E_NUI_HARDWARE_FEATURE_UNAVAILABLE) {
+				// Kinect for Xbox360 does not support some features
+				puts("The feature is not supported by the requested feature. The request is ignored.\n"); // TODO log
+			} else {
+				CHECK_HRESULT(hr);
+			}
+		} else {
+			// not initialized yet
+		}
 	}
 };

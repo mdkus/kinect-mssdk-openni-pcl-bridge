@@ -41,19 +41,12 @@ private:
 	INuiSensor* m_pSensor; // I don't like having state here, but I'm OK to accept this exception
 
 public:
-	// I'm just lazy in writing getters/setters
-	BOOL m_distinctDepthValues;
-	BOOL m_nearMode;
-
-public:
 	MSRKinectRequirement() :
 		m_nInitFlags(0),
 		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_bInitialized(FALSE),
-		m_pSensor(NULL),
-		m_distinctDepthValues(FALSE),
-		m_nearMode(FALSE)
+		m_pSensor(NULL)
 	{
 	}
 
@@ -139,14 +132,6 @@ public:
 	NUI_IMAGE_TYPE GetDepthImageType() const
 	{
 		return IsUserNodeRequired() ? NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX : NUI_IMAGE_TYPE_DEPTH;
-	}
-
-	DWORD GetDepthImageFrameFlags() const
-	{
-		DWORD flags = 0;
-		if (m_nearMode) flags |= NUI_IMAGE_STREAM_FLAG_ENABLE_NEAR_MODE;
-		if (m_distinctDepthValues) flags |= NUI_IMAGE_STREAM_FLAG_DISTINCT_OVERFLOW_DEPTH_VALUES;
-		return flags;
 	}
 
 	void DoInitialize() // throws XnStatusException

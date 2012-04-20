@@ -93,11 +93,12 @@ public:
 
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
 	{
-		if (strcmp(strName, PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES) == 0) {
-			nValue = m_pReader->GetRequirement()->m_distinctDepthValues;
+		// sorry for using downcast!
+		if (streq(strName, PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES)) {
+			nValue = ((MSRKinectDepthImageStreamReader*) m_pReader)->GetDistinctOverflowDepthValues();
 			return XN_STATUS_OK;
-		} else if (strcmp(strName, PROP_DEPTH_NEAR_MODE) == 0) {
-			nValue = m_pReader->GetRequirement()->m_nearMode;
+		} else if (streq(strName, PROP_DEPTH_NEAR_MODE)) {
+			nValue = ((MSRKinectDepthImageStreamReader*) m_pReader)->GetNearMode();
 			return XN_STATUS_OK;
 		} else {
 			return SuperClass::GetIntProperty(strName, nValue);
@@ -106,11 +107,12 @@ public:
 
 	XnStatus SetIntProperty(const XnChar* strName, XnUInt64 nValue)
 	{
-		if (strcmp(strName, PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES) == 0) {
-			m_pReader->GetRequirement()->m_distinctDepthValues = !!nValue;
+		// sorry for using downcast!
+		if (streq(strName, PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES)) {
+			((MSRKinectDepthImageStreamReader*) m_pReader)->SetDistinctOverflowDepthValues(!!nValue);
 			return XN_STATUS_OK;
-		} else if (strcmp(strName, PROP_DEPTH_NEAR_MODE) == 0) {
-			m_pReader->GetRequirement()->m_nearMode = !!nValue;
+		} else if (streq(strName, PROP_DEPTH_NEAR_MODE)) {
+			((MSRKinectDepthImageStreamReader*) m_pReader)->SetNearMode(!!nValue);
 			return XN_STATUS_OK;
 		} else {
 			return SuperClass::SetIntProperty(strName, nValue);
