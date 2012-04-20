@@ -32,6 +32,8 @@
     <ClInclude Include="..\src\AbstractMSRKinectImageStreamGenerator.h" />
     <ClInclude Include="..\src\AbstractMSRKinectMapGenerator.h" />
     <ClInclude Include="..\src\AbstractMultiThreadFrameGenerator.h" />
+    <ClInclude Include="..\src\IMultiThreadFrameContext.h" />
+    <ClInclude Include="..\src\IMultiThreadFrameReader.h" />
     <ClInclude Include="..\src\AudioConfiguration.h" />
     <ClInclude Include="..\src\base.h" />
     <ClInclude Include="..\src\custom_properties.h" />

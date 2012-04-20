@@ -27,48 +27,28 @@
 //
 //@COPYRIGHT@//
 
-#pragma once;
-#include "base.h"
-
 #pragma once
 #include "base.h"
-#include "MSRKinectSkeletonReader.h"
+#include "IMultiThreadFrameContext.h"
 
-class MSRKinectSkeletonManager
+class IMultiThreadFrameReader
 {
-private:
-	HANDLE m_hNextFrameEvent;
-	MSRKinectSkeletonReader* m_pReader;
+public:
+	class IListener
+	{
+	public:
+		virtual ~IListener() {}
+		virtual void OnUpdateFrame() = 0;
+		virtual void OnStartReadingFrame() = 0;
+		virtual void OnStopReadingFrame() = 0;
+	};
 
 public:
-	MSRKinectSkeletonReader* GetReader() { return m_pReader; }
+	virtual ~IMultiThreadFrameReader() {}
 
-public:
-	MSRKinectSkeletonManager(MSRKinectRequirement* pRequirement) : m_hNextFrameEvent(NULL), m_pReader(NULL) // throws XnStatusException
-	{
-		try {
-			CHECK_XN_STATUS(xnOSCreateEvent(&m_hNextFrameEvent, TRUE));
-			m_pReader = new MSRKinectSkeletonReader(pRequirement, m_hNextFrameEvent);
-		} catch (XnStatusException&) {
-			if (m_pReader) delete m_pReader;
-			if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
-			throw;
-		}
-	}
+	virtual void AddListener(IListener* listener) = 0;
+	virtual void RemoveListener(IListener* listener) = 0;
 
-	virtual ~MSRKinectSkeletonManager()
-	{
-		if (m_pReader) m_pReader->Stop();
-		if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
-	}
-
-	void AddListener(MSRKinectSkeletonReader::IListener* listener)
-	{
-		m_pReader->AddListener(listener);
-	}
-
-	void RemoveListener(MSRKinectSkeletonReader::IListener* listener)
-	{
-		m_pReader->RemoveListener(listener);
-	}
+	virtual XnStatus Start() = 0;
+	virtual void Stop() = 0;
 };

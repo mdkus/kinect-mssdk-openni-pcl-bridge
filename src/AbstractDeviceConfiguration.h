@@ -34,8 +34,9 @@ template<class M>
 class AbstractDeviceConfiguration
 {
 public:
+	// M must have RawMode internal type, operator RawMode, and MatchRawMode method
 	typedef M Mode;
-	typedef typename M::RawMode RawMode; // M must have RawMode internal type and GetRawMode method
+	typedef typename M::RawMode RawMode;
 
 	class Desc
 	{

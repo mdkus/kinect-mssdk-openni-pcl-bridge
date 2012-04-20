@@ -56,12 +56,12 @@ public:
 		if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
 	}
 
-	void AddListener(MSRKinectImageStreamReader::Listener* listener)
+	void AddListener(MSRKinectImageStreamReader::IListener* listener)
 	{
 		m_pReader->AddListener(listener);
 	}
 
-	void RemoveListener(MSRKinectImageStreamReader::Listener* listener)
+	void RemoveListener(MSRKinectImageStreamReader::IListener* listener)
 	{
 		m_pReader->RemoveListener(listener);
 	}

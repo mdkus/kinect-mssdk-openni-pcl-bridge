@@ -30,26 +30,21 @@
 #pragma once
 #include "base.h"
 #include "MSRKinectFrameContext.h"
+#include "IMultiThreadFrameReader.h"
 #include <vector>
 #include <algorithm>
 
 template <class ContextClass>
 class MSRKinectFrameReader :
-	public ContextClass
+	public ContextClass,
+	public virtual IMultiThreadFrameReader
 {
 private:
 	typedef MSRKinectFrameReader<ContextClass> ThisClass;
 
 public:
-	class Listener {
-	public:
-		virtual ~Listener() {}
-		virtual void OnStartReadingFrame() = 0;
-		virtual void OnStopReadingFrame() = 0;
-		virtual void OnUpdateFrame() = 0;
-	};
-	typedef std::vector<Listener*> ListenerList;
-	typedef void (Listener::*ListenerHandlerNoArg)();
+	typedef std::vector<IListener*> ListenerList;
+	typedef void (IListener::*ListenerHandlerNoArg)();
 
 private:
 	XN_THREAD_HANDLE m_hReaderThread;
@@ -69,14 +64,14 @@ public:
 		}
 	}
 
-	void AddListener(Listener* listener)
+	void AddListener(IListener* listener)
 	{
 		if (std::find(m_listeners.begin(), m_listeners.end(), listener) == m_listeners.end()) {
 			m_listeners.push_back(listener);
 		}
 	}
 
-	void RemoveListener(Listener* listener)
+	void RemoveListener(IListener* listener)
 	{
 		ListenerList::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
 		if (i != m_listeners.end()) {
@@ -95,7 +90,7 @@ public:
 
 			m_bRunning = TRUE;
 			CHECK_XN_STATUS(xnOSCreateThread(ReaderThread, this, &m_hReaderThread));
-			RaiseEventNoArg(&Listener::OnStartReadingFrame);
+			RaiseEventNoArg(&IListener::OnStartReadingFrame);
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			m_bRunning = FALSE;
@@ -107,7 +102,7 @@ public:
 	{
 		if (m_bRunning) {
 			StopImpl();
-			RaiseEventNoArg(&Listener::OnStopReadingFrame);
+			RaiseEventNoArg(&IListener::OnStopReadingFrame);
 		}
 	}
 
@@ -138,7 +133,7 @@ private:
 			if ((nStatus == XN_STATUS_OK || nStatus == XN_STATUS_OS_EVENT_TIMEOUT) && that->m_bRunning) {
 				HRESULT hr = that->GetNextFrame();
 				if (SUCCEEDED(hr)) {
-					that->RaiseEventNoArg(&Listener::OnUpdateFrame);
+					that->RaiseEventNoArg(&IListener::OnUpdateFrame);
 				}
 			}
 		}

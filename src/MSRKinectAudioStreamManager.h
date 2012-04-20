@@ -56,12 +56,12 @@ public:
 		if (m_hNextFrameEvent) xnOSCloseEvent(&m_hNextFrameEvent);
 	}
 
-	void AddListener(MSRKinectAudioStreamReader::Listener* listener)
+	void AddListener(MSRKinectAudioStreamReader::IListener* listener)
 	{
 		m_pReader->AddListener(listener);
 	}
 
-	void RemoveListener(MSRKinectAudioStreamReader::Listener* listener)
+	void RemoveListener(MSRKinectAudioStreamReader::IListener* listener)
 	{
 		m_pReader->RemoveListener(listener);
 	}

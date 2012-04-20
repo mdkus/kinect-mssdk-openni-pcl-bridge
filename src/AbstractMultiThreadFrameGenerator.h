@@ -30,13 +30,12 @@
 #pragma once
 #include "base.h"
 #include "AbstractModuleGenerator.h"
-
-// FIXME: ReaderClass should have interface definition
+#include "IMultiThreadFrameReader.h"
 
 template <class ParentModuleGeneratorClass, class FrameReaderClass>
 class AbstractMultiThreadFrameGenerator :
 	public AbstractModuleGenerator<ParentModuleGeneratorClass>,
-	public virtual FrameReaderClass::Listener
+	public virtual IMultiThreadFrameReader::IListener
 {
 private:
 	typedef AbstractModuleGenerator<ParentModuleGeneratorClass> SuperClass;

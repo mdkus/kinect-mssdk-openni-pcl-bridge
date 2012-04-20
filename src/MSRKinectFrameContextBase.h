@@ -30,8 +30,9 @@
 #pragma once
 #include "base.h"
 #include "MSRKinectRequirement.h"
+#include "IMultiThreadFrameContext.h"
 
-class MSRKinectFrameContextBase
+class MSRKinectFrameContextBase : public virtual IMultiThreadFrameContext
 {
 protected:
 	HANDLE m_hNextFrameEvent;
@@ -48,9 +49,9 @@ public:
 	INuiSensor* GetSensor() { return m_pRequirement->GetSensor(); }
 	MSRKinectRequirement* GetRequirement() { return m_pRequirement; }
 
-	XnUInt32 GetFrameID() const { return m_nFrameID; }
-	XnUInt64 GetTimestamp() const { return m_lTimestamp; }
-	BOOL IsRunning() const { return m_bRunning; }
+	virtual XnUInt32 GetFrameID() { return m_nFrameID; }
+	virtual XnUInt64 GetTimestamp() { return m_lTimestamp; }
+	virtual BOOL IsRunning() { return m_bRunning; }
 
 protected:
 	MSRKinectFrameContextBase(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
