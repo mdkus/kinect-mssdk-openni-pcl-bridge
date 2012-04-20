@@ -94,7 +94,7 @@ public:
 	{
 		return
 			SuperClass::IsCapabilitySupported(strCapabilityName) ||
-			strcmp(strCapabilityName, XN_CAPABILITY_SKELETON) == 0;
+			streq(strCapabilityName, XN_CAPABILITY_SKELETON);
 	}
 
 	virtual ModuleSkeletonInterface* GetSkeletonInterface() { return this; }

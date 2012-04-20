@@ -37,7 +37,7 @@ class MSRKinectMirrorCap :
 protected:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
 	{
-		return strcmp(XN_CAPABILITY_MIRROR, strCapabilityName) == 0;
+		return streq(XN_CAPABILITY_MIRROR, strCapabilityName);
 	}
 
 };

@@ -37,7 +37,7 @@ class MSRKinectAlternativeViewPointCap :
 protected:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
 	{
-		return strcmp(XN_CAPABILITY_ALTERNATIVE_VIEW_POINT, strCapabilityName) == 0;
+		return streq(XN_CAPABILITY_ALTERNATIVE_VIEW_POINT, strCapabilityName);
 	}
 
 };
@@ -52,8 +52,8 @@ public: \
 	virtual XnBool IsViewPointSupported(xn::ProductionNode& other) \
 	{ \
 		return \
-			strcmp(other.GetInfo().GetDescription().strName, "MSRKinectImageGenerator") == 0 || \
-			strcmp(other.GetInfo().GetDescription().strName, "KinectSDKImageGenerator") == 0 ; \
+			streq(other.GetInfo().GetDescription().strName, "MSRKinectImageGenerator") || \
+			streq(other.GetInfo().GetDescription().strName, "KinectSDKImageGenerator") ; \
 	} \
 	\
 	virtual XnStatus SetViewPoint(xn::ProductionNode& other) \

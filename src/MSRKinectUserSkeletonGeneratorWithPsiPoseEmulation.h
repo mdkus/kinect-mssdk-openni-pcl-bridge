@@ -62,7 +62,7 @@ public:
 	{
 		return
 			SuperClass::IsCapabilitySupported(strCapabilityName) ||
-			strcmp(strCapabilityName, XN_CAPABILITY_POSE_DETECTION) == 0;
+			streq(strCapabilityName, XN_CAPABILITY_POSE_DETECTION);
 	}
 
 	virtual ModulePoseDetectionInteface* GetPoseDetectionInteface() { return this; }

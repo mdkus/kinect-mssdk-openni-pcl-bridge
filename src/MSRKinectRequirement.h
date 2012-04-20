@@ -104,7 +104,7 @@ public:
 
 	void AddCapabilityRequirement(const char* strCapability)
 	{
-		if (strcmp(strCapability, XN_CAPABILITY_SKELETON) == 0) {
+		if (streq(strCapability, XN_CAPABILITY_SKELETON)) {
 			m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_SKELETON;
 		}
 	}

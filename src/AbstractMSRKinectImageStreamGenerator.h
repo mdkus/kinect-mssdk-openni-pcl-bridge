@@ -111,9 +111,9 @@ public:
 
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
 	{
-		if (strcmp(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE) == 0) {
+		if (streq(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE)) {
 			return getCameraElevationAngle(&nValue);
-		} else if (strcmp(strName, PROP_COMMON_NUI_SENSOR_POINTER) == 0) {
+		} else if (streq(strName, PROP_COMMON_NUI_SENSOR_POINTER)) {
 			nValue = (XnUInt64) m_pReader->GetSensor();
 			return XN_STATUS_OK;
 		} else {
@@ -123,7 +123,7 @@ public:
 
 	XnStatus SetIntProperty(const XnChar* strName, XnUInt64 nValue)
 	{
-		if (strcmp(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE) == 0) {
+		if (streq(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE)) {
 			return setCameraElevationAngle(nValue);
 		} else {
 			return SuperClass::SetIntProperty(strName, nValue);

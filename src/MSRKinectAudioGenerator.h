@@ -128,11 +128,11 @@ public:
 	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const
 	{
 		try {
-			if (strcmp(strName, PROP_AUDIO_BEAM_ANGLE) == 0) {
+			if (streq(strName, PROP_AUDIO_BEAM_ANGLE)) {
 				dValue = m_pReader->GetBeamAngle();
-			} else if (strcmp(strName, PROP_AUDIO_SOURCE_ANGLE) == 0) {
+			} else if (streq(strName, PROP_AUDIO_SOURCE_ANGLE)) {
 				dValue = m_pReader->GetSourceAngle();
-			} else if (strcmp(strName, PROP_AUDIO_SOURCE_ANGLE_CONFIDENCE) == 0) {
+			} else if (streq(strName, PROP_AUDIO_SOURCE_ANGLE_CONFIDENCE)) {
 				dValue = m_pReader->GetSourceAngleConfidence();
 			} else {
 				return SuperClass::GetRealProperty(strName, dValue);
