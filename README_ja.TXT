@@ -1,33 +1,39 @@
-kinect-mssdk-openni-bridge v1.0.0.3-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.4-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/4/17
+Release Date: 2012/4/21
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
 
 先日Microsoftから商用利用可能なKinect for WindowsとKinect SDKが
 リリースされましたが、これらとOpenNIとの間には互換性がありません。
-すなわち、OpenNI上のアプリケーション資産やノウハウが既にあったとしても、
-Kinect for Windowsと組み合わせて活用することは不可能だったということです。
-
-この残念な状況を打開するため、Kinect SDKをOpenNIに接続することで、
-Kinect for WindowsをOpenNI上から使えるようにする実験モジュールが
-このkinect-mssdk-openni-bridgeです。
+このkinect-mssdk-openni-bridgeは、Kinect SDKをOpenNIに接続することで
+Kinect for WindowsをOpenNI上から使えるようにする実験モジュールです。
+これにより、既存のOpenNI上のアプリケーション資産やノウハウを
+Kinect for Windowsと組み合わせて活用することができるようになります。
 
 このモジュールをインストールすると、Kienct for Windows + Kinect SDK上で
-動作するDepthノード、Imageノード、UserノードがOpenNIにプラグインされます。
-このDepthノードの上でNITEのスケルトントラッキングやジェスチャー検出を
-使うこともできます。
-
-本モジュールはOpenNI 1.5.2.23 32bit版およびKinect SDK V1.0に
-対応しています
-・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
-・Kinect SDK Beta版はライセンスが異なるため対応していません。
-  Beta版で使用したい場合には以前のバージョンを使用してください。
+動作するDepthノード、Imageノード、Userノード、AudioノードがOpenNIに
+プラグインされます。特筆すべきは、これらのノードはOpenNI + NITEによって
+提供されている既存のノードと組み合わせて使用できる点です。例えば、
+このモジュールのDepthノードの上でNITEのスケルトントラッキングや
+ジェスチャーを使うことが可能です。さらには、これらのノードを使うと、
+プロパティを通してKinect for Windowsの各種固有機能(近接モード、
+音源方向検出、エコーキャンセリング等)を使うことができます。
 
 2. インストールとアンインストール
 
-2.1 ダウンロード
+2.1 前提条件
+
+本モジュールはOpenNI 1.5.2.23 32bit版およびKinect SDK V1.0に
+対応しています。事前にこれらをインストールしておいてください。
+・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
+・これより新しい版のOpenNIも使用可能なはずですが、いつ互換性が
+　崩れるかはわかりません。
+・Kinect SDK Beta版はライセンスが異なるため対応していません。
+  Beta版で使用したい場合には以前のバージョンを使用してください。
+
+2.2 ダウンロード
 
 既にバイナリパッケージまたはソースコードリポジトリのコピーを
 入手しているならば、本節を飛ばしてインストールに進んでください。
@@ -36,7 +42,7 @@ Kinect for WindowsをOpenNI上から使えるようにする実験モジュー�
 どこかに展開してください。ソースコードもあります。
 http://code.google.com/p/kinect-mssdk-openni-bridge/
 
-2.2 インストール
+2.3 インストール
 
 OpenNIとKinectSDKをインストールした上で、install.batを実行してください。
 Windowsのユーザーアカウント制御(UAC)が有効になっている場合、
@@ -47,9 +53,10 @@ Windowsのユーザーアカウント制御(UAC)が有効になっている場�
 
 正しくインストールされたかどうかはOpenNIのユーティリティniRegを
 -lオプションをつけて呼び出すことで確認できます。本モジュールの
-名前が表示されていれば成功です。
+名前が表示されていれば成功です。また、OpenNIの簡単なサンプルを
+実行することにより確認することもできます。
 
-2.3. アンインストール
+2.4. アンインストール
 
 uninstall.batを実行してください。UACが有効になっている場合、
 上と同様に「管理者として実行」してください。
@@ -58,7 +65,7 @@ uninstall.batを実行してください。UACが有効になっている場合�
 
 3.1 基本
 
-Kinect SDKが入った環境でDepthノードとImageノードを使うと、
+Kinect SDKが入った環境でDepth、Image、あるいはAudioノードを使うと、
 自動的に本モジュールが呼ばれるようになります。これらのノードは
 NITEのスケルトントラッキングやジェスチャー認識など他のアルゴリズムと
 組み合わせて使用することができます。
@@ -121,11 +128,6 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
   "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" を指定してください。
   偽者ですがポーズ検出イベントを受け取れるようになります。
 
-・ちょっと遊び心で「自動角度調整機能付きUserノード」を作ってあります。
-  "KinectSDKUserSkeletonGenerator" の代わりに
-  "KinectSDKUserSkeletonGeneratorWithAutoElevation" を指定すると、
-  プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
-
 ・本モジュールのImage、Depth、UserノードはcameraElevationAngleプロパティを
   備えており、これを用いてプログラムからカメラの角度を取得・設定することが
   できます。StartGeneratingを呼び出した後に使用することができます。
@@ -141,6 +143,57 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
   imageGenerator.GetIntProperty("nuiSensorPointer", i);
   INuiSensor* pSensor = (INuiSensor*) i;
   pSensor->NuiXxx(...);
+
+・ちょっと遊び心で「自動角度調整機能付きUserノード」を作ってあります。
+  "KinectSDKUserSkeletonGenerator" の代わりに
+  "KinectSDKUserSkeletonGeneratorWithAutoElevation" を指定すると、
+  プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
+
+・本モジュールのAudioノードには次の設定プロパティが用意されています。
+
+		<Node type="Audio" name="Audio1">
+			<Configuration>
+				<!-- ビーム形成(指向性決定)モード
+					 0: Adaptive (Kinect固有のDSPにより制御)
+					 1: Automatic (DMOにより制御)
+					 2: Manual (後述のbeamAngleプロパティに値を設定することでアプリにより制御) -->
+				<Property type="int" name="beamAngleMode" value="0"/>
+				
+				<!-- 自動感度調整: 0(off), 1(on) -->
+				<Property type="int" name="automaticGainControl" value="0"/>
+				
+				<!-- エコーキャンセル(AEC)と残留エコーの抑制(AES) -->
+					 0: なし
+					 1: AEC
+					 2: AECとAES 1回
+					 3: AECとAES 2回 -->
+				<Property type="int" name="echoCancellationMode" value="2"/>
+				
+				<!-- Center clipping (AEC後の残留エコーを除去する技術)と
+					 Noise filling (残留エコー除去部を無音にせず小さなノイズを加えて自然に聞かせる技術)
+					 0: なし
+					 1: Center clipping
+					 2: Center clippingとNoise filling
+					 -->
+				<Property type="int" name="centerClippingMode" value="0"/>
+				
+				<!-- ノイズ抑制: 0(off), 1(on) -->
+				<Property type="int" name="noiseSuppression" value="1"/>
+				
+				<!-- 音声データバッファのサイズ(ミリ秒)
+					 アプリはこの間隔以内でデータを取得しないとデータが失われる可能性がある。
+					 StartGenerating前に設定すること。 -->
+				<Property type="int" name="bufferSizeInMs" value="1000"/>
+			</Configuration>
+		</Node>
+
+  また、次のようにアプリケーションからビーム方向と音源方向をプログラム的に
+  取得することができます。
+  
+  double beamAngle, sourceAngle, sourceAngleConfidence;
+  audioGenerator.GetRealProperty("beamAngle", beamAngle); // 読み取り専用、または読み書き可能(beamAngleModeがManualの場合)
+  audioGenerator.GetRealProperty("sourceAngle", sourceAngle); // 読み取り専用
+  audioGenerator.GetRealProperty("sourceAngleConfidence", sourceAngleConfidence); // 読み取り専用
 
 4. ライセンス
 
@@ -165,6 +218,10 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.0.0.4-1.5.2.23
+・Audioノードを正式サポート
+・nearModeとdistinctOverflowDepthValuesの実行中の変更をサポート
 
 V1.0.0.3-1.5.2.23
 ・Issue #1 (mirrorをfalseにしたときにデータが取得できなくなるバグ)を修正
