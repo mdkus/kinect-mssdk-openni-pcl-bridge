@@ -93,11 +93,11 @@ changed from the previous version.)
 * Image node supports 640x480 (default) and 1280x1024 resolution.
   This example configures the Image node in the high resolution mode.
 
-		<Node type="Image" name="Image1">
-			<Configuration>
-				<MapOutputMode xRes="1280" yRes="1024" FPS="15"/>
-			</Configuration>
-		</Node>
+        <Node type="Image" name="Image1">
+            <Configuration>
+                <MapOutputMode xRes="1280" yRes="1024" FPS="15"/>
+            </Configuration>
+        </Node>
 
 * Depth node supports 640x480 (default) and 320x240 resolution.
   The resolution can be specified in the same way as Image node.
@@ -108,21 +108,21 @@ changed from the previous version.)
   Near mode is supported. Set nearMode int property to non-zero
   to turn it on.
 
-		<Node type="Depth" name="Depth1">
-			<Configuration>
-				<Property type="int" name="nearMode" value="1"/>
-			</Configuration>
-		</Node>
+        <Node type="Depth" name="Depth1">
+            <Configuration>
+                <Property type="int" name="nearMode" value="1"/>
+            </Configuration>
+        </Node>
 
   Distinct overflow values (returns different values for too near, too far,
   and unknown distances) is also supported. Set distinctOverflowDepthValues
   int property to non-zero to turn it on.
 
-		<Node type="Depth" name="Depth1">
-			<Configuration>
-				<Property type="int" name="distinctOverflowDepthValues" value="1"/>
-			</Configuration>
-		</Node>
+        <Node type="Depth" name="Depth1">
+            <Configuration>
+                <Property type="int" name="distinctOverflowDepthValues" value="1"/>
+            </Configuration>
+        </Node>
 
 * If your application assumes Psi pose detection, specify
   "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" instead of
@@ -152,42 +152,42 @@ changed from the previous version.)
 
 * Audio node supports the configuration properties below.
 
-		<Node type="Audio" name="Audio1">
-			<Configuration>
-				<!-- Beam forming mode
-					 0: Adaptive (Controlled by Kinect-specific DSP)
-					 1: Automatic (Controlled by DMO)
-					 2: Manual (Controlled by the application via the beamAngle property explained later) -->
-				<Property type="int" name="beamAngleMode" value="0"/>
-				
-				<!-- Automatic gain control: 0(off), 1(on) -->
-				<Property type="int" name="automaticGainControl" value="0"/>
-				
-				<!-- Echo cancellation (AEC) and suppression of residual signal (AES)
-					 0: None
-					 1: AEC
-					 2: AEC and AES once
-					 3: AEC and AES twice -->
-				<Property type="int" name="echoCancellationMode" value="2"/>
-				
-				<!-- Center clipping (a technique to remove the residual signal after AEC) and
-				 	 Noise filling (a technique to make the sound natural by using a small
-				 	 amount of noise instead of silence after removing the residual signal)
-					 0: None
-					 1: Center clipping
-					 2: Center clipping and Noise filling
-					 -->
-				<Property type="int" name="centerClippingMode" value="0"/>
-				
-				<!-- Noise suppression: 0(off), 1(on) -->
-				<Property type="int" name="noiseSuppression" value="1"/>
-				
-				<!-- Audio buffer size in milliseconds. The audio data is
-					 lost unlsee the application polls the audio data
-					 within this interval. Set before StartGenerating. -->
-				<Property type="int" name="bufferSizeInMs" value="1000"/>
-			</Configuration>
-		</Node>
+        <Node type="Audio" name="Audio1">
+            <Configuration>
+                <!-- Beam forming mode
+                     0: Adaptive (Controlled by Kinect-specific DSP)
+                     1: Automatic (Controlled by DMO)
+                     2: Manual (Controlled by the application via the beamAngle property explained later) -->
+                <Property type="int" name="beamAngleMode" value="0"/>
+                
+                <!-- Automatic gain control: 0(off), 1(on) -->
+                <Property type="int" name="automaticGainControl" value="0"/>
+                
+                <!-- Echo cancellation (AEC) and suppression of residual signal (AES)
+                     0: None
+                     1: AEC
+                     2: AEC and AES once
+                     3: AEC and AES twice -->
+                <Property type="int" name="echoCancellationMode" value="2"/>
+                
+                <!-- Center clipping (a technique to remove the residual signal after AEC) and
+                     Noise filling (a technique to make the sound natural by using a small
+                     amount of noise instead of silence after removing the residual signal)
+                     0: None
+                     1: Center clipping
+                     2: Center clipping and Noise filling
+                     -->
+                <Property type="int" name="centerClippingMode" value="0"/>
+                
+                <!-- Noise suppression: 0(off), 1(on) -->
+                <Property type="int" name="noiseSuppression" value="1"/>
+                
+                <!-- Audio buffer size in milliseconds. The audio data is
+                     lost unlsee the application polls the audio data
+                     within this interval. Set before StartGenerating. -->
+                <Property type="int" name="bufferSizeInMs" value="1000"/>
+            </Configuration>
+        </Node>
 
   Also, you can get the beam angle and the audio source angle from your
   application programatically.

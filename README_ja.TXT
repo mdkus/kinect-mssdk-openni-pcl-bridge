@@ -92,11 +92,11 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
 ・Imageノードは640x480(デフォルト)と1280x1024の解像度をサポートします。
   次のように指定するとImageノードを高解像モードで使用できます。
 
-		<Node type="Image" name="Image1">
-			<Configuration>
-				<MapOutputMode xRes="1280" yRes="1024" FPS="15"/>
-			</Configuration>
-		</Node>
+        <Node type="Image" name="Image1">
+            <Configuration>
+                <MapOutputMode xRes="1280" yRes="1024" FPS="15"/>
+            </Configuration>
+        </Node>
 
 ・Depthノードは640x480(デフォルト)と320x240の解像度をサポートします。
   解像度の指定の仕方はImageノードと同じです。
@@ -107,21 +107,21 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
   近接モードがサポートされています。近接モードを有効にするには次のように
   nearMode整数プロパティにゼロ以外の値を設定します。
 
-		<Node type="Depth" name="Depth1">
-			<Configuration>
-				<Property type="int" name="nearMode" value="1"/>
-			</Configuration>
-		</Node>
+        <Node type="Depth" name="Depth1">
+            <Configuration>
+                <Property type="int" name="nearMode" value="1"/>
+            </Configuration>
+        </Node>
 
   またオーバーフロー値の区別(近すぎる、遠すぎる、不明な距離に対して
   異なる値を返す)もサポートされています。これを有効にするには次のように
   distinctOverflowDepthValues整数プロパティにゼロ以外の値を設定します。
 
-		<Node type="Depth" name="Depth1">
-			<Configuration>
-				<Property type="int" name="distinctOverflowDepthValues" value="1"/>
-			</Configuration>
-		</Node>
+        <Node type="Depth" name="Depth1">
+            <Configuration>
+                <Property type="int" name="distinctOverflowDepthValues" value="1"/>
+            </Configuration>
+        </Node>
 
 ・あなたのアプリケーションがPsiポーズ検出を前提としている場合、
   "KinectSDKUserSkeletonGenerator" の代わりに
@@ -151,41 +151,41 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
 
 ・本モジュールのAudioノードには次の設定プロパティが用意されています。
 
-		<Node type="Audio" name="Audio1">
-			<Configuration>
-				<!-- ビーム形成(指向性決定)モード
-					 0: Adaptive (Kinect固有のDSPにより制御)
-					 1: Automatic (DMOにより制御)
-					 2: Manual (後述のbeamAngleプロパティに値を設定することでアプリにより制御) -->
-				<Property type="int" name="beamAngleMode" value="0"/>
-				
-				<!-- 自動感度調整: 0(off), 1(on) -->
-				<Property type="int" name="automaticGainControl" value="0"/>
-				
-				<!-- エコーキャンセル(AEC)と残留エコーの抑制(AES) -->
-					 0: なし
-					 1: AEC
-					 2: AECとAES 1回
-					 3: AECとAES 2回 -->
-				<Property type="int" name="echoCancellationMode" value="2"/>
-				
-				<!-- Center clipping (AEC後の残留エコーを除去する技術)と
-					 Noise filling (残留エコー除去部を無音にせず小さなノイズを加えて自然に聞かせる技術)
-					 0: なし
-					 1: Center clipping
-					 2: Center clippingとNoise filling
-					 -->
-				<Property type="int" name="centerClippingMode" value="0"/>
-				
-				<!-- ノイズ抑制: 0(off), 1(on) -->
-				<Property type="int" name="noiseSuppression" value="1"/>
-				
-				<!-- 音声データバッファのサイズ(ミリ秒)
-					 アプリはこの間隔以内でデータを取得しないとデータが失われる可能性がある。
-					 StartGenerating前に設定すること。 -->
-				<Property type="int" name="bufferSizeInMs" value="1000"/>
-			</Configuration>
-		</Node>
+        <Node type="Audio" name="Audio1">
+            <Configuration>
+                <!-- ビーム形成(指向性決定)モード
+                     0: Adaptive (Kinect固有のDSPにより制御)
+                     1: Automatic (DMOにより制御)
+                     2: Manual (後述のbeamAngleプロパティに値を設定することでアプリにより制御) -->
+                <Property type="int" name="beamAngleMode" value="0"/>
+                
+                <!-- 自動感度調整: 0(off), 1(on) -->
+                <Property type="int" name="automaticGainControl" value="0"/>
+                
+                <!-- エコーキャンセル(AEC)と残留エコーの抑制(AES) -->
+                     0: なし
+                     1: AEC
+                     2: AECとAES 1回
+                     3: AECとAES 2回 -->
+                <Property type="int" name="echoCancellationMode" value="2"/>
+                
+                <!-- Center clipping (AEC後の残留エコーを除去する技術)と
+                     Noise filling (残留エコー除去部を無音にせず小さなノイズを加えて自然に聞かせる技術)
+                     0: なし
+                     1: Center clipping
+                     2: Center clippingとNoise filling
+                     -->
+                <Property type="int" name="centerClippingMode" value="0"/>
+                
+                <!-- ノイズ抑制: 0(off), 1(on) -->
+                <Property type="int" name="noiseSuppression" value="1"/>
+                
+                <!-- 音声データバッファのサイズ(ミリ秒)
+                     アプリはこの間隔以内でデータを取得しないとデータが失われる可能性がある。
+                     StartGenerating前に設定すること。 -->
+                <Property type="int" name="bufferSizeInMs" value="1000"/>
+            </Configuration>
+        </Node>
 
   また、次のようにアプリケーションからビーム方向と音源方向をプログラム的に
   取得することができます。
