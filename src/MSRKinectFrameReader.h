@@ -128,14 +128,16 @@ private:
 	{
 		ThisClass* that = (ThisClass*)pCookie;
 
-		while (that->m_bRunning) {
-			XnStatus nStatus = xnOSWaitEvent(that->m_hNextFrameEvent, that->m_timeout);
-			if ((nStatus == XN_STATUS_OK || nStatus == XN_STATUS_OS_EVENT_TIMEOUT) && that->m_bRunning) {
-				HRESULT hr = that->GetNextFrame();
-				if (SUCCEEDED(hr)) {
+		try {
+			while (that->m_bRunning) {
+				XnStatus nStatus = xnOSWaitEvent(that->m_hNextFrameEvent, that->m_timeout);
+				if ((nStatus == XN_STATUS_OK || nStatus == XN_STATUS_OS_EVENT_TIMEOUT) && that->m_bRunning) {
+					CHECK_HRESULT(that->GetNextFrame());
 					that->RaiseEventNoArg(&IListener::OnUpdateFrame);
 				}
 			}
+		} catch (XnStatusException&) {
+			that->Stop();
 		}
 
 		XN_THREAD_PROC_RETURN(0);

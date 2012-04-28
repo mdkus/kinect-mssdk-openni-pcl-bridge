@@ -69,6 +69,7 @@
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithAutoElevation.h" />
     <ClInclude Include="..\src\JointOrientationCalculator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation.h" />
+    <ClInclude Include="..\src\nui_error.h" />
     <ClInclude Include="..\src\PrimeSenseProperties.h" />
     <ClInclude Include="..\src\ProductionNodeExporter.h" />
     <ClInclude Include="..\src\Properties.h" />
@@ -81,6 +82,7 @@
     <ClCompile Include="..\src\dllmain.cpp" />
     <ClCompile Include="..\src\globals.cpp" />
     <ClCompile Include="..\src\kinect-mssdk-openni-bridge.cpp" />
+    <ClCompile Include="..\src\nui_error.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29B0AB61-DC23-40A9-9DC3-25E082B9AB88}</ProjectGuid>

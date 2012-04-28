@@ -42,6 +42,8 @@ typedef KINECT_LOCKED_RECT NUI_LOCKED_RECT;
 #include <XnEvent.h>
 #include <XnLog.h>
 
+#include "nui_error.h"
+
 #pragma warning(disable : 4996)
 
 struct XnStatusException {
@@ -59,10 +61,9 @@ struct XnStatusException {
 
 inline void printHResult(HRESULT hr, const char* statement)
 {
-	LPTSTR message;
-	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&message, 0, NULL);
-	fprintf(stderr, "%s (HRESULT=%08x): %s\n", message, hr, statement);
-	LocalFree(message);
+	char buf[1024];
+	getNuiErrorString(hr, buf, sizeof(buf));
+	fprintf(stderr, "Failed: %s [%08x] (%s)\n", buf, hr, statement);
 }
 
 #define CHECK_HRESULT(statement) \
@@ -83,3 +84,4 @@ inline int streq(const char* s1, const char* s2)
 {
 	return strcmp(s1, s2) == 0;
 }
+

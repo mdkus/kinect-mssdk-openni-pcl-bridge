@@ -139,7 +139,7 @@ protected:
 			HRESULT hr = GetSensor()->NuiImageStreamSetImageFrameFlags(m_hStreamHandle, flags);
 			if (hr == E_NUI_HARDWARE_FEATURE_UNAVAILABLE) {
 				// Kinect for Xbox360 does not support some features
-				puts("The feature is not supported by the requested feature. The request is ignored.\n"); // TODO log
+				puts("The requested feature is not supported by the device. The request is ignored.\n"); // TODO log
 			} else {
 				CHECK_HRESULT(hr);
 			}
