@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.4-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.5-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 4/21/2012
+Release Date: 5/8/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -220,6 +220,10 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.0.0.5-1.5.2.23
+* Better error message
+* Fixed bug: AudioGenerator::GetAudioBuffer should not return null.
 
 V1.0.0.4-1.5.2.23
 * Officially supported Audio node

@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.4-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.5-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/4/21
+Release Date: 2012/5/8
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -218,6 +218,10 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.0.0.5-1.5.2.23
+・エラーメッセージ改善
+・AudioGenerator::GetAudioBufferがNULLを返すバグを修正
 
 V1.0.0.4-1.5.2.23
 ・Audioノードを正式サポート

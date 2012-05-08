@@ -72,9 +72,9 @@ public:
 	XnStatus UpdateData()
 	{
 		m_pReader->LockFrame();
+		m_pReader->SwapBuffer();
 		m_dataSize = m_pReader->GetDataSize();
 		m_data = m_pReader->GetData();
-		m_pReader->SwapBuffer();
 		m_bNewDataAvailable = FALSE;
 		m_pReader->UnlockFrame();
 		return XN_STATUS_OK;

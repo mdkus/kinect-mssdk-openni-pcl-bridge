@@ -132,8 +132,12 @@ private:
 			while (that->m_bRunning) {
 				XnStatus nStatus = xnOSWaitEvent(that->m_hNextFrameEvent, that->m_timeout);
 				if ((nStatus == XN_STATUS_OK || nStatus == XN_STATUS_OS_EVENT_TIMEOUT) && that->m_bRunning) {
-					CHECK_HRESULT(that->GetNextFrame());
-					that->RaiseEventNoArg(&IListener::OnUpdateFrame);
+					HRESULT that_GetNextFrame = that->GetNextFrame();
+					if (that_GetNextFrame == S_OK) {
+						that->RaiseEventNoArg(&IListener::OnUpdateFrame);
+					} else {
+						CHECK_HRESULT(that_GetNextFrame); // maybe error, maybe no data
+					}
 				}
 			}
 		} catch (XnStatusException&) {
