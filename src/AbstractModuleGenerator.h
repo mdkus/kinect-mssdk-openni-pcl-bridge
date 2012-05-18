@@ -29,6 +29,7 @@
 
 #pragma once
 #include "base.h"
+#include <string>
 
 template <class ParentModuleGeneratorClass>
 class AbstractModuleGenerator : public ParentModuleGeneratorClass
@@ -40,14 +41,27 @@ private:
 protected:
 	ChangeEvent m_newDataAvailableEvent;
 	ChangeEvent m_generationRunningChangeEvent;
+	std::string m_nodeName;
+	XnNodeNotifications* m_pNodeNotifications;
+	void* m_pNodeNotificationsdCookie;
 
 public:
-	AbstractModuleGenerator()
+	AbstractModuleGenerator() : m_pNodeNotifications(NULL)
 	{
 	}
 
 	virtual ~AbstractModuleGenerator()
 	{
+	}
+
+	void SetNodeName(const XnChar* name)
+	{
+		m_nodeName = name;
+	}
+
+	const XnChar* GetNodeName()
+	{
+		return m_nodeName.c_str();
 	}
 
 	//
@@ -72,6 +86,57 @@ public:
 	virtual void UnregisterFromGenerationRunningChange(XnCallbackHandle hCallback)
 	{
 		m_generationRunningChangeEvent.Unregister(hCallback);
+	}
+
+protected:
+	//
+	// Property change notifications
+	//
+	void RegisterNodeNotifications(XnNodeNotifications* pNotifications, void* pCookie)
+	{
+		m_pNodeNotifications = pNotifications;
+		m_pNodeNotificationsdCookie = pCookie;
+	}
+
+	void UnregisterNodeNotifications()
+	{
+	}
+
+	XnStatus OnNodeIntPropChanged(const XnChar* strPropName, XnUInt64 nValue)
+	{
+		if (m_pNodeNotifications) {
+			return m_pNodeNotifications->OnNodeIntPropChanged(m_pNodeNotificationsdCookie, m_nodeName.c_str(), strPropName, nValue);
+		} else {
+			return XN_STATUS_OK;
+		}
+	}
+
+	XnStatus OnNodeRealPropChanged(const XnChar* strPropName, XnDouble dValue)
+	{
+		if (m_pNodeNotifications) {
+			return m_pNodeNotifications->OnNodeRealPropChanged(m_pNodeNotificationsdCookie, m_nodeName.c_str(), strPropName, dValue);
+		} else {
+			return XN_STATUS_OK;
+		}
+	}
+
+
+	XnStatus OnNodeStringPropChanged(const XnChar* strPropName, const XnChar* strValue)
+	{
+		if (m_pNodeNotifications) {
+			return m_pNodeNotifications->OnNodeStringPropChanged(m_pNodeNotificationsdCookie, m_nodeName.c_str(), strPropName, strValue);
+		} else {
+			return XN_STATUS_OK;
+		}
+	}
+
+	XnStatus OnNodeGeneralPropChanged(const XnChar* strPropName, XnUInt32 nBufferSize, const void* pBuffer)
+	{
+		if (m_pNodeNotifications) {
+			return m_pNodeNotifications->OnNodeGeneralPropChanged(m_pNodeNotificationsdCookie, m_nodeName.c_str(), strPropName, nBufferSize, pBuffer);
+		} else {
+			return XN_STATUS_OK;
+		}
 	}
 
 };

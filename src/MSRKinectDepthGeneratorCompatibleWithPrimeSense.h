@@ -71,4 +71,28 @@ public:
 	}
 
 	XnDepthPixel GetDeviceMaxDepth() { return 10000; }
+
+	// ModuleExtendedSerializationInterface implementation
+	virtual XnStatus NotifyExState(XnNodeNotifications *pNotifications, void *pCookie)
+	{
+		RegisterNodeNotifications(pNotifications, pCookie);
+		try {
+			for (Properties::IntPropertyMap::const_iterator i = m_properties.GetIntProperties().begin();
+					i != m_properties.GetIntProperties().end(); i++) {
+				CHECK_XN_STATUS(OnNodeIntPropChanged(i->first.c_str(), i->second));
+			}
+			for (Properties::DoublePropertyMap::const_iterator i = m_properties.GetRealProperties().begin();
+					i != m_properties.GetRealProperties().end(); i++) {
+				CHECK_XN_STATUS(OnNodeRealPropChanged(i->first.c_str(), i->second));
+			}
+			for (Properties::BinaryPropertyMap::const_iterator i = m_properties.GetGeneralProperties().begin();
+					i != m_properties.GetGeneralProperties().end(); i++) {
+				CHECK_XN_STATUS(OnNodeGeneralPropChanged(i->first.c_str(), i->second.length, i->second.data));
+			}
+			return XN_STATUS_OK;
+		} catch (XnStatusException& e) {
+			return e.nStatus;
+		}
+	}
+
 };

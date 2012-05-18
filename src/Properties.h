@@ -40,15 +40,19 @@ public:
 		const BYTE* data;
 	};
 
+	typedef std::map<std::string, XnUInt64> IntPropertyMap;
+	typedef std::map<std::string, XnDouble> DoublePropertyMap;
+	typedef std::map<std::string, Binary> BinaryPropertyMap;
+
 private:
-	std::map<std::string, XnUInt64> m_intProperties;
-	std::map<std::string, XnDouble> m_realProperties;
-	std::map<std::string, Binary> m_generalProperties;
+	IntPropertyMap m_intProperties;
+	DoublePropertyMap m_realProperties;
+	BinaryPropertyMap m_generalProperties;
 
 public:
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
 	{
-		std::map<std::string, XnUInt64>::const_iterator p = m_intProperties.find(std::string(strName));
+		IntPropertyMap::const_iterator p = m_intProperties.find(std::string(strName));
 		if (p != m_intProperties.end()) {
 			nValue = p->second;
 			return XN_STATUS_OK;
@@ -59,7 +63,7 @@ public:
 
 	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const
 	{
-		std::map<std::string, XnDouble>::const_iterator p = m_realProperties.find(std::string(strName));
+		DoublePropertyMap::const_iterator p = m_realProperties.find(std::string(strName));
 		if (p != m_realProperties.end()) {
 			dValue = p->second;
 			return XN_STATUS_OK;
@@ -70,7 +74,7 @@ public:
 
 	XnStatus GetGeneralProperty(const XnChar* strName, XnUInt32 nBufferSize, void* pBuffer) const
 	{
-		std::map<std::string, Binary>::const_iterator p = m_generalProperties.find(strName);
+		BinaryPropertyMap::const_iterator p = m_generalProperties.find(strName);
 		if (p != m_generalProperties.end()) {
 			xnOSMemCopy(pBuffer, p->second.data, min(p->second.length, nBufferSize));
 			return XN_STATUS_OK;
@@ -78,6 +82,10 @@ public:
 			return XN_STATUS_BAD_PARAM;
 		}
 	}
+
+	const IntPropertyMap& GetIntProperties() { return m_intProperties; }
+	const DoublePropertyMap& GetRealProperties() { return m_realProperties; }
+	const BinaryPropertyMap& GetGeneralProperties() { return m_generalProperties; }
 
 protected:
 	void SetIntProperty(const XnChar* strName, XnUInt64 nValue)

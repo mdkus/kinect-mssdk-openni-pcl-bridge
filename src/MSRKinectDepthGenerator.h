@@ -50,7 +50,8 @@ public:
 class MSRKinectDepthGenerator :
 	public MSRKinectDepthGeneratorBase<xn::ModuleDepthGenerator, MSRKinectDepthGeneratorDepthPixelProcessor>,
 	public virtual MSRKinectMirrorCap,
-	public virtual MSRKinectAlternativeViewPointCap
+	public virtual MSRKinectAlternativeViewPointCap,
+	public virtual ModuleExtendedSerializationInterface
 {
 private:
 	typedef MSRKinectDepthGeneratorBase SuperClass;
@@ -66,7 +67,8 @@ public:
 	{
 		return
 			MSRKinectMirrorCap::IsCapabilitySupported(strCapabilityName) ||
-			MSRKinectAlternativeViewPointCap::IsCapabilitySupported(strCapabilityName);
+			MSRKinectAlternativeViewPointCap::IsCapabilitySupported(strCapabilityName) ||
+			streq(strCapabilityName, XN_CAPABILITY_EXTENDED_SERIALIZATION);
 	}
 
 	// DepthGenerator methods
@@ -110,13 +112,38 @@ public:
 		// sorry for using downcast!
 		if (streq(strName, PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES)) {
 			((MSRKinectDepthImageStreamReader*) m_pReader)->SetDistinctOverflowDepthValues(!!nValue);
+			OnNodeIntPropChanged(PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES, !!nValue);
 			return XN_STATUS_OK;
 		} else if (streq(strName, PROP_DEPTH_NEAR_MODE)) {
 			((MSRKinectDepthImageStreamReader*) m_pReader)->SetNearMode(!!nValue);
+			OnNodeIntPropChanged(PROP_DEPTH_NEAR_MODE, !!nValue);
 			return XN_STATUS_OK;
 		} else {
 			return SuperClass::SetIntProperty(strName, nValue);
 		}
+	}
+
+	// ModuleExtendedSerializationInterface accessor
+	virtual ModuleExtendedSerializationInterface* GetExtendedSerializationInterface() { return this; }
+
+	// ModuleExtendedSerializationInterface implementation
+	virtual XnStatus NotifyExState(XnNodeNotifications *pNotifications, void *pCookie)
+	{
+		RegisterNodeNotifications(pNotifications, pCookie);
+		try {
+			CHECK_XN_STATUS(OnNodeIntPropChanged(PROP_DEPTH_NEAR_MODE,
+				((MSRKinectDepthImageStreamReader*) m_pReader)->GetNearMode()));
+			CHECK_XN_STATUS(OnNodeIntPropChanged(PROP_DEPTH_DISTINCT_OVERFLOW_DEPTH_VALUES,
+				((MSRKinectDepthImageStreamReader*) m_pReader)->GetDistinctOverflowDepthValues()));
+			return XN_STATUS_OK;
+		} catch (XnStatusException& e) {
+			return e.nStatus;
+		}
+	}
+
+	virtual void UnregisterExNotifications()
+	{
+		UnregisterNodeNotifications();
 	}
 
 protected:

@@ -41,7 +41,9 @@ protected:
 	virtual XnStatus InitImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
 	{
 		try {
-			*ppInstance = new ProductionNodeClass();
+			ProductionNodeClass* node = new ProductionNodeClass();
+			node->SetNodeName(strInstanceName);
+			*ppInstance = node;
 			return XN_STATUS_OK;
 		} catch (XnStatusException e) {
 			return e.nStatus;
