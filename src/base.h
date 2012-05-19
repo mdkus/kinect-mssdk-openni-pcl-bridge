@@ -73,15 +73,3 @@ inline void printHResult(HRESULT hr, const char* statement)
 }
 
 #define LOG(format, ...) fprintf(stderr, format, __VA_ARGS__)
-
-template<typename T>
-inline T changeBit(T value, T mask, BOOL toSet)
-{
-	return toSet ? (value | mask) : (value & ~mask);
-}
-
-inline int streq(const char* s1, const char* s2)
-{
-	return strcmp(s1, s2) == 0;
-}
-

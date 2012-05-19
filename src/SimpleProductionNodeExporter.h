@@ -38,7 +38,7 @@ class SimpleProductionNodeExporter :
 protected:
 	SimpleProductionNodeExporter(const XnChar* strName, XnPredefinedProductionNodeType nodeType) : ProductionNodeExporter(strName, nodeType) {}
 
-	virtual XnStatus InitImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
+	virtual XnStatus CreateImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
 	{
 		try {
 			ProductionNodeClass* node = new ProductionNodeClass();
@@ -50,12 +50,20 @@ protected:
 		}
 
 	}
+
+	virtual XnStatus EnumerateProductionTreesImpl(xn::Context& context, xn::NodeInfoList& nodes, xn::EnumerationErrors* pErrors)
+	{
+		XnProductionNodeDescription desc;
+		GetDescription(&desc);
+		NodeInfoList neededNodes;
+		return nodes.Add(desc, NULL, &neededNodes);
+	}
 };
 
 #define SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(ProductionNodeClass, NodeTypeSuffix) \
-class Exported##ProductionNodeClass : public SimpleProductionNodeExporter<ProductionNodeClass> \
+class ProductionNodeClass##Exporter : public SimpleProductionNodeExporter<ProductionNodeClass> \
 { \
 public: \
-	Exported##ProductionNodeClass() : SimpleProductionNodeExporter(#ProductionNodeClass, XN_NODE_TYPE_##NodeTypeSuffix) {} \
+	ProductionNodeClass##Exporter() : SimpleProductionNodeExporter(#ProductionNodeClass, XN_NODE_TYPE_##NodeTypeSuffix) {} \
 }; \
-XN_EXPORT_##NodeTypeSuffix(Exported##ProductionNodeClass);
+XN_EXPORT_##NodeTypeSuffix(ProductionNodeClass##Exporter);

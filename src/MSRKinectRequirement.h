@@ -29,6 +29,7 @@
 
 #pragma once
 #include "base.h"
+#include "util.h"
 
 class MSRKinectRequirement
 {
@@ -37,6 +38,7 @@ private:
 	NUI_IMAGE_RESOLUTION m_colorImageResolution;
 	NUI_IMAGE_RESOLUTION m_depthImageResolution;
 	BOOL m_bInitialized;
+	std::string m_requiredSensorID;
 
 	INuiSensor* m_pSensor; // I don't like having state here, but I'm OK to accept this exception
 
@@ -155,6 +157,12 @@ public:
 		return m_pSensor;
 	}
 
+	// Specify the sensor ID to use.
+	void RequireSensorID(const XnChar* id)
+	{
+		m_requiredSensorID = id;
+	}
+
 private:
 	INuiSensor* findFirstAvailableSensor()
 	{
@@ -170,23 +178,27 @@ private:
 		}
 
 		INuiSensor* pSensor = NULL;
-		for (int i = 0; i < count; i++) {
-			CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
-			HRESULT hr = pSensor->NuiInitialize(m_nInitFlags);
-			if (FAILED(hr)) {
-				pSensor->Release();
-				pSensor = NULL;
-				if (i < count - 1) {
-					continue; // retry
-				} else {
-					CHECK_HRESULT(hr); // throw an exception because this was the last one
+		if (m_requiredSensorID.empty()) {
+			for (int i = 0; i < count; i++) {
+				CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
+				HRESULT hr = pSensor->NuiInitialize(m_nInitFlags);
+				if (FAILED(hr)) {
+					pSensor->Release();
+					pSensor = NULL;
+					if (i < count - 1) {
+						continue; // retry
+					} else {
+						CHECK_HRESULT(hr); // throw an exception because this was the last one
+					}
 				}
+				break; // got one
 			}
-			break; // got one
+		} else {
+			BSTR id = cstr2bstr(m_requiredSensorID.c_str());
+			CHECK_HRESULT(NuiCreateSensorById(id, &pSensor));
+			SysFreeString(id);
+			CHECK_HRESULT(pSensor->NuiInitialize(m_nInitFlags));
 		}
-
-		HANDLE e = CreateEvent(NULL, TRUE, FALSE, NULL);
-		HANDLE h = NULL;
 
 		return pSensor;
 	}

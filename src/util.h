@@ -27,41 +27,34 @@
 //
 //@COPYRIGHT@//
 
+#pragma once
 #include "base.h"
-#include "MSRKinectUserGenerator.h"
-#include "SimpleProductionNodeExporter.h"
-#include <XnModuleCppRegistratration.h>
+#include <string>
 
-XN_EXPORT_MODULE(Module)
+template<typename T>
+inline T changeBit(T value, T mask, BOOL toSet)
+{
+	return toSet ? (value | mask) : (value & ~mask);
+}
 
-#if KINECTSDK_VER >= 100
-#define DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ProductionNodeClassBody, NodeTypeSuffix) \
-	typedef MSRKinect##ProductionNodeClassBody KinectSDK##ProductionNodeClassBody; \
-	SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(KinectSDK##ProductionNodeClassBody, NodeTypeSuffix);
-#else
-#define DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ProductionNodeClassBody, NodeTypeSuffix) \
-	SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinect##ProductionNodeClassBody, NodeTypeSuffix);
-#endif
+inline int streq(const char* s1, const char* s2)
+{
+	return strcmp(s1, s2) == 0;
+}
 
-//#include "MSRKinectDepthGenerator.h"
-//SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
+// BSTR sucks
+inline std::string bstr2cstr(BSTR s)
+{
+	int len = WideCharToMultiByte(CP_ACP, 0, s, -1, NULL, 0, NULL, NULL);
+	XnChar* buf = new XnChar[len];
+	WideCharToMultiByte(CP_ACP, 0, s, -1, buf, len, NULL, NULL);
+	return buf;
+}
 
-#include "MSRKinectDepthGeneratorCompatibleWithPrimeSense.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(DepthGeneratorCompatibleWithPrimeSense, DEPTH);
-
-#include "MSRKinectImageGenerator.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ImageGenerator, IMAGE);
-
-#include "MSRKinectUserSkeletonGenerator.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGenerator, USER);
-
-#include "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGeneratorWithPsiPoseEmulation, USER);
-
-#include "MSRKinectUserSkeletonGeneratorWithAutoElevation.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGeneratorWithAutoElevation, USER);
-
-#include "MSRKinectAudioGenerator.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(AudioGenerator, AUDIO);
-
-#include "MSRKinectDeviceExporter.h"
+inline BSTR cstr2bstr(const char* s)
+{
+	int len = MultiByteToWideChar(CP_ACP, 0, s, -1, NULL, 0) - 1;
+	BSTR b = SysAllocStringByteLen(NULL, len * sizeof(OLECHAR));
+	MultiByteToWideChar(CP_ACP, 0, s, -1, b, len);
+	return b;
+}

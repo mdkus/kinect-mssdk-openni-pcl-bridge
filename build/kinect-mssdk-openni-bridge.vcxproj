@@ -46,6 +46,8 @@
     <ClInclude Include="..\src\MSRKinectAudioStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectAudioStreamManager.h" />
     <ClInclude Include="..\src\MSRKinectAudioStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectDevice.h" />
+    <ClInclude Include="..\src\MSRKinectDeviceExporter.h" />
     <ClInclude Include="..\src\MSRKinectFrameContextBase.h" />
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h" />
     <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h" />
@@ -75,6 +77,7 @@
     <ClInclude Include="..\src\Properties.h" />
     <ClInclude Include="..\src\Prop.h" />
     <ClInclude Include="..\src\SimpleProductionNodeExporter.h" />
+    <ClInclude Include="..\src\util.h" />
     <ClInclude Include="..\src\vec.h" />
     <ClInclude Include="..\src\version.h" />
   </ItemGroup>

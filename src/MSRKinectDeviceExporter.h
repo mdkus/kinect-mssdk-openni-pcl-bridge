@@ -27,41 +27,52 @@
 //
 //@COPYRIGHT@//
 
+#pragma once
 #include "base.h"
-#include "MSRKinectUserGenerator.h"
-#include "SimpleProductionNodeExporter.h"
-#include <XnModuleCppRegistratration.h>
+#include "util.h"
+#include "ProductionNodeExporter.h"
+#include "MSRKinectDevice.h"
 
-XN_EXPORT_MODULE(Module)
+class MSRKinectDeviceExporter : public ProductionNodeExporter<MSRKinectDevice>
+{
+public:
+	MSRKinectDeviceExporter() : ProductionNodeExporter("KinectSDKDevice", XN_NODE_TYPE_DEVICE) {}
 
-#if KINECTSDK_VER >= 100
-#define DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ProductionNodeClassBody, NodeTypeSuffix) \
-	typedef MSRKinect##ProductionNodeClassBody KinectSDK##ProductionNodeClassBody; \
-	SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(KinectSDK##ProductionNodeClassBody, NodeTypeSuffix);
-#else
-#define DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ProductionNodeClassBody, NodeTypeSuffix) \
-	SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinect##ProductionNodeClassBody, NodeTypeSuffix);
-#endif
+protected:
+	virtual XnStatus CreateImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
+	{
+		try {
+			MSRKinectDevice* node = new MSRKinectDevice(strCreationInfo);
+			node->SetNodeName(strInstanceName);
+			*ppInstance = node;
+			return XN_STATUS_OK;
+		} catch (XnStatusException e) {
+			return e.nStatus;
+		}
 
-//#include "MSRKinectDepthGenerator.h"
-//SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
+	}
 
-#include "MSRKinectDepthGeneratorCompatibleWithPrimeSense.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(DepthGeneratorCompatibleWithPrimeSense, DEPTH);
+	virtual XnStatus EnumerateProductionTreesImpl(xn::Context& context, xn::NodeInfoList& nodes, xn::EnumerationErrors* pErrors)
+	{
+		int count;
+		CHECK_HRESULT(NuiGetSensorCount(&count));
+		if (count == 0) {
+			return XN_STATUS_DEVICE_NOT_CONNECTED;
+		}
 
-#include "MSRKinectImageGenerator.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ImageGenerator, IMAGE);
+		XnProductionNodeDescription desc;
+		GetDescription(&desc);
+		NodeInfoList neededNodes;
 
-#include "MSRKinectUserSkeletonGenerator.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGenerator, USER);
+		for (int i = 0; i < count; i++) {
+			INuiSensor* pSensor = NULL;
+			CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
+			nodes.Add(desc, bstr2cstr(pSensor->NuiDeviceConnectionId()).c_str(), &neededNodes);
+			pSensor->Release();
+		}
 
-#include "MSRKinectUserSkeletonGeneratorWithPsiPoseEmulation.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGeneratorWithPsiPoseEmulation, USER);
+		return XN_STATUS_OK;
+	}
+};
 
-#include "MSRKinectUserSkeletonGeneratorWithAutoElevation.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGeneratorWithAutoElevation, USER);
-
-#include "MSRKinectAudioGenerator.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(AudioGenerator, AUDIO);
-
-#include "MSRKinectDeviceExporter.h"
+XN_EXPORT_DEVICE(MSRKinectDeviceExporter);

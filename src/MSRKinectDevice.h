@@ -29,53 +29,71 @@
 
 #pragma once
 #include "base.h"
-#include "version.h"
+#include "util.h"
+#include "AbstractModuleGenerator.h"
+#include "MSRKinectManager.h"
 
-template<class ProductionNodeClass>
-class ProductionNodeExporter {
+class MSRKinectDevice :
+	public AbstractModuleGenerator<xn::ModuleDevice>,
+	public virtual xn::ModuleDeviceIdentificationInterface
+{
 private:
-	XnPredefinedProductionNodeType m_nodeType;
-	const XnChar* m_strName;
+	typedef AbstractModuleGenerator<xn::ModuleDevice> SuperClass;
+
+private:
+	std::string m_sensorID;
+	Properties m_props;
 
 public:
-	ProductionNodeExporter(const XnChar* strName, XnPredefinedProductionNodeType nodeType)
+	MSRKinectDevice(const XnChar* strCreationInfo)
 	{
-		m_nodeType = nodeType;
-		m_strName = strName;
+		m_sensorID = strCreationInfo;
+
+		// Hack: most recently created one wins
+		MSRKinectManager::GetInstance()->GetRequirement()->RequireSensorID(strCreationInfo);
 	}
 
-	virtual ~ProductionNodeExporter()
+	virtual ~MSRKinectDevice()
 	{
 	}
 
-	void GetDescription(XnProductionNodeDescription* pDescription)
+	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
 	{
-		pDescription->Type = m_nodeType;
-		strcpy(pDescription->strVendor, VERSION_VENDOR);
-		strcpy(pDescription->strName, m_strName);
-		pDescription->Version.nMajor = VERSION_MAJOR;
-		pDescription->Version.nMinor = VERSION_MINOR;
-		pDescription->Version.nMaintenance = VERSION_MAINTENANCE;
-		pDescription->Version.nBuild = VERSION_BUILD;
+		return streq(strCapabilityName, XN_CAPABILITY_DEVICE_IDENTIFICATION) ||
+			SuperClass::IsCapabilitySupported(strCapabilityName);
 	}
 
-	XnStatus EnumerateProductionTrees(xn::Context& context, xn::NodeInfoList& nodes, xn::EnumerationErrors* pErrors)
+	virtual ModuleDeviceIdentificationInterface* GetIdentificationInterface()
 	{
-		return EnumerateProductionTreesImpl(context, nodes, pErrors);
+		return this;
 	}
 
-	XnStatus Create(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
+	virtual XnStatus GetDeviceName(XnChar* strBuffer, XnUInt32& nBufferSize)
 	{
-		return CreateImpl(context, strInstanceName, strCreationInfo, pNodes, strConfigurationDir, ppInstance);
+		const std::string value("KinectSDK Bridge");
+		strcpy_s(strBuffer, nBufferSize, value.c_str());
+		if (strlen(strBuffer) < value.length()) {
+			nBufferSize = value.length() + 1;
+			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
+		} else {
+			return XN_STATUS_OK;
+		}
 	}
 
-	void Destroy(xn::ModuleProductionNode* pInstance)
+	virtual XnStatus GetVendorSpecificData(XnChar* strBuffer, XnUInt32& nBufferSize)
 	{
-		delete pInstance;
+		return XN_STATUS_OK;
 	}
 
-protected:
-	virtual XnStatus CreateImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance) = 0;
-	virtual XnStatus EnumerateProductionTreesImpl(xn::Context& context, xn::NodeInfoList& nodes, xn::EnumerationErrors* pErrors) = 0;
+	virtual XnStatus GetSerialNumber(XnChar* strBuffer, XnUInt32& nBufferSize)
+	{
+		strcpy_s(strBuffer, nBufferSize, m_sensorID.c_str());
+		if (strlen(strBuffer) < m_sensorID.length()) {
+			nBufferSize = m_sensorID.length() + 1;
+			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
+		} else {
+			return XN_STATUS_OK;
+		}
+	}
 
 };

@@ -38,4 +38,4 @@
 
 // Function version
 #define VERSION_MAINTENANCE 0
-#define VERSION_BUILD 5
+#define VERSION_BUILD 6
