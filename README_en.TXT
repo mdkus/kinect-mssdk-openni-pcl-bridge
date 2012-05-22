@@ -25,8 +25,9 @@ as near mode, audio source detection, acoustic echo cancelling, etc.
 
 2.1 Prerequisites
 
-This module is compatible with OpenNI 1.5.2.23 32bit and Kinect SDK V1.0.
-You need to install them before installing this module.
+This module is compatible with the combination of OpenNI 1.5.2.23 32bit
+and Kinect SDK V1.0 or V1.5. You need to install them before installing
+this module.
 * NOTE USE OpenNI 32BIT EVEN THOUGH YOUR OS MAY BE 64BIT.
 * Most probably you can use newer version of OpenNI, but I do not know
   until when the compatibility stays.
