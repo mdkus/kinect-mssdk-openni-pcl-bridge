@@ -34,8 +34,8 @@
 #define VERSION_MAJOR 1
 
 // KinectSDK minor version
-#define VERSION_MINOR 0
+#define VERSION_MINOR 5
 
 // Function version
 #define VERSION_MAINTENANCE 0
-#define VERSION_BUILD 6
+#define VERSION_BUILD 0
