@@ -114,8 +114,17 @@ public:
 		return MSRKinectJointMap::GetNuiIndexByXnJoint(eJoint) >= 0;
 	}
 
-	virtual XnBool IsProfileAvailable(XnSkeletonProfile eProfile) { return TRUE; } // probably work
-	virtual XnStatus SetSkeletonProfile(XnSkeletonProfile eProfile) { return XN_STATUS_OK; } // ignore
+	virtual XnBool IsProfileAvailable(XnSkeletonProfile eProfile)
+	{
+		return TRUE; // TODO
+	}
+
+	virtual XnStatus SetSkeletonProfile(XnSkeletonProfile eProfile)
+	{
+		m_pSkeletonReader->SetSkeletonProfile(eProfile);
+		return XN_STATUS_OK;
+	}
+
 	virtual XnStatus SetJointActive(XnSkeletonJoint eJoint, XnBool bState) { return XN_STATUS_OK; } // ignore
 	virtual XnBool IsJointActive(XnSkeletonJoint eJoint) { return IsJointAvailable(eJoint); }
 

@@ -47,7 +47,15 @@ public:
 	virtual void Setup()
 	{
 		m_pRequirement->DoInitialize();
+		CHECK_HRESULT(GetSensor()->NuiSkeletonTrackingEnable(m_hNextFrameEvent, NUI_SKELETON_TRACKING_FLAG_ENABLE_IN_NEAR_RANGE));
+	}
 
-		CHECK_HRESULT(GetSensor()->NuiSkeletonTrackingEnable(m_hNextFrameEvent, 0));
+	void SetSkeletonProfile(XnSkeletonProfile eProfile)
+	{
+		DWORD flags = NUI_SKELETON_TRACKING_FLAG_ENABLE_IN_NEAR_RANGE;
+		if (eProfile == XN_SKEL_PROFILE_HEAD_HANDS || eProfile == XN_SKEL_PROFILE_UPPER) {
+			flags |= NUI_SKELETON_TRACKING_FLAG_ENABLE_SEATED_SUPPORT;
+		}
+		CHECK_HRESULT(GetSensor()->NuiSkeletonTrackingEnable(m_hNextFrameEvent, flags));
 	}
 };
