@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.5-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.6-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 5/8/2012
+Release Date: 5/22/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -220,6 +220,13 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.0.0.6-1.5.2.23
+* Now properties are correctly saved to .oni file.
+* Supported enumeration and selection from multiple Kinect sensors,
+  but with limitations: The last sensor corresponding to the device
+  node most recently created before StartGenerating will be selected.
+  No simultaneous use of multiple sensors.
 
 V1.0.0.5-1.5.2.23
 * Better error message

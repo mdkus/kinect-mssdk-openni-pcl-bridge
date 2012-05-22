@@ -1,4 +1,4 @@
-kinect-mssdk-openni-bridge v1.0.0.5-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.0.0.6-for-1.5.2.23
 Author: Tomoto S. Washio
 Release Date: 2012/5/8
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
@@ -218,6 +218,12 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.0.0.6-1.5.2.23
+・oniファイルへのプロパティ保存を実装
+・複数Kinectの列挙と選択をなんとなくサポート
+　(選択は制限あり。StartGenerating前に最後に作られたDeviceノードに対応する
+　 Kinectが選択される。複数同時選択は不可能。)
 
 V1.0.0.5-1.5.2.23
 ・エラーメッセージ改善
