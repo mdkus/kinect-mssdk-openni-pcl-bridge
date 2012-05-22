@@ -1,4 +1,4 @@
-kinect-mssdk-openni-bridge v1.0.0.6-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.5.0.0-for-1.5.2.23
 Author: Tomoto S. Washio
 Release Date: 5/22/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
@@ -107,6 +107,8 @@ changed from the previous version.)
   
   Near mode is supported. Set nearMode int property to non-zero
   to turn it on.
+  [Kinect SDK 1.5] You can get the skeleton data if you use
+  KinectSDKUserSkeletonGenerator in near mode.
 
         <Node type="Depth" name="Depth1">
             <Configuration>
@@ -123,6 +125,11 @@ changed from the previous version.)
                 <Property type="int" name="distinctOverflowDepthValues" value="1"/>
             </Configuration>
         </Node>
+
+* [Kinect SDK 1.5] By specifying XN_SKEL_PROFILE_HEAD_HANDS or
+  XN_SKEL_PROFILE_UPPER to SetSkeletonProfile when you use
+  KinectSDKUserSkeletonGenerator, the skeleton tracking works in Seated Mode.
+  e.g. userGenerator.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_HEAD_HANDS)
 
 * If your application assumes Psi pose detection, specify
   "KinectSDKUserSkeletonGeneratorWithPsiPoseEmulation" instead of
@@ -220,6 +227,9 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.5.0.0-1.5.2.23
+* Kinect SDK V1.5 support (near mode skeleton tracking, seated mode)
 
 V1.0.0.6-1.5.2.23
 * Now properties are correctly saved to .oni file.

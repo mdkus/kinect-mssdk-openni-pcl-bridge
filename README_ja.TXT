@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.0.0.6-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.5.0.0-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/5/8
+Release Date: 2012/5/22
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -29,7 +29,7 @@ Kinect for Windowsと組み合わせて活用することができるように�
 対応しています。事前にこれらをインストールしておいてください。
 ・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
 ・これより新しい版のOpenNIも使用可能なはずですが、いつ互換性が
-　崩れるかはわかりません。
+  崩れるかはわかりません。
 ・Kinect SDK Beta版はライセンスが異なるため対応していません。
   Beta版で使用したい場合には以前のバージョンを使用してください。
 
@@ -106,6 +106,8 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
 
   近接モードがサポートされています。近接モードを有効にするには次のように
   nearMode整数プロパティにゼロ以外の値を設定します。
+  [Kinect SDK 1.5の場合] 近接モードでKinectSDKUserSkeletonGeneratorを
+  使うとスケルトンが取得できます。
 
         <Node type="Depth" name="Depth1">
             <Configuration>
@@ -122,6 +124,11 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
                 <Property type="int" name="distinctOverflowDepthValues" value="1"/>
             </Configuration>
         </Node>
+
+  [Kinect SDK 1.5の場合] SetSkeletonProfileにXN_SKEL_PROFILE_HEAD_HANDS
+  またはXN_SKEL_PROFILE_UPPERを指定してKinectSDKUserSkeletonGeneratorを使うと
+  スケルトントラッキングがSeated modeになります。
+  例: userGenerator.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_HEAD_HANDS)
 
 ・あなたのアプリケーションがPsiポーズ検出を前提としている場合、
   "KinectSDKUserSkeletonGenerator" の代わりに
@@ -219,11 +226,15 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
 
 6. 更新履歴
 
+V1.5.0.0-1.5.2.23
+* Kinect SDK V1.5サポート(近接モードでのスケルトントラッキング、
+　seatedモード)
+
 V1.0.0.6-1.5.2.23
 ・oniファイルへのプロパティ保存を実装
 ・複数Kinectの列挙と選択をなんとなくサポート
-　(選択は制限あり。StartGenerating前に最後に作られたDeviceノードに対応する
-　 Kinectが選択される。複数同時選択は不可能。)
+  (選択は制限あり。StartGenerating前に最後に作られたDeviceノードに対応する
+   Kinectが選択される。複数同時選択は不可能。)
 
 V1.0.0.5-1.5.2.23
 ・エラーメッセージ改善
