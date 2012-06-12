@@ -48,7 +48,9 @@ inline std::string bstr2cstr(BSTR s)
 	int len = WideCharToMultiByte(CP_ACP, 0, s, -1, NULL, 0, NULL, NULL);
 	XnChar* buf = new XnChar[len];
 	WideCharToMultiByte(CP_ACP, 0, s, -1, buf, len, NULL, NULL);
-	return buf;
+	std::string result(buf);
+	delete [] buf;
+	return result;
 }
 
 inline BSTR cstr2bstr(const char* s)
