@@ -35,6 +35,14 @@ template <class ParentMapGeneratorClass, class SourcePixelType, class TargetPixe
 class AbstractMSRKinectMapGenerator :
 	public AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType>
 {
+private:
+	typedef AbstractMSRKinectImageStreamGenerator<ParentMapGeneratorClass, SourcePixelType, TargetPixelType> SuperClass;
+	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
+
+
+protected:
+	ChangeEvent m_mapOutputModeChangeEvent;
+
 protected:
 	AbstractMSRKinectMapGenerator(XnPredefinedProductionNodeType nodeType, BOOL bActiveGeneratorControl, const ImageConfiguration::Desc* pImageConfigDesc) :
 		 AbstractMSRKinectImageStreamGenerator(nodeType, bActiveGeneratorControl, pImageConfigDesc)
@@ -60,6 +68,7 @@ public:
 			CHECK_XN_STATUS(m_imageConfig.SelectRawMode(mode));
 			m_pReader->SetOutputMode(m_nodeType, m_imageConfig.GetSelectedMode()->outputMode);
 			CleanUpBuffer();
+			m_mapOutputModeChangeEvent.Raise();
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
 			return e.nStatus;
@@ -74,13 +83,13 @@ public:
 
 	virtual XnStatus RegisterToMapOutputModeChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback)
 	{
-		// ignore, maybe someday
+		m_mapOutputModeChangeEvent.Register(handler, pCookie, &hCallback);
 		return XN_STATUS_OK;
 	}
 
 	virtual void UnregisterFromMapOutputModeChange(XnCallbackHandle hCallback)
 	{
-		// ignore, maybe someday
+		m_mapOutputModeChangeEvent.Unregister(hCallback);
 	}
 
 protected:
