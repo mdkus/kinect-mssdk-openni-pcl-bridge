@@ -44,6 +44,8 @@ public:
 		SetIntProperty("MaxShift", 2047);
 		SetIntProperty("ZPD", 120);
 		SetIntProperty("ConstShift", 200);
+		SetIntProperty("ShadowValue", 0);
+		SetIntProperty("NoSampleValue", 0);
 		SetRealProperty("ZPPS", 0.1052); // 0.1042?
 		SetRealProperty("LDDIS", 7.5);
 
