@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.5.0.0-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.5.0.1-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 5/22/2012
+Release Date: 6/17/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -228,6 +228,10 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.5.0.1-1.5.2.23
+* Added ShadowValue and NoSampleValue properties required by some
+  OpenCV applications.
 
 V1.5.0.0-1.5.2.23
 * Kinect SDK V1.5 support (near mode skeleton tracking, seated mode)
