@@ -65,8 +65,10 @@ protected:
 public:
 	MSRKinectUserSkeletonGenerator() // throws XnStatusException
 	{
-		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
-		m_pSkeletonReader = pMan->GetSkeletonManager()->GetReader();
+		m_pSkeletonReader = m_pMan->GetSkeletonManager()->GetReader();
+	}
+
+	virtual ~MSRKinectUserSkeletonGenerator() {
 	}
 
 	virtual XnBool IsGenerating()

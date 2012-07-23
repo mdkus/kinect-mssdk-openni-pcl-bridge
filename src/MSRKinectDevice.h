@@ -50,7 +50,7 @@ public:
 		m_sensorID = strCreationInfo;
 
 		// Hack: most recently created one wins
-		MSRKinectManager::GetInstance()->GetRequirement()->RequireSensorID(strCreationInfo);
+		m_pMan->GetRequirement()->RequireSensorID(strCreationInfo);
 	}
 
 	virtual ~MSRKinectDevice()

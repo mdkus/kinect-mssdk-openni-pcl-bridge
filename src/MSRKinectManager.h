@@ -37,7 +37,9 @@
 class MSRKinectManager
 {
 private:
-	static MSRKinectManager cs_instance;
+	static MSRKinectManager* cs_pInstance;
+
+	int m_refCount;
 
 	MSRKinectRequirement m_requirement;
 
@@ -47,18 +49,32 @@ private:
 	MSRKinectAudioStreamManager* m_pAudioStreamManager;
 
 public:
+	// Note: call Release() once per call of GetInstance()
 	static MSRKinectManager* GetInstance() // throws XnStatusException
 	{
-		return &cs_instance;
+		if (cs_pInstance == NULL) {
+			cs_pInstance = new MSRKinectManager();
+		}
+
+		cs_pInstance->m_refCount++;
+
+		return cs_pInstance;
 	}
 
-	MSRKinectManager() : m_pColorImageStreamManager(NULL), m_pDepthImageStreamManager(NULL), m_pSkeletonManager(NULL), m_pAudioStreamManager(NULL)
+	MSRKinectManager() : m_refCount(0), m_pColorImageStreamManager(NULL), m_pDepthImageStreamManager(NULL), m_pSkeletonManager(NULL), m_pAudioStreamManager(NULL)
 	{
 	}
 
 	virtual ~MSRKinectManager()
 	{
 		Shutdown();
+	}
+
+	void Release() {
+		if (--m_refCount == 0) {
+			delete this;
+			cs_pInstance = NULL;
+		}
 	}
 
 	MSRKinectRequirement* GetRequirement()
@@ -114,4 +130,5 @@ public:
 		}
 		m_requirement.DoShutdown();
 	}
+
 };

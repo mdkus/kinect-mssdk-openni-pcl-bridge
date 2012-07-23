@@ -57,8 +57,7 @@ protected:
 		m_imageConfig(pImageConfigDesc),
 		m_pBuffer(NULL)
 	{
-		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
-		m_pReader = pMan->GetImageStreamManager(nodeType)->GetReader();
+		m_pReader = m_pMan->GetImageStreamManager(nodeType)->GetReader();
 		m_pReader->SetOutputMode(nodeType,  m_imageConfig.GetSelectedMode()->outputMode);
 	}
 

@@ -30,6 +30,7 @@
 #pragma once
 #include "base.h"
 #include <string>
+#include "MSRKinectManager.h"
 
 template <class ParentModuleGeneratorClass>
 class AbstractModuleGenerator : public ParentModuleGeneratorClass
@@ -39,6 +40,7 @@ private:
 	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
 
 protected:
+	MSRKinectManager* m_pMan;
 	ChangeEvent m_newDataAvailableEvent;
 	ChangeEvent m_generationRunningChangeEvent;
 	std::string m_nodeName;
@@ -48,10 +50,12 @@ protected:
 public:
 	AbstractModuleGenerator() : m_pNodeNotifications(NULL)
 	{
+		m_pMan = MSRKinectManager::GetInstance();
 	}
 
 	virtual ~AbstractModuleGenerator()
 	{
+		m_pMan->Release();
 	}
 
 	void SetNodeName(const XnChar* name)

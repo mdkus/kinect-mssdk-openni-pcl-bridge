@@ -59,8 +59,7 @@ private:
 public:
 	MSRKinectAudioGenerator() : SuperClass(TRUE), m_audioConfig(GetAudioConfigDesc()), m_dataSize(0), m_data(NULL)
 	{
-		MSRKinectManager* pMan = MSRKinectManager::GetInstance();
-		m_pReader = pMan->GetAudioStreamManager()->GetReader();
+		m_pReader = m_pMan->GetAudioStreamManager()->GetReader();
 	}
 
 	~MSRKinectAudioGenerator()

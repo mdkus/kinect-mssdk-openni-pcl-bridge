@@ -55,7 +55,7 @@ public:
 	virtual ~AbstractMultiThreadFrameGenerator()
 	{
 		if (m_pReader) {
-			m_pReader->RemoveListener(this);
+			StopGeneratingImpl();
 		}
 	}
 
@@ -122,14 +122,18 @@ public:
 	
 	virtual void StopGenerating()
 	{
-		if (m_bActiveGeneratorControl) {
-			m_pReader->Stop();
-		}
-		m_pReader->RemoveListener(this);
+		StopGeneratingImpl();
 	}
 
 protected:
 	virtual void PreStartGenerating() {}
 	virtual void PostStartGenerating() {}
 
+private:
+	void StopGeneratingImpl() {
+		if (m_bActiveGeneratorControl) {
+			m_pReader->Stop();
+		}
+		m_pReader->RemoveListener(this);
+	}
 };
