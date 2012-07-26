@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.5.0.1-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.5.0.2-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/6/17
+Release Date: 2012/7/25
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -225,6 +225,10 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.5.0.2-1.5.2.23
+* インストーラのKinect SDKバージョンチェックを削除。
+* ContextをReleaseした後の最初期化をサポート。
 
 V1.5.0.1-1.5.2.23
 * プロパティShadowValueとNoSampleValueを追加。あるOpenCVアプリで必要。
