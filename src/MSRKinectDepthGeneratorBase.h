@@ -93,7 +93,7 @@ protected:
 #if KINECTSDK_VER >= 100
 			const XnUInt32 pixelSize = max(1, destXRes / sourceXRes);
 
-			for (XnUInt32 y = 0; y < sourceYRes; y++) {
+			/*for (XnUInt32 y = 0; y < sourceYRes; y++) {
 				sp = data + y * sourceXRes + (step < 0 ? sourceXRes-1 : 0);
 				for (XnUInt32 x = 0; x < sourceXRes; x++) {
 					LONG ix, iy;
@@ -106,7 +106,57 @@ protected:
 					}
 					sp += step;
 				}
-			}
+			}*/
+
+			//OutpostStudios: Henrik Weirauch
+			MSRKinectManager * KM = MSRKinectManager::GetInstance();
+			
+				USHORT * pData = (USHORT*)data;
+
+				DWORD cColorCoordinates  = destXRes*destYRes*2;
+				LONG * pColorCoordinates = new LONG[cColorCoordinates];
+				const LONG * pCC;
+				
+				HRESULT hr = KM->GetRequirement()->GetSensor()->
+						NuiImageGetColorPixelCoordinateFrameFromDepthPixelFrameAtResolution
+						(
+							(destXRes == 640 ? NUI_IMAGE_RESOLUTION_640x480 : NUI_IMAGE_RESOLUTION_320x240)
+							, pFrame->eResolution/*source*/
+							, sourceXRes*sourceYRes, pData
+							, cColorCoordinates, pColorCoordinates 
+						);
+
+				if(FAILED(hr)){
+					printf("colorres: %d\n",(destXRes == 640 ? NUI_IMAGE_RESOLUTION_640x480 : NUI_IMAGE_RESOLUTION_320x240));
+					printf("depthres: %d\n",pFrame->eResolution);
+					printf("sourcebyte: %d ptr %d\n", sourceXRes*sourceYRes,  pData);
+					printf("destbyte: %d ptr %d\n", cColorCoordinates,  pColorCoordinates);
+					CHECK_HRESULT(hr);
+				}
+				for (XnUInt32 y = 0; y < sourceYRes; y++) 
+				{
+					sp = data + y * sourceXRes + (step < 0 ? sourceXRes-1 : 0);
+					pCC= pColorCoordinates + y * pixelSize * destXRes*2 + (step < 0 ? (destXRes*2)-2 : 0);
+
+					for (XnUInt32 x = 0; x < sourceXRes; x++)
+					{
+						LONG ix = (step < 0 ? destXRes-1-pCC[0] : pCC[0]); 
+						LONG iy = pCC[1];
+						USHORT d = *sp;
+
+						if (ix >= 0 && ix <= LONG(destXRes - pixelSize) && iy >= 0 && iy <= LONG(destYRes - pixelSize)) 
+						{
+							proc.Process(d, m_pBuffer + iy * destXRes + ix, pixelSize );
+						}
+						sp += step;
+						pCC+= (step*2*pixelSize);
+					}
+				}
+
+				delete [] pColorCoordinates;
+
+			KM->Release();
+
 #else
 			// NuiImageGetColorPixelCoordinatesFromDepthPixel only supports Image@640x480 and Depth@320x240
 			const XnUInt32 convXRes = 320;

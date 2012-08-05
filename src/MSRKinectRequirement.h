@@ -48,7 +48,8 @@ public:
 		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_bInitialized(FALSE),
-		m_pSensor(NULL)
+		m_pSensor(NULL),
+		m_bDisconnected(true) //OutpostStudios: Henrik Weirauch
 	{
 	}
 
@@ -141,6 +142,7 @@ public:
 		if (m_bInitialized) return;
 		m_pSensor = findFirstAvailableSensor();
 		m_bInitialized = TRUE;
+		m_bDisconnected = false;
 	}
 
 	void DoShutdown()
@@ -149,6 +151,7 @@ public:
 			m_pSensor->NuiShutdown();
 			m_pSensor->Release();
 			m_pSensor = NULL;
+			m_bDisconnected = true;
 		}
 	}
 
@@ -181,8 +184,16 @@ private:
 		if (m_requiredSensorID.empty()) {
 			for (int i = 0; i < count; i++) {
 				CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
+
+				//OutpostStudios: Henrik Weirauch
+				if( pSensor->NuiStatus() != S_OK )
+				{	
+					continue;
+				}
+				
 				HRESULT hr = pSensor->NuiInitialize(m_nInitFlags);
-				if (FAILED(hr)) {
+				if (FAILED(hr)) 
+				{
 					pSensor->Release();
 					pSensor = NULL;
 					if (i < count - 1) {
@@ -203,10 +214,28 @@ private:
 		return pSensor;
 	}
 
-	static void CALLBACK dummyDeviceStatusCallback(HRESULT, const OLECHAR*, const OLECHAR*, void*)
+	public://OutpostStudios: Henrik Weirauch
+	bool WasDisconnected()
+	{
+		return m_bDisconnected;
+	}
+	private:
+	bool m_bDisconnected;
+	static void CALLBACK dummyDeviceStatusCallback(HRESULT hrStatus, const OLECHAR* instanceName, const OLECHAR*, void* pMSRKinectRequirement)
 	{
 		// TODO: move to somewhere else
 
 		// dummy to avoid Kinect SDK's bug
+
+		//OutpostStudios: Henrik Weirauch
+		 if ( SUCCEEDED( hrStatus ) )      
+		{          
+			wprintf(L"Kinect-Sensor Connected (%s)\n",instanceName);
+		}      
+		else      
+		{          
+			wprintf(L"Kinect-Sensor Disconnected (%s)\n",instanceName);
+			((MSRKinectRequirement*)pMSRKinectRequirement)->m_bDisconnected = true;
+		}
 	}
 };
