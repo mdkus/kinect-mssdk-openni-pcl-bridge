@@ -129,7 +129,11 @@ protected:
 					USHORT d = *sp;
 
 					if (ix >= 0 && ix <= LONG(destXRes - pixelSize) && iy >= 0 && iy <= LONG(destYRes - pixelSize)) {
-						proc.Process(d, m_pBuffer + iy * destXRes + ix, pixelSize);
+						USHORT* dp = m_pBuffer + iy * destXRes + ix;
+						proc.Process(d, dp, pixelSize);
+						proc.Process(d, dp + pixelSize, pixelSize);
+						//proc.Process(d, dp + destXRes * pixelSize, pixelSize);
+						//proc.Process(d, dp + (destXRes + 1) * pixelSize, pixelSize);
 					}
 
 					sp += step;
