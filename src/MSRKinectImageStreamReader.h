@@ -41,7 +41,7 @@ private:
 
 public:
 	MSRKinectImageStreamReader(MSRKinectRequirement* pRequirement, HANDLE hNextFrameEvent) :
-		SuperClass(pRequirement, hNextFrameEvent, INFINITE)
+		SuperClass(pRequirement, hNextFrameEvent, 1000)
 	{
 	}
 

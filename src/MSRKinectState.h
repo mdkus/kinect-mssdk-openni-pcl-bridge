@@ -29,72 +29,51 @@
 
 #pragma once
 #include "base.h"
-#include "util.h"
-#include "AbstractModuleGenerator.h"
-#include "MSRKinectManager.h"
 
-class MSRKinectDevice :
-	public AbstractModuleGenerator<xn::ModuleDevice>,
-	public virtual xn::ModuleDeviceIdentificationInterface
-{
+class MSRKinectState {
 private:
-	typedef AbstractModuleGenerator<xn::ModuleDevice> SuperClass;
-
-private:
-	std::string m_sensorID;
-	Properties m_props;
+	INuiSensor* m_pSensor;
+	BOOL m_bDisconnected; // true if disconnected after once connected
 
 public:
-	MSRKinectDevice(const XnChar* strCreationInfo)
-	{
-		m_sensorID = strCreationInfo;
-
-		// Hack: most recently created one wins
-		m_pMan->GetRequirement()->RequireSensorID(strCreationInfo);
-	}
-
-	virtual ~MSRKinectDevice()
+	MSRKinectState() : m_pSensor(NULL), m_bDisconnected(FALSE)
 	{
 	}
 
-	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
+	virtual ~MSRKinectState()
 	{
-		return
-			SuperClass::IsCapabilitySupported(strCapabilityName) ||
-			streq(strCapabilityName, XN_CAPABILITY_DEVICE_IDENTIFICATION);
+		ReleaseSensor();
 	}
 
-	virtual ModuleDeviceIdentificationInterface* GetIdentificationInterface()
+	void ReleaseSensor()
 	{
-		return this;
-	}
-
-	virtual XnStatus GetDeviceName(XnChar* strBuffer, XnUInt32& nBufferSize)
-	{
-		const std::string value("KinectSDK Bridge");
-		strcpy_s(strBuffer, nBufferSize, value.c_str());
-		if (strlen(strBuffer) < value.length()) {
-			nBufferSize = value.length() + 1;
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
-		} else {
-			return XN_STATUS_OK;
+		if (m_pSensor) {
+			m_pSensor->NuiShutdown();
+			m_pSensor->Release();
+			m_pSensor = NULL;
+			m_bDisconnected = TRUE;
 		}
 	}
 
-	virtual XnStatus GetVendorSpecificData(XnChar* strBuffer, XnUInt32& nBufferSize)
+	void SetSensor(INuiSensor* pSensor)
 	{
-		return XN_STATUS_OK;
+		m_pSensor = pSensor;
+		m_bDisconnected = FALSE;
 	}
 
-	virtual XnStatus GetSerialNumber(XnChar* strBuffer, XnUInt32& nBufferSize)
+	INuiSensor* GetSensor()
 	{
-		strcpy_s(strBuffer, nBufferSize, m_sensorID.c_str());
-		if (strlen(strBuffer) < m_sensorID.length()) {
-			nBufferSize = m_sensorID.length() + 1;
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
-		} else {
-			return XN_STATUS_OK;
-		}
+		return m_pSensor;
+	}
+
+	void SetDisconnected(BOOL value)
+	{
+		m_bDisconnected = value;
+	}
+
+	BOOL IsDisconnected()
+	{
+		return m_bDisconnected;
 	}
 
 };

@@ -30,71 +30,36 @@
 #pragma once
 #include "base.h"
 #include "util.h"
-#include "AbstractModuleGenerator.h"
-#include "MSRKinectManager.h"
 
-class MSRKinectDevice :
-	public AbstractModuleGenerator<xn::ModuleDevice>,
-	public virtual xn::ModuleDeviceIdentificationInterface
+class MSRKinectErrorStateCap :
+	public virtual xn::ModuleErrorStateInterface
 {
-private:
-	typedef AbstractModuleGenerator<xn::ModuleDevice> SuperClass;
-
-private:
-	std::string m_sensorID;
-	Properties m_props;
-
-public:
-	MSRKinectDevice(const XnChar* strCreationInfo)
-	{
-		m_sensorID = strCreationInfo;
-
-		// Hack: most recently created one wins
-		m_pMan->GetRequirement()->RequireSensorID(strCreationInfo);
-	}
-
-	virtual ~MSRKinectDevice()
-	{
-	}
-
+protected:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
 	{
-		return
-			SuperClass::IsCapabilitySupported(strCapabilityName) ||
-			streq(strCapabilityName, XN_CAPABILITY_DEVICE_IDENTIFICATION);
-	}
-
-	virtual ModuleDeviceIdentificationInterface* GetIdentificationInterface()
-	{
-		return this;
-	}
-
-	virtual XnStatus GetDeviceName(XnChar* strBuffer, XnUInt32& nBufferSize)
-	{
-		const std::string value("KinectSDK Bridge");
-		strcpy_s(strBuffer, nBufferSize, value.c_str());
-		if (strlen(strBuffer) < value.length()) {
-			nBufferSize = value.length() + 1;
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
-		} else {
-			return XN_STATUS_OK;
-		}
-	}
-
-	virtual XnStatus GetVendorSpecificData(XnChar* strBuffer, XnUInt32& nBufferSize)
-	{
-		return XN_STATUS_OK;
-	}
-
-	virtual XnStatus GetSerialNumber(XnChar* strBuffer, XnUInt32& nBufferSize)
-	{
-		strcpy_s(strBuffer, nBufferSize, m_sensorID.c_str());
-		if (strlen(strBuffer) < m_sensorID.length()) {
-			nBufferSize = m_sensorID.length() + 1;
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
-		} else {
-			return XN_STATUS_OK;
-		}
+		return streq(XN_CAPABILITY_ERROR_STATE, strCapabilityName);
 	}
 
 };
+
+#define MSRKinectErrorStateCap_IMPL(pContext) \
+public: \
+	virtual xn::ModuleErrorStateInterface* GetErrorStateInterface() \
+	{ \
+		return this; \
+	} \
+	\
+	virtual XnStatus GetErrorState() \
+	{ \
+		return pContext->GetRequirement()->GetState()->IsDisconnected() ? XN_STATUS_DEVICE_NOT_CONNECTED : XN_STATUS_OK; \
+	} \
+	\
+	virtual XnStatus RegisterToErrorStateChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback) \
+	{ \
+		return XN_STATUS_OK; /* not supported yet */ \
+	} \
+	\
+	virtual void UnregisterFromErrorStateChange(XnCallbackHandle hCallback) \
+	{ \
+		/* not supported yet */ \
+	}

@@ -66,6 +66,7 @@ public:
 	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
 	{
 		return
+			SuperClass::IsCapabilitySupported(strCapabilityName) ||
 			MSRKinectMirrorCap::IsCapabilitySupported(strCapabilityName) ||
 			MSRKinectAlternativeViewPointCap::IsCapabilitySupported(strCapabilityName) ||
 			streq(strCapabilityName, XN_CAPABILITY_EXTENDED_SERIALIZATION);

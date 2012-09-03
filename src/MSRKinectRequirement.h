@@ -30,6 +30,7 @@
 #pragma once
 #include "base.h"
 #include "util.h"
+#include "MSRKinectState.h"
 
 class MSRKinectRequirement
 {
@@ -40,7 +41,8 @@ private:
 	BOOL m_bInitialized;
 	std::string m_requiredSensorID;
 
-	INuiSensor* m_pSensor; // I don't like having state here, but I'm OK to accept this exception
+	MSRKinectState m_state;
+	MSRKinectState* m_pState; // I don't like having state here. Refactoring required.
 
 public:
 	MSRKinectRequirement() :
@@ -48,8 +50,7 @@ public:
 		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_bInitialized(FALSE),
-		m_pSensor(NULL),
-		m_bDisconnected(true) //OutpostStudios: Henrik Weirauch
+		m_pState(&m_state)
 	{
 	}
 
@@ -140,24 +141,25 @@ public:
 	void DoInitialize() // throws XnStatusException
 	{
 		if (m_bInitialized) return;
-		m_pSensor = findFirstAvailableSensor();
+
+		m_pState->SetSensor(findFirstAvailableSensor());
 		m_bInitialized = TRUE;
-		m_bDisconnected = false;
 	}
 
 	void DoShutdown()
 	{
-		if (m_pSensor) {
-			m_pSensor->NuiShutdown();
-			m_pSensor->Release();
-			m_pSensor = NULL;
-			m_bDisconnected = true;
-		}
+		m_pState->ReleaseSensor();
+		// m_bInitialized = FALSE;
 	}
 
 	INuiSensor* GetSensor()
 	{
-		return m_pSensor;
+		return m_pState->GetSensor();
+	}
+
+	MSRKinectState* GetState()
+	{
+		return m_pState;
 	}
 
 	// Specify the sensor ID to use.
@@ -171,8 +173,9 @@ private:
 	{
 		// TODO: move to somewhere else
 
-		// Register dummy device status callback to avoid freezing. Kinect SDK's bug.
-		NuiSetDeviceStatusCallback(dummyDeviceStatusCallback, this);
+		// Register the device status callback.
+		// Caution: This may conflict with the application's device callback.
+		NuiSetDeviceStatusCallback(deviceStatusCallback, this);
 
 		int count;
 		CHECK_HRESULT(NuiGetSensorCount(&count));
@@ -185,12 +188,6 @@ private:
 			for (int i = 0; i < count; i++) {
 				CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
 
-				//OutpostStudios: Henrik Weirauch
-				if( pSensor->NuiStatus() != S_OK )
-				{	
-					continue;
-				}
-				
 				HRESULT hr = pSensor->NuiInitialize(m_nInitFlags);
 				if (FAILED(hr)) 
 				{
@@ -214,28 +211,20 @@ private:
 		return pSensor;
 	}
 
-	public://OutpostStudios: Henrik Weirauch
-	bool WasDisconnected()
-	{
-		return m_bDisconnected;
-	}
-	private:
-	bool m_bDisconnected;
-	static void CALLBACK dummyDeviceStatusCallback(HRESULT hrStatus, const OLECHAR* instanceName, const OLECHAR*, void* pMSRKinectRequirement)
+	static void CALLBACK deviceStatusCallback(HRESULT hrStatus, const OLECHAR* instanceName, const OLECHAR*, void* pUserData)
 	{
 		// TODO: move to somewhere else
 
-		// dummy to avoid Kinect SDK's bug
+		MSRKinectRequirement* pRequirement = (MSRKinectRequirement*) pUserData;
 
-		//OutpostStudios: Henrik Weirauch
-		 if ( SUCCEEDED( hrStatus ) )      
-		{          
-			wprintf(L"Kinect-Sensor Connected (%s)\n",instanceName);
-		}      
-		else      
-		{          
-			wprintf(L"Kinect-Sensor Disconnected (%s)\n",instanceName);
-			((MSRKinectRequirement*)pMSRKinectRequirement)->m_bDisconnected = true;
+		if ( SUCCEEDED( hrStatus ) ) {
+			wprintf(L"Kinect-Sensor Connected (%s)\n", instanceName); // Only for information
+		} else {
+			wprintf(L"Kinect-Sensor Disconnected (%s)\n", instanceName);
+			if (wstreq(instanceName, pRequirement->GetSensor()->NuiDeviceConnectionId())) {
+				printf("Instance name matched. Shutdown the sensor.\n");
+				pRequirement->DoShutdown();
+			}
 		}
 	}
 };

@@ -42,6 +42,11 @@ inline int streq(const char* s1, const char* s2)
 	return strcmp(s1, s2) == 0;
 }
 
+inline int wstreq(const wchar_t* s1, const wchar_t* s2)
+{
+	return wcscmp(s1, s2) == 0;
+}
+
 // BSTR sucks
 inline std::string bstr2cstr(BSTR s)
 {

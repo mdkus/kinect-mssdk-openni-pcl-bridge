@@ -30,12 +30,14 @@
 #pragma once
 #include "base.h"
 #include "AbstractModuleGenerator.h"
+#include "MSRKinectErrorStateCap.h"
 #include "IMultiThreadFrameReader.h"
 
 template <class ParentModuleGeneratorClass, class FrameReaderClass>
 class AbstractMultiThreadFrameGenerator :
 	public AbstractModuleGenerator<ParentModuleGeneratorClass>,
-	public virtual IMultiThreadFrameReader::IListener
+	public virtual IMultiThreadFrameReader::IListener,
+	public virtual MSRKinectErrorStateCap
 {
 private:
 	typedef AbstractModuleGenerator<ParentModuleGeneratorClass> SuperClass;
@@ -116,6 +118,7 @@ public:
 			PostStartGenerating();
 			return XN_STATUS_OK;
 		} catch (XnStatusException& e) {
+			m_pReader->RemoveListener(this);
 			return e.nStatus;
 		}
 	}
@@ -124,6 +127,15 @@ public:
 	{
 		StopGeneratingImpl();
 	}
+
+	virtual XnBool IsCapabilitySupported(const XnChar* strCapabilityName)
+	{
+		return
+			SuperClass::IsCapabilitySupported(strCapabilityName) ||
+			MSRKinectErrorStateCap::IsCapabilitySupported(strCapabilityName);
+	}
+
+	 MSRKinectErrorStateCap_IMPL(m_pReader);
 
 protected:
 	virtual void PreStartGenerating() {}

@@ -127,22 +127,30 @@ private:
 	static XN_THREAD_PROC ReaderThread(void* pCookie)
 	{
 		ThisClass* that = (ThisClass*)pCookie;
+		printf("Reader thread %08x starting\n", that);
 
 		try {
 			while (that->m_bRunning) {
 				XnStatus nStatus = xnOSWaitEvent(that->m_hNextFrameEvent, that->m_timeout);
-				if ((nStatus == XN_STATUS_OK || nStatus == XN_STATUS_OS_EVENT_TIMEOUT) && that->m_bRunning) {
+				if (nStatus == XN_STATUS_OK && that->m_bRunning) {
 					HRESULT that_GetNextFrame = that->GetNextFrame();
 					if (that_GetNextFrame == S_OK) {
 						that->RaiseEventNoArg(&IListener::OnUpdateFrame);
 					} else {
 						CHECK_HRESULT(that_GetNextFrame); // maybe error, maybe no data
 					}
+				} else if (nStatus == XN_STATUS_OS_EVENT_TIMEOUT) {
+					printf("Reader thread %08x timeout\n", that);
+					if (that->GetRequirement()->GetState()->IsDisconnected()) {
+						that->Stop();
+					}
 				}
 			}
 		} catch (XnStatusException&) {
 			that->Stop();
 		}
+
+		printf("Reader thread %08x stopping\n", that);
 
 		XN_THREAD_PROC_RETURN(0);
 	}
