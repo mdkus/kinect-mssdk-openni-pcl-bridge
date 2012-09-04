@@ -99,7 +99,7 @@ protected:
 
 			// Thanks to OutpostStudios: Henrik Weirauch for contribution!
 
-			DWORD numOfColorCoordinates  = destXRes * destYRes * 2;
+			DWORD numOfColorCoordinates  = sourceXRes * sourceYRes * 2;
 			m_colorCoordinatesBuffer.resize(numOfColorCoordinates);
 			LONG * pColorCoordinatesBuffer = &m_colorCoordinatesBuffer[0];
 
@@ -121,7 +121,7 @@ protected:
 
 			for (XnUInt32 y = 0; y < sourceYRes; y++) {
 				sp = data + y * sourceXRes + (step < 0 ? sourceXRes-1 : 0);
-				const LONG* ccp = pColorCoordinatesBuffer + y * pixelSize * destXRes*2 + (step < 0 ? (destXRes*2)-2 : 0);
+				const LONG* ccp = pColorCoordinatesBuffer + y * sourceXRes*2 + (step < 0 ? (sourceXRes*2)-2 : 0);
 
 				for (XnUInt32 x = 0; x < sourceXRes; x++) {
 					LONG ix = (step < 0 ? destXRes-1-ccp[0] : ccp[0]); 
@@ -137,7 +137,7 @@ protected:
 					}
 
 					sp += step;
-					ccp += step * 2 * pixelSize;
+					ccp += step * 2;
 				}
 			}
 #else
