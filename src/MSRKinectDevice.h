@@ -41,7 +41,8 @@ private:
 	typedef AbstractModuleGenerator<xn::ModuleDevice> SuperClass;
 
 private:
-	std::string m_sensorID;
+	std::string m_sensorID; // in Primesense format
+	std::string m_connectionID;
 	Properties m_props;
 
 public:
@@ -71,14 +72,8 @@ public:
 
 	virtual XnStatus GetDeviceName(XnChar* strBuffer, XnUInt32& nBufferSize)
 	{
-		const std::string value("KinectSDK Bridge");
-		strcpy_s(strBuffer, nBufferSize, value.c_str());
-		if (strlen(strBuffer) < value.length()) {
-			nBufferSize = value.length() + 1;
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
-		} else {
-			return XN_STATUS_OK;
-		}
+		const char* value("KinectSDK Bridge");
+		return copyToReturnString(strBuffer, nBufferSize, value, strlen(value));
 	}
 
 	virtual XnStatus GetVendorSpecificData(XnChar* strBuffer, XnUInt32& nBufferSize)
@@ -88,13 +83,7 @@ public:
 
 	virtual XnStatus GetSerialNumber(XnChar* strBuffer, XnUInt32& nBufferSize)
 	{
-		strcpy_s(strBuffer, nBufferSize, m_sensorID.c_str());
-		if (strlen(strBuffer) < m_sensorID.length()) {
-			nBufferSize = m_sensorID.length() + 1;
-			return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
-		} else {
-			return XN_STATUS_OK;
-		}
+		return copyToReturnString(strBuffer, nBufferSize, m_sensorID.c_str(), m_sensorID.length());
 	}
 
 };

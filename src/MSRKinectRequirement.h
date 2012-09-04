@@ -31,6 +31,7 @@
 #include "base.h"
 #include "util.h"
 #include "MSRKinectState.h"
+#include "ConnectionInfoUtil.h"
 
 class MSRKinectRequirement
 {
@@ -202,7 +203,7 @@ private:
 				break; // got one
 			}
 		} else {
-			BSTR id = cstr2bstr(m_requiredSensorID.c_str());
+			BSTR id = cstr2bstr(ConnectionInfoUtil::decodeConnectionInfo(m_requiredSensorID.c_str()).c_str());
 			CHECK_HRESULT(NuiCreateSensorById(id, &pSensor));
 			SysFreeString(id);
 			CHECK_HRESULT(pSensor->NuiInitialize(m_nInitFlags));

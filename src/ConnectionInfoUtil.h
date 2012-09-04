@@ -27,23 +27,40 @@
 //
 //@COPYRIGHT@//
 
+#pragma once
 #include "base.h"
+#include <string>
+#include <algorithm>
 
-HMODULE g_hModule;
+#define CONNECTION_INFO_PREFIX "\\\\?\\"
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
-{
-	switch (ul_reason_for_call)
+class ConnectionInfoUtil {
+public:
+	static std::string encodeConnectionInfo(const char* id)
 	{
-	case DLL_PROCESS_ATTACH:
-		g_hModule = hModule;
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
+		std::string result(id);
+		std::transform(result.begin(), result.end(), result.begin(), encodeFunc);
+		return CONNECTION_INFO_PREFIX + result;
 	}
-	return TRUE;
-}
+
+	static std::string decodeConnectionInfo(const char* connectionInfo)
+	{
+		if (strncmp(connectionInfo, CONNECTION_INFO_PREFIX, strlen(CONNECTION_INFO_PREFIX)) == 0) {
+			std::string result(connectionInfo + strlen(CONNECTION_INFO_PREFIX));
+			std::transform(result.begin(), result.end(), result.begin(), decodeFunc);
+			return result;
+		} else {
+			return connectionInfo; // malformed?
+		}
+	}
+
+private:
+	static int encodeFunc(int c) {
+		return (c == '\\') ? '#' : tolower(c);
+	}
+
+	static int decodeFunc(int c) {
+		return (c == '#') ? '\\' : toupper(c);
+	}
+};
+

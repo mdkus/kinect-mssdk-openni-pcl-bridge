@@ -65,3 +65,14 @@ inline BSTR cstr2bstr(const char* s)
 	MultiByteToWideChar(CP_ACP, 0, s, -1, b, len);
 	return b;
 }
+
+inline XnStatus copyToReturnString(XnChar* dest, XnUInt32& destSize, const XnChar* src, XnUInt32 srcLen)
+{
+	strcpy_s(dest, destSize, src);
+	if (destSize < srcLen + 1) {
+		destSize = srcLen + 1;
+		return XN_STATUS_OUTPUT_BUFFER_OVERFLOW;
+	} else {
+		return XN_STATUS_OK;
+	}
+}

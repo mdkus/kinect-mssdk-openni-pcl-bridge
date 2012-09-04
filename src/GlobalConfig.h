@@ -27,23 +27,77 @@
 //
 //@COPYRIGHT@//
 
+#pragma once
 #include "base.h"
+#include <tchar.h>
 
-HMODULE g_hModule;
-
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+class GlobalConfig
 {
-	switch (ul_reason_for_call)
+private:
+	static GlobalConfig* cs_pInstance;
+
+public:
+	static GlobalConfig* getInstance() // throws XnStatusException
 	{
-	case DLL_PROCESS_ATTACH:
-		g_hModule = hModule;
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
+		if (!cs_pInstance) {
+			cs_pInstance = new GlobalConfig();
+		}
+		return cs_pInstance;
 	}
-	return TRUE;
-}
+
+private:
+	BOOL m_useConnectionIdForCreationInfo;
+
+public:
+	GlobalConfig() : m_useConnectionIdForCreationInfo(0)
+	{
+		// FIXME quick hack!
+
+		extern HMODULE g_hModule;
+		TCHAR path[MAX_PATH+1];
+		DWORD len = GetModuleFileName(g_hModule, path, MAX_PATH+1);
+
+		if (len < 4) {
+			puts("Cannot get the module file name of the bridge DLL. Ignoring the global config.");
+			return;
+		}
+
+		for (TCHAR* p = path; *p; p++) {
+			*p = tolower(*p);
+		}
+		
+		if (replaceSuffix(path, _T("debug.dll"), _T(".ini")) ||
+				replaceSuffix(path, _T("release.dll"), _T(".ini")) ||
+				replaceSuffix(path, _T(".dll"), _T(".ini"))) {
+			// we are good
+		} else {
+			puts("The module file name is not as supposed to be. Ignoring the global config.");
+			return;
+		}
+
+		// wprintf(_T("%s\n"), path);
+
+		readConfig(path);
+	}
+
+	BOOL isUseConnectionIdForCreationInfo() { return m_useConnectionIdForCreationInfo; }
+
+private:
+	static BOOL replaceSuffix(TCHAR* s, const TCHAR* a, const TCHAR* b)
+	{
+		// len(a) should be >= len(b)
+		TCHAR* p = s + _tcslen(s) - _tcslen(a);
+		if (_tcscmp(p, a) == 0) {
+			_tcscpy(p, b);
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+
+	void readConfig(const TCHAR* path)
+	{
+		m_useConnectionIdForCreationInfo = GetPrivateProfileInt(
+			_T("general"), _T("useConnectionIdForCreationInfo"), m_useConnectionIdForCreationInfo, path);
+	}
+};

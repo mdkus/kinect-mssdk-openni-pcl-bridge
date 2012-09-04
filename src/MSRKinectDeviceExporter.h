@@ -32,6 +32,8 @@
 #include "util.h"
 #include "ProductionNodeExporter.h"
 #include "MSRKinectDevice.h"
+#include "GlobalConfig.h"
+#include "ConnectionInfoUtil.h"
 
 class MSRKinectDeviceExporter : public ProductionNodeExporter<MSRKinectDevice>
 {
@@ -67,7 +69,14 @@ protected:
 		for (int i = 0; i < count; i++) {
 			INuiSensor* pSensor = NULL;
 			CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
-			nodes.Add(desc, bstr2cstr(pSensor->NuiDeviceConnectionId()).c_str(), &neededNodes);
+
+			std::string connectionInfo = 
+				ConnectionInfoUtil::encodeConnectionInfo(
+					GlobalConfig::getInstance()->isUseConnectionIdForCreationInfo() ?
+						bstr2cstr(pSensor->NuiDeviceConnectionId()).c_str() :
+						bstr2cstr(pSensor->NuiUniqueId()).c_str() );
+
+			nodes.Add(desc, connectionInfo.c_str(), &neededNodes);
 			pSensor->Release();
 		}
 

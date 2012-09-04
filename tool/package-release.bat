@@ -6,6 +6,7 @@ set TARGET=release\kinect-mssdk-openni-bridge-%VER%
 rmdir /s /q %TARGET%
 mkdir %TARGET%
 xcopy ..\bin\*V10*.dll %TARGET%\bin\ /e
+xcopy ..\bin\*V10*.ini %TARGET%\bin\ /e
 copy ..\LICENSE.TXT %TARGET%
 copy ..\README_*.TXT %TARGET%
 copy ..\HISTORY_*.TXT %TARGET%
