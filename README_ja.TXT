@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.5.0.2-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.5.0.3-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/7/25
+Release Date: 2012/9/6
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -28,7 +28,8 @@ Kinect for Windowsと組み合わせて活用することができるように�
 本モジュールはOpenNI 1.5.2.23 32bit版とKinect SDK V1.0またはV1.5の
 組み合わせに対応しています。事前にこれらをインストールしておいてください。
 ・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
-・これより新しい版のOpenNIも使用可能なはずですが、いつ互換性が
+・コンパイルは1.5.4.0上で行っていますが1.5.2.23でも動くはずです。
+・さらに新しい版のOpenNIも使用可能なはずですが、いつ互換性が
   崩れるかはわかりません。
 ・Kinect SDK Beta版はライセンスが異なるため対応していません。
   Beta版で使用したい場合には以前のバージョンを使用してください。
@@ -202,6 +203,9 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
   audioGenerator.GetRealProperty("sourceAngle", sourceAngle); // 読み取り専用
   audioGenerator.GetRealProperty("sourceAngleConfidence", sourceAngleConfidence); // 読み取り専用
 
+* bin/kinect-mssdk-openni-bridge-V10.ini をいじることで全体の設定を
+  変更できます。詳細はファイル内の説明を参照してください。
+
 4. ライセンス
 
 LICENSE.TXTを見てください。
@@ -225,6 +229,14 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.5.0.3-1.5.2.23
+* AlternateViwePointの性能向上(Thanks to Tony)
+* ErrorStateCapをサポート、センサーの切断を検出可能に
+* Issue #9 AlternateViewPoint時に深度情報に穴が生じる問題の修正
+* creation infoのフォーマットをPCLのOpenNIGrabberが解析できるよう改良
+　(Issue #10で指摘されたもの)
+* 全体設定ファイルのサポート(.ini)
 
 V1.5.0.2-1.5.2.23
 * インストーラのKinect SDKバージョンチェックを削除。

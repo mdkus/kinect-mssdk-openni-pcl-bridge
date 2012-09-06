@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.5.0.2-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.5.0.3-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 7/25/2012
+Release Date: 9/6/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -29,6 +29,7 @@ This module is compatible with the combination of OpenNI 1.5.2.23 32bit
 and Kinect SDK V1.0 or V1.5. You need to install them before installing
 this module.
 * NOTE USE OpenNI 32BIT EVEN THOUGH YOUR OS MAY BE 64BIT.
+* This module is compiled on 1.5.4.0 but should work on 1.5.2.23.
 * Most probably you can use newer version of OpenNI, but I do not know
   until when the compatibility stays.
 * Kinect SDK Beta is not supported because the license is incompatible.
@@ -205,6 +206,9 @@ changed from the previous version.)
   audioGenerator.GetRealProperty("sourceAngle", sourceAngle); // read-only
   audioGenerator.GetRealProperty("sourceAngleConfidence", sourceAngleConfidence); // read-only
 
+* Edit bin/kinect-mssdk-openni-bridge-V10.ini to configure the global settings.
+  See the instructions in the file for more details.
+
 4. License
 
 See LICENSE.TXT.
@@ -228,6 +232,15 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.5.0.3-1.5.2.23
+* Performance improvement of AlternateViwePoint (Thanks to Tony)
+* Supported ErrorStateCap to allow the application to detect the
+  disconnection of the sensor
+* Fixed issue #9, tiny holes in depth map with AlternativeViewPoint
+* Improved creation info format so that PCL's OpenNIGrabber can parse.
+  (Pointed by Issue #10)
+* Global configuration (.ini) support
 
 V1.5.0.2-1.5.2.23
 * Eliminated the check for Kinect SDK version.
