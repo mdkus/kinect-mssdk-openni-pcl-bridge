@@ -56,10 +56,10 @@ public: \
 	\
 	virtual XnStatus RegisterToErrorStateChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback) \
 	{ \
-		return XN_STATUS_OK; /* not supported yet */ \
+		return pContext->GetRequirement()->GetState()->RegisterToErrorStateChange(handler, pCookie, hCallback); \
 	} \
 	\
 	virtual void UnregisterFromErrorStateChange(XnCallbackHandle hCallback) \
 	{ \
-		/* not supported yet */ \
+		pContext->GetRequirement()->GetState()->UnregisterToErrorStateChange(hCallback); \
 	}

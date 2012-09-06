@@ -48,6 +48,7 @@
     <ClInclude Include="..\src\MSRKinectAudioStreamReader.h" />
     <ClInclude Include="..\src\MSRKinectDevice.h" />
     <ClInclude Include="..\src\MSRKinectDeviceExporter.h" />
+    <ClInclude Include="..\src\MSRKinectErrorStateCap.h" />
     <ClInclude Include="..\src\MSRKinectFrameContextBase.h" />
     <ClInclude Include="..\src\MSRKinectDepthGenerator.h" />
     <ClInclude Include="..\src\MSRKinectDepthGeneratorBase.h" />
@@ -66,6 +67,7 @@
     <ClInclude Include="..\src\MSRKinectSkeletonContext.h" />
     <ClInclude Include="..\src\MSRKinectSkeletonManager.h" />
     <ClInclude Include="..\src\MSRKinectSkeletonReader.h" />
+    <ClInclude Include="..\src\MSRKinectState.h" />
     <ClInclude Include="..\src\MSRKinectUserGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGenerator.h" />
     <ClInclude Include="..\src\MSRKinectUserSkeletonGeneratorWithAutoElevation.h" />

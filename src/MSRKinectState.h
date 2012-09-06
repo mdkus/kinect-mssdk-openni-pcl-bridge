@@ -32,8 +32,13 @@
 
 class MSRKinectState {
 private:
+	XN_DECLARE_EVENT_0ARG(ChangeEvent, ChangeEventInterface);
+
+private:
 	INuiSensor* m_pSensor;
 	BOOL m_bDisconnected; // true if disconnected after once connected
+
+	ChangeEvent m_errorStateChangeEvent;
 
 public:
 	MSRKinectState() : m_pSensor(NULL), m_bDisconnected(FALSE)
@@ -51,14 +56,14 @@ public:
 			m_pSensor->NuiShutdown();
 			m_pSensor->Release();
 			m_pSensor = NULL;
-			m_bDisconnected = TRUE;
+			SetDisconnected(TRUE);
 		}
 	}
 
 	void SetSensor(INuiSensor* pSensor)
 	{
 		m_pSensor = pSensor;
-		m_bDisconnected = FALSE;
+		SetDisconnected(FALSE);
 	}
 
 	INuiSensor* GetSensor()
@@ -68,12 +73,23 @@ public:
 
 	void SetDisconnected(BOOL value)
 	{
-		m_bDisconnected = value;
+		if (m_bDisconnected != value) {
+			m_bDisconnected = value;
+			m_errorStateChangeEvent.Raise();
+		}
 	}
 
 	BOOL IsDisconnected()
 	{
 		return m_bDisconnected;
+	}
+
+	virtual XnStatus RegisterToErrorStateChange(XnModuleStateChangedHandler handler, void* pCookie, XnCallbackHandle& hCallback) {
+		return m_errorStateChangeEvent.Register(handler, pCookie, &hCallback);
+	}
+
+	virtual XnStatus UnregisterToErrorStateChange(XnCallbackHandle& hCallback) {
+		return m_errorStateChangeEvent.Unregister(hCallback);
 	}
 
 };
