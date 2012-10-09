@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.5.0.3-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.6.0.0-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 9/6/2012
+Release Date: 10/9/2012
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. What is this?
@@ -12,9 +12,9 @@ applications to use Kinect for Windows over OpenNI, so that you can
 leverage the existing applications and know-hows on OpenNI with Kinect
 for Windows.
 
-This module plugs-in OpenNI framework with Depth, Image, User, and
-Audio node that works with Kinect for Windows + Kinect SDK. The cool
-part of this mechanism is it can work with other existing node
+This module plugs-in OpenNI framework with Depth, Image, IR, User,
+and Audio node that works with Kinect for Windows + Kinect SDK. The
+cool part of this mechanism is it can work with other existing node
 implementations from OpenNI + NITE. For example, the Depth node from
 this module works with NITE's skeleton tracking and gesture recognition
 algorithms. Another cool part is these nodes provide the access to
@@ -26,7 +26,7 @@ as near mode, audio source detection, acoustic echo cancelling, etc.
 2.1 Prerequisites
 
 This module is compatible with the combination of OpenNI 1.5.2.23 32bit
-and Kinect SDK V1.0 or V1.5. You need to install them before installing
+and Kinect SDK V1.0~V1.6. You need to install them before installing
 this module.
 * NOTE USE OpenNI 32BIT EVEN THOUGH YOUR OS MAY BE 64BIT.
 * This module is compiled on 1.5.4.0 but should work on 1.5.2.23.
@@ -127,6 +127,14 @@ changed from the previous version.)
                 <Property type="int" name="distinctOverflowDepthValues" value="1"/>
             </Configuration>
         </Node>
+  
+  [Kinect SDK 1.6] You can programmatically turn off the infrared emitter
+  by setting forceInfraredEmitterOff property to 1. Set 0 to turn it back.
+  
+  depthGenerator.SetIntProperty("forceInfraredEmitterOff", 1);
+
+* [Kinect SDK 1.6] IR node is supported with 640x480. It cannot be created
+  with Image node at the same time due to the Kinect SDK restriction.
 
 * [Kinect SDK 1.5] By specifying XN_SKEL_PROFILE_HEAD_HANDS or
   XN_SKEL_PROFILE_UPPER to SetSkeletonProfile when you use
@@ -158,6 +166,14 @@ changed from the previous version.)
   Specify "KinectSDKUserSkeletonGeneratorWithAutoElevation" instead of
   "KinectSDKUserSkeletonGenerator", then the camera elevation will be
   auto-adjusted so that the whole player body fits within the sight.
+
+* [Kinect SDK 1.6] You can get the current readings of the accelerometer
+  by reading accelerometerX/Y/Z properties.
+  
+  double x, y, z;
+  imageGenerator.GetRealProperty("accelerometerX", x);
+  imageGenerator.GetRealProperty("accelerometerY", y);
+  imageGenerator.GetRealProperty("accelerometerZ", z);
 
 * Audio node supports the configuration properties below.
 
@@ -232,6 +248,11 @@ this module is not liable for any consequences caused by failing to do so.
   things normally and felt like doing something weird. :-)
 
 6. Change History
+
+V1.6.0.0-1.5.2.23
+* Tested on Kinect SDK V1.6
+* IR node support
+* accelerometer and forceInfraredEmitterOff properties support
 
 V1.5.0.3-1.5.2.23
 * Performance improvement of AlternateViwePoint (Thanks to Tony)

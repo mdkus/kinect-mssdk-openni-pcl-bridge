@@ -60,6 +60,7 @@
     <ClInclude Include="..\src\MSRKinectImageStreamContext.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamManager.h" />
     <ClInclude Include="..\src\MSRKinectImageStreamReader.h" />
+    <ClInclude Include="..\src\MSRKinectIRGenerator.h" />
     <ClInclude Include="..\src\MSRKinectJointMap.h" />
     <ClInclude Include="..\src\MSRKinectManager.h" />
     <ClInclude Include="..\src\MSRKinectMirrorCap.h" />
@@ -229,7 +230,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENNIMSBRIDGE_EXPORTS;%(PreprocessorDefinitions);KINECTSDK_VER=105</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENNIMSBRIDGE_EXPORTS;%(PreprocessorDefinitions);KINECTSDK_VER=106</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -279,7 +280,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNIMSBRIDGE_EXPORTS;%(PreprocessorDefinitions);KINECTSDK_VER=105</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNIMSBRIDGE_EXPORTS;%(PreprocessorDefinitions);KINECTSDK_VER=106</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

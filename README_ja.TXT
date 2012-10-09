@@ -1,6 +1,6 @@
-kinect-mssdk-openni-bridge v1.5.0.3-for-1.5.2.23
+kinect-mssdk-openni-bridge v1.6.0.0-for-1.5.2.23
 Author: Tomoto S. Washio
-Release Date: 2012/9/6
+Release Date: 2012/10/9
 Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
 1. これは何？
@@ -13,19 +13,19 @@ Kinect for WindowsをOpenNI上から使えるようにする実験モジュー�
 Kinect for Windowsと組み合わせて活用することができるようになります。
 
 このモジュールをインストールすると、Kienct for Windows + Kinect SDK上で
-動作するDepthノード、Imageノード、Userノード、AudioノードがOpenNIに
-プラグインされます。特筆すべきは、これらのノードはOpenNI + NITEによって
-提供されている既存のノードと組み合わせて使用できる点です。例えば、
-このモジュールのDepthノードの上でNITEのスケルトントラッキングや
-ジェスチャーを使うことが可能です。さらには、これらのノードを使うと、
-プロパティを通してKinect for Windowsの各種固有機能(近接モード、
-音源方向検出、エコーキャンセリング等)を使うことができます。
+動作するDepth、Image、IR、User、AudioノードがOpenNIにプラグインされます。
+特筆すべきは、これらのノードはOpenNI + NITEによって提供されている
+既存のノードと組み合わせて使用できる点です。例えば、このモジュールの
+Depthノードの上でNITEのスケルトントラッキングやジェスチャーを使うことが
+可能です。さらには、これらのノードを使うと、プロパティを通して
+Kinect for Windowsの各種固有機能(近接モード、音源方向検出、
+エコーキャンセリング等)を使うことができます。
 
 2. インストールとアンインストール
 
 2.1 前提条件
 
-本モジュールはOpenNI 1.5.2.23 32bit版とKinect SDK V1.0またはV1.5の
+本モジュールはOpenNI 1.5.2.23 32bit版とKinect SDK V1.0～V1.6の
 組み合わせに対応しています。事前にこれらをインストールしておいてください。
 ・OpenNIは、OSが64bitであっても必ず32bit版を使ってください。
 ・コンパイルは1.5.4.0上で行っていますが1.5.2.23でも動くはずです。
@@ -126,6 +126,14 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
             </Configuration>
         </Node>
 
+・[Kinect SDK 1.6の場合] プログラム中でforceInfraredEmitterOffプロパティに
+　1を設定することで赤外線エミッタをオフにできます。0にするとオンになります。
+
+  depthGenerator.SetIntProperty("forceInfraredEmitterOff", 1);
+
+・[Kinect SDK 1.6の場合] IRノードは640x480の解像度をサポートしています。
+　IRノードはImageノードと同時に作成できません(Kinect SDKの制限のため)。
+
   [Kinect SDK 1.5の場合] SetSkeletonProfileにXN_SKEL_PROFILE_HEAD_HANDS
   またはXN_SKEL_PROFILE_UPPERを指定してKinectSDKUserSkeletonGeneratorを使うと
   スケルトントラッキングがSeated modeになります。
@@ -156,6 +164,14 @@ NITEの標準のスケルトントラッキングの代わりにKinect SDKのも
   "KinectSDKUserSkeletonGenerator" の代わりに
   "KinectSDKUserSkeletonGeneratorWithAutoElevation" を指定すると、
   プレイヤー全体が視界に収まるよう自動的にカメラの角度が調整されます。
+
+・[Kinect SDK 1.6] accelerometerX/Y/Zプロパティを読むことで、
+　加速度センサーの現在の値を読むことができます。
+
+  double x, y, z;
+  imageGenerator.GetRealProperty("accelerometerX", x);
+  imageGenerator.GetRealProperty("accelerometerY", y);
+  imageGenerator.GetRealProperty("accelerometerZ", z);
 
 ・本モジュールのAudioノードには次の設定プロパティが用意されています。
 
@@ -229,6 +245,11 @@ MicrosoftやPrimeSenseなど関連ソフトウェアやデバイスの提供者�
   やってみたかっただけです。:-)
 
 6. 更新履歴
+
+V1.6.0.0-1.5.2.23
+* Kinect SDK V1.6に対応
+* IRノードのサポート
+* 加速度センサーと赤外線エミッタオフのサポート
 
 V1.5.0.3-1.5.2.23
 * AlternateViwePointの性能向上(Thanks to Tony)
