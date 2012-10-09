@@ -103,6 +103,9 @@ public:
 		} else if (streq(strName, PROP_DEPTH_NEAR_MODE)) {
 			nValue = ((MSRKinectDepthImageStreamReader*) m_pReader)->GetNearMode();
 			return XN_STATUS_OK;
+		} else if (streq(strName, PROP_DEPTH_FORCE_INFRARED_EMITTER_OFF)) {
+			nValue = !!m_pReader->GetSensor()->NuiGetForceInfraredEmitterOff();
+			return XN_STATUS_OK;
 		} else {
 			return SuperClass::GetIntProperty(strName, nValue);
 		}
@@ -118,6 +121,9 @@ public:
 		} else if (streq(strName, PROP_DEPTH_NEAR_MODE)) {
 			((MSRKinectDepthImageStreamReader*) m_pReader)->SetNearMode(!!nValue);
 			OnNodeIntPropChanged(PROP_DEPTH_NEAR_MODE, !!nValue);
+			return XN_STATUS_OK;
+		} else if (streq(strName, PROP_DEPTH_FORCE_INFRARED_EMITTER_OFF)) {
+			m_pReader->GetSensor()->NuiSetForceInfraredEmitterOff(!!nValue);
 			return XN_STATUS_OK;
 		} else {
 			return SuperClass::SetIntProperty(strName, nValue);

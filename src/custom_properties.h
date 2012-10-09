@@ -58,3 +58,13 @@
 // IntProperty for audio node: Audio data buffer size in milliseconds [1000]. Set before generation starts.
 // You can set zero if you only need source angles but no audio data itself.
 #define PROP_AUDIO_BUFFER_SIZE "bufferSizeInMs"
+
+// Kinect SDK 1.6
+
+// RealProperty for all node types: Accelerometer readings (read only)
+#define PROP_COMMON_ACCELEROMETER_X "accelerometerX"
+#define PROP_COMMON_ACCELEROMETER_Y "accelerometerY"
+#define PROP_COMMON_ACCELEROMETER_Z "accelerometerZ"
+
+// IntProperty for depth node: Force infrared emitter off: [0](emitter on) [1](emitter off)
+#define PROP_DEPTH_FORCE_INFRARED_EMITTER_OFF "forceInfraredEmitterOff"

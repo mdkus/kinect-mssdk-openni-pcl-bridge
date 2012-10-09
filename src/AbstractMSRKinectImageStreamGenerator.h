@@ -111,7 +111,7 @@ public:
 	XnStatus GetIntProperty(const XnChar* strName, XnUInt64& nValue) const
 	{
 		if (streq(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE)) {
-			return getCameraElevationAngle(&nValue);
+			return GetCameraElevationAngle(&nValue);
 		} else if (streq(strName, PROP_COMMON_NUI_SENSOR_POINTER)) {
 			nValue = (XnUInt64) m_pReader->GetSensor();
 			return XN_STATUS_OK;
@@ -123,9 +123,25 @@ public:
 	XnStatus SetIntProperty(const XnChar* strName, XnUInt64 nValue)
 	{
 		if (streq(strName, PROP_COMMON_CAMERA_ELEVATION_ANGLE)) {
-			return setCameraElevationAngle(nValue);
+			return SetCameraElevationAngle(nValue);
 		} else {
 			return SuperClass::SetIntProperty(strName, nValue);
+		}
+	}
+
+	XnStatus GetRealProperty(const XnChar* strName, XnDouble& dValue) const
+	{
+		if (streq(strName, PROP_COMMON_ACCELEROMETER_X)) {
+			dValue = (GetAccelerometer()).x;
+			return XN_STATUS_OK;
+		} else if (streq(strName, PROP_COMMON_ACCELEROMETER_Y)) {
+			dValue = (GetAccelerometer()).y;
+			return XN_STATUS_OK;
+		} else if (streq(strName, PROP_COMMON_ACCELEROMETER_Z)) {
+			dValue = (GetAccelerometer()).z;
+			return XN_STATUS_OK;
+		} else {
+			return SuperClass::GetRealProperty(strName, dValue);
 		}
 	}
 
@@ -158,7 +174,7 @@ protected:
 	}
 
 private:
-	XnStatus getCameraElevationAngle(XnUInt64* pValue) const
+	XnStatus GetCameraElevationAngle(XnUInt64* pValue) const
 	{
 		INuiSensor* pSensor = m_pReader->GetSensor();
 		if (pSensor) {
@@ -175,7 +191,7 @@ private:
 		}
 	}
 
-	XnStatus setCameraElevationAngle(XnUInt64 value)
+	XnStatus SetCameraElevationAngle(XnUInt64 value)
 	{
 		INuiSensor* pSensor = m_pReader->GetSensor();
 		if (pSensor) {
@@ -183,6 +199,20 @@ private:
 			return (SUCCEEDED(hr)) ? XN_STATUS_OK : XN_STATUS_ERROR;
 		} else {
 			return XN_STATUS_NOT_INIT;
+		}
+	}
+
+	Vector4 GetAccelerometer() const
+	{
+		static Vector4 zeroVector = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+		INuiSensor* pSensor = m_pReader->GetSensor();
+		if (pSensor) {
+			Vector4 v;
+			HRESULT hr = pSensor->NuiAccelerometerGetCurrentReading(&v);
+			return v;
+		} else {
+			return zeroVector;
 		}
 	}
 };
