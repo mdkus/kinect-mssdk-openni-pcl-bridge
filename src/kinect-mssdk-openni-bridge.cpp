@@ -52,6 +52,9 @@ DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(DepthGeneratorCompatibleWithPrimeSense, DEP
 #include "MSRKinectImageGenerator.h"
 DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ImageGenerator, IMAGE);
 
+#include "MSRKinectIRGenerator.h"
+DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(IRGenerator, IR);
+
 #include "MSRKinectUserSkeletonGenerator.h"
 DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(UserSkeletonGenerator, USER);
 

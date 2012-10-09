@@ -86,6 +86,7 @@ public:
 	{
 		switch (nodeType) {
 		case XN_NODE_TYPE_IMAGE:
+		case XN_NODE_TYPE_IR:
 			if (!m_pColorImageStreamManager) {
 				m_pColorImageStreamManager = new MSRKinectColorImageStreamManager(&m_requirement);
 			}

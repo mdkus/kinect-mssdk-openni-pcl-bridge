@@ -77,7 +77,7 @@ public:
 protected:
 	virtual void SetupStreamInfo()
 	{
-		m_eImageType = NUI_IMAGE_TYPE_COLOR;
+		m_eImageType = m_pRequirement->GetColorImageType();
 		m_eImageResolution = m_pRequirement->GetColorImageResolution();
 	}
 };

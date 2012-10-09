@@ -37,6 +37,7 @@ class MSRKinectRequirement
 {
 private:
 	DWORD m_nInitFlags;
+	NUI_IMAGE_TYPE m_colorImageType;
 	NUI_IMAGE_RESOLUTION m_colorImageResolution;
 	NUI_IMAGE_RESOLUTION m_depthImageResolution;
 	BOOL m_bInitialized;
@@ -48,6 +49,7 @@ private:
 public:
 	MSRKinectRequirement() :
 		m_nInitFlags(0),
+		m_colorImageType(NUI_IMAGE_TYPE_COLOR),
 		m_colorImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_depthImageResolution(NUI_IMAGE_RESOLUTION_INVALID),
 		m_bInitialized(FALSE),
@@ -59,7 +61,20 @@ public:
 	{
 		switch (nodeType) {
 		case XN_NODE_TYPE_IMAGE:
-			m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_COLOR;
+		case XN_NODE_TYPE_IR:
+			{
+				NUI_IMAGE_TYPE imageType = (nodeType == XN_NODE_TYPE_IMAGE) ? NUI_IMAGE_TYPE_COLOR : NUI_IMAGE_TYPE_COLOR_INFRARED;
+
+				if (m_nInitFlags & NUI_INITIALIZE_FLAG_USES_COLOR) {
+					if (m_colorImageType != imageType) {
+						puts("Kinect SDK does not allow you to request Image stream and IR stream at the same time.");
+						throw XnStatusException(XN_STATUS_ERROR);
+					}
+				} else {
+					m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_COLOR;
+				}
+				m_colorImageType = imageType;
+			}
 
 			// Lastly specified resolution wins
 			if (outputMode.nXRes == 640 && outputMode.nYRes == 480) {
@@ -117,6 +132,11 @@ public:
 	DWORD GetInitFlags() const
 	{
 		return m_nInitFlags;
+	}
+
+	NUI_IMAGE_TYPE GetColorImageType() const
+	{
+		return m_colorImageType;
 	}
 
 	NUI_IMAGE_RESOLUTION GetColorImageResolution() const
