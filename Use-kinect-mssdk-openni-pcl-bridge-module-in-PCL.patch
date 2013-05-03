@@ -1,0 +1,919 @@
+From c4ab85f7300c9f6935d2eae4339ba033f4781e58 Mon Sep 17 00:00:00 2001
+From: Michael Dingerkus <mdkus@web.de>
+Date: Sun, 28 Apr 2013 18:15:20 +0200
+Subject: [PATCH] Patch for the use of the kinect-mssdk-openni-pcl-bridge
+ module
+
+---
+ CMakeLists.txt                                     |  41 ++++++
+ cmake/Modules/FindK4WSDK-OpenNI-PCL-Bridge.cmake   |  74 +++++++++++
+ cmake/Modules/FindK4WSDK.cmake                     |  61 +++++++++
+ io/CMakeLists.txt                                  |  37 ++++++
+ io/include/pcl/io/openni_camera/openni_device.h    |  19 ++-
+ .../pcl/io/openni_camera/openni_device_kinect4w.h  |  99 ++++++++++++++
+ io/include/pcl/io/openni_grabber.h                 |  41 ++++--
+ io/src/openni_camera/openni_device.cpp             | 108 ++++++++++++++++
+ io/src/openni_camera/openni_device_kinect4w.cpp    | 142 +++++++++++++++++++++
+ io/src/openni_camera/openni_driver.cpp             |  43 ++++++-
+ io/src/openni_grabber.cpp                          |  19 +++
+ 11 files changed, 666 insertions(+), 18 deletions(-)
+ create mode 100644 cmake/Modules/FindK4WSDK-OpenNI-PCL-Bridge.cmake
+ create mode 100644 cmake/Modules/FindK4WSDK.cmake
+ create mode 100644 io/include/pcl/io/openni_camera/openni_device_kinect4w.h
+ create mode 100644 io/src/openni_camera/openni_device_kinect4w.cpp
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b6a5377..dc481bf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,3 +1,35 @@
++### 
++# Copyright (c) 2011, Willow Garage, Inc.
++# Copyright (c) 2012-, Open Perception, Inc.
++# Copyright (c) 2013 Michael Dingerkus <mdkus@web.de> 
++#
++# All rights reserved.                                                                                 
++#  
++# Redistribution and use, with or without modification, are permitted provided 
++# that the following conditions are met:
++#   * Redistributions of this file must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions of this file must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in the
++#     documentation and/or other materials provided with the distribution.
++#   * Neither the name of the copyright holder(s) nor the names of their
++#     contributors may be used to endorse or promote products derived from
++#     this software without specific prior written permission.                                                                                        
++#                                                                                                                                                                                                                  
++# Parts of this source file are intended to encourage the use of Kinect for Windows and
++# OpenNI with PCL, but never intended to give any losses or damages to Microsoft,
++# PrimeSense, or any other providers of the related software and devices.
++# When this software is used, the license terms of Kinect for Windows,
++# Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++# combined with this software must also be complied, and the copyright holder(s) and their 
++# contributors shall not be liable for any consequences caused by failing to do so.      
++#
++# Additional Notice:
++# The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++# the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++# Nevertheless you can use this file in your PCL clone for your own purposes under the 
++# conditions mentioned above.
++
+ ### ---[ PCL global CMake
+ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+ 
+@@ -241,6 +273,15 @@ if (OPENNI_FOUND)
+   include_directories(SYSTEM ${OPENNI_INCLUDE_DIRS})
+ endif()
+ 
++if(WIN32)
++  # Kinect-for-Windows SDK
++  find_package(K4WSDK)
++
++  # Kinect-for-Windows-SDK-OpenNI-PCL-Bridge
++  find_package(K4WSDK-OpenNI-PCL-Bridge)
++endif(WIN32)
++
++
+ # Fotonic (FZ_API)
+ find_package(FZAPI)
+ if (FZAPI_FOUND)
+diff --git a/cmake/Modules/FindK4WSDK-OpenNI-PCL-Bridge.cmake b/cmake/Modules/FindK4WSDK-OpenNI-PCL-Bridge.cmake
+new file mode 100644
+index 0000000..cdfa252
+--- /dev/null
++++ b/cmake/Modules/FindK4WSDK-OpenNI-PCL-Bridge.cmake
+@@ -0,0 +1,74 @@
++# Copyright (c) 2013 Michael Dingerkus <mdkus@web.de>  
++#
++# Redistribution and use, with or without modification, are permitted provided 
++# that the following conditions are met:
++#   * Redistributions of this file must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions of this file must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in the
++#     documentation and/or other materials provided with the distribution.
++#   * Neither the name of Michael Dingerkus nor the names of his
++#     contributors may be used to endorse or promote products derived from
++#     this software without specific prior written permission.                                                                                        
++#                                                                                                                                                
++# This source file is intended to encourage the use of Kinect for Windows and
++# OpenNI with PCL, but never intended to give any losses or damages to Microsoft,
++# PrimeSense, or any other providers of the related software and devices.
++# When this software is used, the license terms of Kinect for Windows,
++# Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++# combined with this software must also be complied, and Michael Dingerkus and his 
++# contributors shall not be liable for any consequences caused by failing to do so.                                                                     
++# 
++# Additional Notice:
++# The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++# the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++# Nevertheless you can use this file in your PCL clone for your own purposes under the 
++# conditions mentioned above.
++#
++# - try to find Kinect-for-Windows-SDK-OpenNI-PCL-Bridge for PCL
++#
++# This sets the following variables:
++# K4W_SDK_OPENNI_PCL_BRIDGE_FOUND - True if Kinect-for-Windows-SDK-OpenNI-PCL-Bridge was found.
++
++# Win32?
++if (NOT WIN32)
++  message(STATUS "Kinect-for-Windows-SDK-OpenNI-PCL-Bridge requires Microsoft Windows.")    
++  return () 
++endif ()
++
++# OpenNI?
++if (NOT OPENNI_FOUND)
++  message (STATUS "Kinect-for-Windows-SDK-OpenNI-PCL-Bridge disabled because OpenNI not found.") 
++  return ()    
++endif ()
++
++# Kinect-for-Windows-SDK?
++if (NOT K4WSDK_FOUND)
++  message (STATUS "Kinect-for-Windows-SDK-OpenNI-PCL-Bridge disabled because K4WSDK not found.") 
++  return ()    
++endif ()
++
++set (ACT_MODULE kinect-mssdk-openni-pcl-bridge-V10Debug.dll)
++
++unset (K4WSDK_OPENNI_PCL_BRIDGE_MODULE CACHE)
++
++find_file (K4WSDK_OPENNI_PCL_BRIDGE_MODULE 
++           kinect-mssdk-openni-pcl-bridge-V10Debug.dll
++           PATHS ${PCL_BINARY_DIR}/3rdparty/kinect-mssdk-openni-pcl-bridge
++           PATH_SUFFIXES bin)
++
++if (NOT K4WSDK_OPENNI_PCL_BRIDGE_MODULE)  
++  set (ACT_MODULE kinect-mssdk-openni-pcl-bridge-V10Release.dll)
++  find_file (K4WSDK_OPENNI_PCL_BRIDGE_MODULE 
++             ${ACT_MODULE}
++             PATHS ${PCL_BINARY_DIR}/3rdparty/kinect-mssdk-openni-pcl-bridge			       
++             PATH_SUFFIXES bin)
++endif ()
++
++mark_as_advanced (K4WSDK_OPENNI_PCL_BRIDGE_MODULE)
++
++if (K4WSDK_OPENNI_PCL_BRIDGE_MODULE)
++  message (STATUS "Kinect-for-Windows-SDK-OpenNI-PCL-Bridge found (module: ${K4WSDK_OPENNI_PCL_BRIDGE_MODULE})")
++else (K4WSDK_OPENNI_PCL_BRIDGE_MODULE)
++  message (STATUS "Could NOT find K4WSDK_OPENNI_PCL_BRIDGE_MODULE (missing: ${ACT_MODULE})")
++endif (K4WSDK_OPENNI_PCL_BRIDGE_MODULE)
+diff --git a/cmake/Modules/FindK4WSDK.cmake b/cmake/Modules/FindK4WSDK.cmake
+new file mode 100644
+index 0000000..1191e78
+--- /dev/null
++++ b/cmake/Modules/FindK4WSDK.cmake
+@@ -0,0 +1,61 @@
++###
++# Copyright (c) 2013 Michael Dingerkus <mdkus@web.de>   
++#                                                                                       
++# All rights reserved. 
++# 
++# Redistribution and use, with or without modification, are permitted provided 
++# that the following conditions are met:
++#   * Redistributions of this file must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions of this file must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in the
++#     documentation and/or other materials provided with the distribution.
++#   * Neither the name of the copyright holder(s) nor the names of their
++#     contributors may be used to endorse or promote products derived from
++#     this software without specific prior written permission.                                                                                        
++#                                                                                                                                                
++# This source file is intended to encourage the use of Kinect for Windows and
++# OpenNI with PCL, but never intended to give any losses or damages to Microsoft,
++# PrimeSense, or any other providers of the related software and devices.
++# When this software is used, the license terms of Kinect for Windows,
++# Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++# combined with this software must also be complied, and the copyright holder(s) and their 
++# contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++# 
++# Additional Notice:
++# The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++# the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++# Nevertheless you can use this file in your PCL clone for your own purposes under the 
++# conditions mentioned above.
++#
++# - try to find Kinect SDK for Kinect for Windows
++#
++# This sets the following variables:
++# K4W_SDK_FOUND - True if Kinect-for-Windows-SDK was found.
++# K4W_SDK_INCLUDE_DIRS - Directories containing the K4WSDK include files.
++# K4W_SDK_LIBRARY - Libraries needed to use K4WSDK.
++
++# Win32?
++if (NOT WIN32)
++  message(STATUS "Kinect-for-Windows-SDK requires Microsoft Windows.")    
++  return() 
++endif()
++
++find_path (K4WSDK_INCLUDE_DIR NuiApi.h
++           PATHS "$ENV{KINECTSDK10_DIR}/inc"
++           PATH_SUFFIXES inc
++           NO_DEFAULT_PATH)
++
++find_library (K4WSDK_LIBRARY 
++              Kinect10
++              PATHS "$ENV{KINECTSDK10_DIR}/lib"
++              PATH_SUFFIXES x86)
++
++mark_as_advanced (K4WSDK_LIBRARY K4WSDK_INCLUDE_DIR)
++
++if (K4WSDK_INCLUDE_DIR AND K4WSDK_LIBRARY)
++  set (K4WSDK_FOUND TRUE)  
++  set (K4WSDK_INCLUDE_DIRS ${K4WSDK_INCLUDE_DIR})  
++  message (STATUS "Kinect-for-Windows-SDK found (include: ${K4WSDK_INCLUDE_DIRS}, lib: ${K4WSDK_LIBRARY})")
++endif (K4WSDK_INCLUDE_DIR AND K4WSDK_LIBRARY)
++
+diff --git a/io/CMakeLists.txt b/io/CMakeLists.txt
+index 937bd84..dd0dfe4 100644
+--- a/io/CMakeLists.txt
++++ b/io/CMakeLists.txt
+@@ -1,3 +1,35 @@
++### 
++# Copyright (c) 2011, Willow Garage, Inc.
++# Copyright (c) 2012-, Open Perception, Inc.
++# Copyright (c) 2013 Michael Dingerkus <mdkus@web.de> 
++#
++# All rights reserved.                                                                                 
++#  
++# Redistribution and use, with or without modification, are permitted provided 
++# that the following conditions are met:
++#   * Redistributions of this file must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions of this file must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in the
++#     documentation and/or other materials provided with the distribution.
++#   * Neither the name of the copyright holder(s) nor the names of their
++#     contributors may be used to endorse or promote products derived from
++#     this software without specific prior written permission.                                                                                        
++#                                                                                                                                                                                                                  
++# Parts of this source file are intended to encourage the use of Kinect for Windows and
++# OpenNI with PCL, but never intended to give any losses or damages to Microsoft,
++# PrimeSense, or any other providers of the related software and devices.
++# When this software is used, the license terms of Kinect for Windows,
++# Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++# combined with this software must also be complied, and the copyright holder(s) and their 
++# contributors shall not be liable for any consequences caused by failing to do so.      
++#
++# Additional Notice:
++# The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++# the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++# Nevertheless you can use this file in your PCL clone for your own purposes under the 
++# conditions mentioned above.
++
+ set(SUBSYS_NAME io)
+ set(SUBSYS_DESC "Point cloud IO library")
+ set(SUBSYS_DEPS common octree)
+@@ -57,6 +89,11 @@ if(build)
+             src/openni_grabber.cpp
+             src/oni_grabber.cpp
+             )
++		if(K4WSDK_OPENNI_PCL_BRIDGE_MODULE AND WIN32)
++			set(OPENNI_INCLUDES ${OPENNI_INCLUDES} include/pcl/io/openni_camera/openni_device_kinect4w.h)
++            set(OPENNI_GRABBER_SOURCES ${OPENNI_GRABBER_SOURCES} src/openni_camera/openni_device_kinect4w.cpp)
++            add_definitions("-DHAVE_K4WSDK")
++		endif(K4WSDK_OPENNI_PCL_BRIDGE_MODULE AND WIN32)
+     endif(OPENNI_FOUND)
+ 
+     if(FZAPI_FOUND)
+diff --git a/io/include/pcl/io/openni_camera/openni_device.h b/io/include/pcl/io/openni_camera/openni_device.h
+index 6821e95..ba27deb 100644
+--- a/io/include/pcl/io/openni_camera/openni_device.h
++++ b/io/include/pcl/io/openni_camera/openni_device.h
+@@ -3,6 +3,7 @@
+  *
+  *  Point Cloud Library (PCL) - www.pointclouds.org
+  *  Copyright (c) 2009-2011, Willow Garage, Inc.
++ *  Copyright (c) 2013, Michael Dingerkus <mdkus@web.de>
+  *
+  *  All rights reserved.
+  *
+@@ -33,6 +34,19 @@
+  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  *  POSSIBILITY OF SUCH DAMAGE.
+  *
++ *  This source file contains links to encourage the use of Kinect for Windows and
++ *  OpenNI with PCL, but is never intended to give any losses or damages to Microsoft,
++ *  PrimeSense, or any other providers of the related software and devices.
++ *  When this software is used, the license terms of Kinect for Windows,
++ *  Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ *  combined with this software must also be complied, and the copyright holder(s) and their 
++ *  contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ *  Additional Notice:
++ *  The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ *  the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ *  Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ *  conditions mentioned above.
+  */
+ 
+ #include <pcl/pcl_config.h>
+@@ -62,7 +76,7 @@ namespace openni_wrapper
+   class DepthImage;
+   class IRImage;
+ 
+-  /** \brief Class representing an astract device for OpenNI devices: Primesense PSDK, Microsoft Kinect, Asus Xtion Pro/Live.
++  /** \brief Class representing an astract device for OpenNI devices: Primesense PSDK, Microsoft Kinect for XBox, Microsoft Kinect for Windows, Asus Xtion Pro/Live.
+     * \author Suat Gedikli
+     * \ingroup io
+     */
+@@ -444,6 +458,9 @@ namespace openni_wrapper
+ 
+       OpenNIDevice (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& image_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& ir_node);
+       OpenNIDevice (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& ir_node);
++#ifdef HAVE_K4WSDK
++	  OpenNIDevice (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& image_or_ir_node, const XnPredefinedProductionNodeType& node_type);
++#endif
+       OpenNIDevice (xn::Context& context);
+       static void __stdcall NewDepthDataAvailable (xn::ProductionNode& node, void* cookie) throw ();
+       static void __stdcall NewImageDataAvailable (xn::ProductionNode& node, void* cookie) throw ();
+diff --git a/io/include/pcl/io/openni_camera/openni_device_kinect4w.h b/io/include/pcl/io/openni_camera/openni_device_kinect4w.h
+new file mode 100644
+index 0000000..64d8289
+--- /dev/null
++++ b/io/include/pcl/io/openni_camera/openni_device_kinect4w.h
+@@ -0,0 +1,99 @@
++/* 
++ * Copyright (c) 2013 Michael Dingerkus <mdkus@web.de> 
++ * 
++ * All rights reserved.
++ * 
++ * Redistribution and use in source and binary forms, with or without modification, 
++ * are permitted provided that the following conditions are met:
++ *   * Redistributions of of source code must retain the above copyright
++ *     notice, this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above copyright
++ *     notice, this list of conditions and the following disclaimer in the
++ *     documentation and/or other materials provided with the distribution.
++ *   * Neither the name of the copyright holder(s) nor the names of its
++ *     contributors may be used to endorse or promote products derived
++ *     from this software without specific prior written permission.                                                                                      
++ *       
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ *  POSSIBILITY OF SUCH DAMAGE.
++ *
++ * This source file is intended to encourage the use of Kinect for Windows and
++ * OpenNI with PCL, but never intended to give any losses or damages to Microsoft,
++ * PrimeSense, or any other providers of the related software and devices.
++ * When this software is used, the license terms of Kinect for Windows,
++ * Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ * combined with this software must also be complied, and the copyright holder(s) and their 
++ * contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ * Additional Notice:
++ * The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ * the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ * Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ * conditions mentioned above.
++ * 
++ * @author: Michael Dingerkus <mdkus@web.de>
++*/
++
++#include <pcl/pcl_config.h>
++#ifdef HAVE_OPENNI
++
++#ifndef __OPENNI_DEVICE_KINECT4W__
++#define __OPENNI_DEVICE_KINECT4W__
++
++#include "openni_device.h"
++#include "openni_driver.h"
++#include "openni_image_bayer_grbg.h"
++
++namespace openni_wrapper
++{
++
++  /**
++   * @brief Concrete implementation of the interface OpenNIDevice for a Microsoft Kinect for Windows device.
++   * @author Michael Dingerkus
++   * @date 16.february 2013
++   * @ingroup io
++   */
++  class DeviceKinect4W : public OpenNIDevice
++  {
++    friend class OpenNIDriver;
++  public:
++    DeviceKinect4W (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& image_or_ir_node, const XnPredefinedProductionNodeType& node_type);
++    virtual ~DeviceKinect4W () throw ();
++
++    inline void setDebayeringMethod (const ImageBayerGRBG::DebayeringMethod& debayering_method) throw ();
++    inline const ImageBayerGRBG::DebayeringMethod& getDebayeringMethod () const throw ();
++
++	virtual bool isSynchronizationSupported () const throw ();
++
++  protected:
++    virtual boost::shared_ptr<Image> getCurrentImage (boost::shared_ptr<xn::ImageMetaData> image_meta_data) const throw ();
++    void enumAvailableModes () throw ();
++    virtual bool isImageResizeSupported (unsigned input_width, unsigned input_height, unsigned output_width, unsigned output_height) const throw ();
++    ImageBayerGRBG::DebayeringMethod debayering_method_;
++  } ;
++
++  void
++  DeviceKinect4W::setDebayeringMethod (const ImageBayerGRBG::DebayeringMethod& debayering_method) throw ()
++  {
++    debayering_method_ = debayering_method;
++  }
++
++  const ImageBayerGRBG::DebayeringMethod&
++  DeviceKinect4W::getDebayeringMethod () const throw ()
++  {
++    return debayering_method_;
++  }  
++} // namespace
++
++#endif
++#endif // __OPENNI_DEVICE_KINECT4W__
+diff --git a/io/include/pcl/io/openni_grabber.h b/io/include/pcl/io/openni_grabber.h
+index 9cff487..14f81cc 100644
+--- a/io/include/pcl/io/openni_grabber.h
++++ b/io/include/pcl/io/openni_grabber.h
+@@ -4,6 +4,7 @@
+  *  Point Cloud Library (PCL) - www.pointclouds.org
+  *  Copyright (c) 2009-2011, Willow Garage, Inc.
+  *  Copyright (c) 2012-, Open Perception, Inc.
++ *  Copyright (c) 2013, Michael Dingerkus <mdkus@web.de>
+  *
+  *  All rights reserved.
+  *
+@@ -34,8 +35,21 @@
+  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  *  POSSIBILITY OF SUCH DAMAGE.
+  *
++ *  This source file contains parts to encourage the use of Kinect for Windows and
++ *  OpenNI with PCL, but is never intended to give any losses or damages to Microsoft,
++ *  PrimeSense, or any other providers of the related software and devices.
++ *  When this software is used, the license terms of Kinect for Windows,
++ *  Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ *  combined with this software must also be complied, and the copyright holder(s) and their 
++ *  contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ *  Additional Notice:
++ *  The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ *  the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ *  Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ *  conditions mentioned above.
+  */
+-
++ 
+ #include <pcl/pcl_config.h>
+ #ifdef HAVE_OPENNI
+ 
+@@ -47,6 +61,9 @@
+ #include <pcl/io/grabber.h>
+ #include <pcl/io/openni_camera/openni_driver.h>
+ #include <pcl/io/openni_camera/openni_device_kinect.h>
++#ifdef HAVE_K4WSDK
++#include <pcl/io/openni_camera/openni_device_kinect4W.h>
++#endif
+ #include <pcl/io/openni_camera/openni_image.h>
+ #include <pcl/io/openni_camera/openni_depth_image.h>
+ #include <pcl/io/openni_camera/openni_ir_image.h>
+@@ -74,16 +91,18 @@ namespace pcl
+ 
+       typedef enum
+       {
+-        OpenNI_Default_Mode = 0, // This can depend on the device. For now all devices (PSDK, Xtion, Kinect) its VGA@30Hz
+-        OpenNI_SXGA_15Hz = 1,    // Only supported by the Kinect
+-        OpenNI_VGA_30Hz = 2,     // Supported by PSDK, Xtion and Kinect
+-        OpenNI_VGA_25Hz = 3,     // Supportged by PSDK and Xtion
+-        OpenNI_QVGA_25Hz = 4,    // Supported by PSDK and Xtion
+-        OpenNI_QVGA_30Hz = 5,    // Supported by PSDK, Xtion and Kinect
+-        OpenNI_QVGA_60Hz = 6,    // Supported by PSDK and Xtion
+-        OpenNI_QQVGA_25Hz = 7,   // Not supported -> using software downsampling (only for integer scale factor and only NN)
+-        OpenNI_QQVGA_30Hz = 8,   // Not supported -> using software downsampling (only for integer scale factor and only NN)
+-        OpenNI_QQVGA_60Hz = 9    // Not supported -> using software downsampling (only for integer scale factor and only NN)
++        OpenNI_Default_Mode = 0, // This can depend on the device. For now all devices (PSDK, Xtion, Kinect, Kinect4WSDK) its VGA@30Hz
++        OpenNI_SXGA_12Hz = 1,    // Only supported by the Kinect4WSDK
++		OpenNI_VGA_15Hz = 2,     // Only supported by the Kinect4WSDK
++		OpenNI_SXGA_15Hz = 3,    // Only supported by the Kinect
++        OpenNI_VGA_30Hz = 4,     // Supported by PSDK, Xtion, Kinect and Kinect4WSDK
++        OpenNI_VGA_25Hz = 5,     // Supportged by PSDK and Xtion
++        OpenNI_QVGA_25Hz = 6,    // Supported by PSDK and Xtion
++        OpenNI_QVGA_30Hz = 7,    // Supported by PSDK, Xtion, Kinect and Kinect4WSDK
++        OpenNI_QVGA_60Hz = 8,    // Supported by PSDK and Xtion
++        OpenNI_QQVGA_25Hz = 9,   // Not supported -> using software downsampling (only for integer scale factor and only NN)
++        OpenNI_QQVGA_30Hz = 10,  // Not supported -> using software downsampling (only for integer scale factor and only NN)
++        OpenNI_QQVGA_60Hz = 11   // Not supported -> using software downsampling (only for integer scale factor and only NN)
+       } Mode;
+ 
+       //define callback signature typedefs
+diff --git a/io/src/openni_camera/openni_device.cpp b/io/src/openni_camera/openni_device.cpp
+index 38014b3..62504220 100644
+--- a/io/src/openni_camera/openni_device.cpp
++++ b/io/src/openni_camera/openni_device.cpp
+@@ -4,6 +4,7 @@
+  *  Point Cloud Library (PCL) - www.pointclouds.org
+  *  Copyright (c) 2011, Willow Garage, Inc.
+  *  Copyright (c) 2012-, Open Perception, Inc.
++ *  Copyright (c) 2013, Michael Dingerkus <mdkus@web.de>
+  *
+  *  All rights reserved.
+  *
+@@ -34,6 +35,19 @@
+  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  *  POSSIBILITY OF SUCH DAMAGE.
+  *
++ *  This source file contains parts to encourage the use of Kinect for Windows and
++ *  OpenNI with PCL, but is never intended to give any losses or damages to Microsoft,
++ *  PrimeSense, or any other providers of the related software and devices.
++ *  When this software is used, the license terms of Kinect for Windows,
++ *  Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ *  combined with this software must also be complied, and the copyright holder(s) and their 
++ *  contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ *  Additional Notice:
++ *  The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ *  the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ *  Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ *  conditions mentioned above.
+  */
+ #include <pcl/pcl_config.h>
+ #ifdef HAVE_OPENNI
+@@ -272,6 +286,100 @@ openni_wrapper::OpenNIDevice::OpenNIDevice (xn::Context& context, const xn::Node
+   InitShiftToDepthConversion();
+ }
+ 
++#ifdef HAVE_K4WSDK
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++openni_wrapper::OpenNIDevice::OpenNIDevice (
++    xn::Context& context, 
++    const xn::NodeInfo& device_node, 
++    const xn::NodeInfo& depth_node, 
++    const xn::NodeInfo& image_or_ir_node,
++	const XnPredefinedProductionNodeType& node_type
++  )
++  : image_callback_ (),
++    depth_callback_ (),
++    ir_callback_ (),
++    available_image_modes_ (),
++    available_depth_modes_ (),
++    context_ (context),
++    device_node_info_ (device_node),
++    depth_generator_ (),
++    image_generator_ (),
++    ir_generator_ (),
++    depth_callback_handle_ (),
++    image_callback_handle_ (),
++    ir_callback_handle_ (),
++    depth_focal_length_SXGA_ (),
++    baseline_ (),
++    // This magic value is taken from a calibration routine.
++    rgb_focal_length_SXGA_ (1050),
++    shadow_value_ (),
++    no_sample_value_ (),
++    image_callback_handle_counter_ (),
++    depth_callback_handle_counter_ (),
++    ir_callback_handle_counter_ (),
++    quit_ (),
++    image_mutex_ (), depth_mutex_ (), ir_mutex_ (),
++    image_condition_ (), depth_condition_ (), ir_condition_ (), 
++    image_thread_ (), depth_thread_ (), ir_thread_ ()
++{
++  if (node_type != XN_NODE_TYPE_IMAGE && node_type != XN_NODE_TYPE_IR)
++    THROW_OPENNI_EXCEPTION ("wrong node type: only image or IR node type allowed.");
++#if (XN_MINOR_VERSION >= 3)
++// create the production nodes
++  XnStatus status = context_.CreateProductionTree (const_cast<xn::NodeInfo&>(depth_node), depth_generator_);
++  if (status != XN_STATUS_OK)
++    THROW_OPENNI_EXCEPTION ("creating depth generator failed. Reason: %s", xnGetStatusString (status));
++
++  if (node_type == XN_NODE_TYPE_IMAGE)
++  {
++    status = context_.CreateProductionTree (const_cast<xn::NodeInfo&>(image_or_ir_node), image_generator_);
++    if (status != XN_STATUS_OK)
++      THROW_OPENNI_EXCEPTION ("creating image generator failed. Reason: %s", xnGetStatusString (status));	
++  }
++  else
++  {
++    status = context_.CreateProductionTree (const_cast<xn::NodeInfo&>(image_or_ir_node), ir_generator_);
++    if (status != XN_STATUS_OK)
++      THROW_OPENNI_EXCEPTION ("creating IR generator failed. Reason: %s", xnGetStatusString (status));
++  }    
++#else
++  XnStatus status = context_.CreateProductionTree (const_cast<xn::NodeInfo&>(depth_node));
++  if (status != XN_STATUS_OK)
++    THROW_OPENNI_EXCEPTION ("creating depth generator failed. Reason: %s", xnGetStatusString (status));
++  
++  status = context_.CreateProductionTree (const_cast<xn::NodeInfo&>(image_or_ir_node));
++  if (status != XN_STATUS_OK)
++    THROW_OPENNI_EXCEPTION ("creating image or IR generator failed. Reason: %s", xnGetStatusString (status));
++  
++  // get production node instances
++  status = depth_node.GetInstance (depth_generator_);
++  if (status != XN_STATUS_OK)
++    THROW_OPENNI_EXCEPTION ("creating depth generator instance failed. Reason: %s", xnGetStatusString (status));
++  if (node_type == XN_NODE_TYPE_IMAGE)
++  {
++    status = image_node.GetInstance (image_generator_);
++    if (status != XN_STATUS_OK)
++      THROW_OPENNI_EXCEPTION ("creating image generator instance failed. Reason: %s", xnGetStatusString (status));
++  }
++  else
++  {
++    status = ir_node.GetInstance (ir_generator_);
++    if (status != XN_STATUS_OK)
++      THROW_OPENNI_EXCEPTION ("creating IR generator instance failed. Reason: %s", xnGetStatusString (status));
++  }
++#endif // (XN_MINOR_VERSION >= 3)
++
++  depth_generator_.RegisterToNewDataAvailable (static_cast<xn::StateChangedHandler> (NewDepthDataAvailable), this, depth_callback_handle_);
++  if (node_type == XN_NODE_TYPE_IMAGE)
++    image_generator_.RegisterToNewDataAvailable (static_cast<xn::StateChangedHandler> (NewImageDataAvailable), this, image_callback_handle_);
++  else
++    ir_generator_.RegisterToNewDataAvailable (static_cast<xn::StateChangedHandler> (NewIRDataAvailable), this, ir_callback_handle_);
++
++  Init ();
++
++ // optional shift to depth conversion is done in "kinect-mssdk-openni-pcl-bridge"-module...
++}
++#endif // HAVE_K4WSDK
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ // For ONI Player devices
+ openni_wrapper::OpenNIDevice::OpenNIDevice (xn::Context& context)
+diff --git a/io/src/openni_camera/openni_device_kinect4w.cpp b/io/src/openni_camera/openni_device_kinect4w.cpp
+new file mode 100644
+index 0000000..ca872f0
+--- /dev/null
++++ b/io/src/openni_camera/openni_device_kinect4w.cpp
+@@ -0,0 +1,142 @@
++/* 
++ * Copyright (c) 2013 Michael Dingerkus <mdkus@web.de> 
++ * 
++ * All rights reserved.
++ * 
++ * Redistribution and use in source and binary forms, with or without modification, 
++ * are permitted provided that the following conditions are met:
++ *   * Redistributions of of source code must retain the above copyright
++ *     notice, this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above copyright
++ *     notice, this list of conditions and the following disclaimer in the
++ *     documentation and/or other materials provided with the distribution.
++ *   * Neither the name of the copyright holder(s) nor the names of its
++ *     contributors may be used to endorse or promote products derived
++ *     from this software without specific prior written permission.                                                                                      
++ *       
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ *  POSSIBILITY OF SUCH DAMAGE.
++ *
++ * This source file is intended to encourage the use of Kinect for Windows and
++ * OpenNI with PCL, but never intended to give any losses or damages to Microsoft,
++ * PrimeSense, or any other providers of the related software and devices.
++ * When this software is used, the license terms of Kinect for Windows,
++ * Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ * combined with this software must also be complied, and the copyright holder(s) and their 
++ * contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ * Additional Notice:
++ * The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ * the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ * Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ * conditions mentioned above.
++ * 
++ * @author: Michael Dingerkus <mdkus@web.de>
++*/
++
++#include <pcl/pcl_config.h>
++#ifdef HAVE_OPENNI
++
++#ifdef __GNUC__
++#pragma GCC diagnostic ignored "-Wold-style-cast"
++#endif
++
++#include <pcl/io/openni_camera/openni_device_kinect4w.h>
++#include <pcl/io/openni_camera/openni_image_bayer_grbg.h>
++
++namespace openni_wrapper
++{
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++bool 
++openni_wrapper::DeviceKinect4W::isSynchronizationSupported () const throw ()
++{
++  return (false);
++}
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++openni_wrapper::DeviceKinect4W::DeviceKinect4W (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& image_or_ir_node, const XnPredefinedProductionNodeType& node_type)
++: OpenNIDevice (context, device_node, depth_node, image_or_ir_node, node_type)
++{
++  // setup stream modes
++  enumAvailableModes ();
++  setDepthOutputMode (getDefaultDepthMode ());
++  if (node_type == XN_NODE_TYPE_IMAGE)
++    setImageOutputMode (getDefaultImageMode ());
++  else
++    setIROutputMode (getDefaultIRMode ());
++}
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++openni_wrapper::DeviceKinect4W::~DeviceKinect4W () throw ()
++{
++  depth_mutex_.lock ();
++  depth_generator_.UnregisterFromNewDataAvailable (depth_callback_handle_);
++  depth_mutex_.unlock ();
++
++  image_mutex_.lock ();
++  image_generator_.UnregisterFromNewDataAvailable (image_callback_handle_);
++  image_mutex_.unlock ();
++}
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++bool 
++openni_wrapper::DeviceKinect4W::isImageResizeSupported (unsigned input_width, unsigned input_height, unsigned output_width, unsigned output_height) const throw ()
++{
++  return (ImageBayerGRBG::resizingSupported (input_width, input_height, output_width, output_height));
++}
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++void 
++openni_wrapper::DeviceKinect4W::enumAvailableModes () throw ()
++{
++  XnMapOutputMode output_mode;
++  available_image_modes_.clear();
++  available_depth_modes_.clear();
++
++  output_mode.nFPS = 30;
++  output_mode.nXRes = XN_VGA_X_RES;
++  output_mode.nYRes = XN_VGA_Y_RES;
++  available_image_modes_.push_back (output_mode);	// raw Bayer, RGB
++  available_depth_modes_.push_back (output_mode);
++
++  output_mode.nFPS = 30;
++  output_mode.nXRes = XN_QVGA_X_RES;
++  output_mode.nYRes = XN_QVGA_Y_RES;
++  available_depth_modes_.push_back (output_mode);
++
++  output_mode.nFPS = 30;
++  output_mode.nXRes = 80;	// #define XN_QQQVGA_X_RES	80
++  output_mode.nYRes = 60;	// #define XN_QQQVGA_Y_RES	60
++  available_depth_modes_.push_back (output_mode);
++
++  output_mode.nFPS = 15;
++  output_mode.nXRes = XN_VGA_X_RES;
++  output_mode.nYRes = XN_VGA_Y_RES;
++  available_image_modes_.push_back (output_mode);	// raw Yuv, Yuv
++
++  output_mode.nFPS = 12;
++  output_mode.nXRes = XN_SXGA_X_RES;
++  output_mode.nYRes = 960;	// #define XN_960P_Y_RES 720
++  available_image_modes_.push_back (output_mode);	// raw Bayer, RGB
++}
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
++boost::shared_ptr<openni_wrapper::Image> 
++openni_wrapper::DeviceKinect4W::getCurrentImage (boost::shared_ptr<xn::ImageMetaData> image_data) const throw ()
++{
++  return (boost::shared_ptr<Image> (new ImageBayerGRBG (image_data, debayering_method_)));
++}
++
++}//namespace
++#endif
+diff --git a/io/src/openni_camera/openni_driver.cpp b/io/src/openni_camera/openni_driver.cpp
+index c0d966f..b0a8420 100644
+--- a/io/src/openni_camera/openni_driver.cpp
++++ b/io/src/openni_camera/openni_driver.cpp
+@@ -4,6 +4,7 @@
+  *  Point Cloud Library (PCL) - www.pointclouds.org
+  *  Copyright (c) 2011, Willow Garage, Inc.
+  *  Copyright (c) 2012-, Open Perception, Inc.
++ *  Copyright (c) 2013, Michael Dingerkus <mdkus@web.de>
+  *
+  *  All rights reserved.
+  *
+@@ -34,6 +35,19 @@
+  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  *  POSSIBILITY OF SUCH DAMAGE.
+  *
++ *  This source file contains parts to encourage the use of Kinect for Windows and
++ *  OpenNI with PCL, but is never intended to give any losses or damages to Microsoft,
++ *  PrimeSense, or any other providers of the related software and devices.
++ *  When this software is used, the license terms of Kinect for Windows,
++ *  Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ *  combined with this software must also be complied, and the copyright holder(s) and their 
++ *  contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ *  Additional Notice:
++ *  The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ *  the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ *  Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ *  conditions mentioned above.
+  */
+ #include <pcl/pcl_config.h>
+ #ifdef HAVE_OPENNI
+@@ -45,6 +59,9 @@
+ #include <pcl/io/openni_camera/openni.h>
+ #include <pcl/io/openni_camera/openni_driver.h>
+ #include <pcl/io/openni_camera/openni_device_kinect.h>
++#ifdef HAVE_K4WSDK
++#include <pcl/io/openni_camera/openni_device_kinect4w.h>
++#endif
+ #include <pcl/io/openni_camera/openni_device_primesense.h>
+ #include <pcl/io/openni_camera/openni_device_xtion.h>
+ #include <pcl/io/openni_camera/openni_device_oni.h>
+@@ -201,7 +218,10 @@ openni_wrapper::OpenNIDriver::updateDeviceList ()
+     if (vendor_id == 0x45e)
+     {
+       strcpy (const_cast<char*> (device_context_[deviceIdx].device_node.GetDescription ().strVendor), "Microsoft");
+-      strcpy (const_cast<char*> (device_context_[deviceIdx].device_node.GetDescription ().strName), "Xbox NUI Camera");
++	  if (product_id == 0x2bf)
++	    strcpy (const_cast<char*> (device_context_[deviceIdx].device_node.GetDescription ().strName), "Windows KinectSDK Camera");
++	  else
++        strcpy (const_cast<char*> (device_context_[deviceIdx].device_node.GetDescription ().strName), "Xbox NUI Camera");
+     }
+     else
+ #endif
+@@ -265,11 +285,22 @@ openni_wrapper::OpenNIDriver::getDeviceByIndex (unsigned index) const
+ 
+     if (vendor_id == 0x45e)
+     {
+-      device.reset (new DeviceKinect (context_, 
+-                                      device_context_[index].device_node,
+-                                      *device_context_[index].image_node, 
+-                                      *device_context_[index].depth_node,
+-                                      *device_context_[index].ir_node));
++#ifdef HAVE_K4WSDK
++	  if (product_id == 0x2bf)
++	    device.reset (new DeviceKinect4W (context_, 
++                                          device_context_[index].device_node,                                      
++                                          *device_context_[index].depth_node,
++                                          *device_context_[index].image_node,
++										  XN_NODE_TYPE_IMAGE));
++                                          // *device_context_[index].ir_node,
++										  // XN_NODE_TYPE_IR));
++	  else
++#endif
++        device.reset (new DeviceKinect (context_, 
++                                        device_context_[index].device_node,
++                                        *device_context_[index].image_node, 
++                                        *device_context_[index].depth_node,
++                                        *device_context_[index].ir_node));
+       device_context_[index].device = device;
+     }
+     else if (vendor_id == 0x1d27)
+diff --git a/io/src/openni_grabber.cpp b/io/src/openni_grabber.cpp
+index f72c1d6..9f81182 100644
+--- a/io/src/openni_grabber.cpp
++++ b/io/src/openni_grabber.cpp
+@@ -4,6 +4,7 @@
+  *  Point Cloud Library (PCL) - www.pointclouds.org
+  *  Copyright (c) 2010-2011, Willow Garage, Inc.
+  *  Copyright (c) 2012-, Open Perception, Inc.
++ *  Copyright (c) 2013, Michael Dingerkus <mdkus@web.de>
+  *
+  *  All rights reserved.
+  *
+@@ -34,6 +35,19 @@
+  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  *  POSSIBILITY OF SUCH DAMAGE.
+  *
++ *  This source file contains parts to encourage the use of Kinect for Windows and
++ *  OpenNI with PCL, but is never intended to give any losses or damages to Microsoft,
++ *  PrimeSense, or any other providers of the related software and devices.
++ *  When this software is used, the license terms of Kinect for Windows,
++ *  Kinect SDK, OpenNI, PCL, and any other related software and devices that are
++ *  combined with this software must also be complied, and the copyright holder(s) and their 
++ *  contributors shall not be liable for any consequences caused by failing to do so.                                                                  
++ *
++ *  Additional Notice:
++ *  The Windows Kinect SDK is a closed-source binary and thus can't be incorporated in
++ *  the BSD-licensed PCL distribution. So this file can't be committed to the PCL project.
++ *  Nevertheless you can use this file in your PCL clone for your own purposes under the 
++ *  conditions mentioned above.
+  */
+ 
+ #include <pcl/pcl_config.h>
+@@ -117,6 +131,11 @@ pcl::OpenNIGrabber::OpenNIGrabber (const std::string& device_id, const Mode& dep
+     openni_wrapper::DeviceKinect* kinect = dynamic_cast<openni_wrapper::DeviceKinect*> (device_.get ());
+     if (kinect)
+       kinect->setDebayeringMethod (openni_wrapper::ImageBayerGRBG::EdgeAware);
++#ifdef HAVE_K4WSDK
++    openni_wrapper::DeviceKinect4W* kinect4W = dynamic_cast<openni_wrapper::DeviceKinect4W*> (device_.get ());
++    if (kinect4W)
++      kinect4W->setDebayeringMethod (openni_wrapper::ImageBayerGRBG::EdgeAware);
++#endif
+   }
+ 
+   image_callback_handle = device_->registerImageCallback (&OpenNIGrabber::imageCallback, *this);
+-- 
+1.8.1.msysgit.1
+

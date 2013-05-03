@@ -30,58 +30,26 @@
 
 #pragma once
 #include "base.h"
-#include "util.h"
-#include "ProductionNodeExporter.h"
-#include "MSRKinectDevice.h"
-#include "GlobalConfig.h"
-#include "ConnectionInfoUtil.h"
+#include "Properties.h"
 
-class MSRKinectDeviceExporter : public ProductionNodeExporter<MSRKinectDevice>
+// IntProperty for depth node: Set the output format
+#define PROP_DEPTH_OUTPUT_FORMAT "OutputFormat"
+
+#define DEFINE_BINARY_PROPERTY(name, size, data) \
+	static const BYTE s_##name##Data[size+1] = data; \
+	SetGeneralProperty(#name, size, s_##name##Data);
+
+class PCLProperties : public Properties
 {
 public:
-	MSRKinectDeviceExporter() : ProductionNodeExporter("KinectSDKDevice", XN_NODE_TYPE_DEVICE) {}
+	typedef enum
+    {
+		OpenNI_shift_values = 0, // Shift values (disparity)
+        OpenNI_12_bit_depth = 1, // Default mode: regular 12-bit depth
+    };
 
-protected:
-	virtual XnStatus CreateImpl(xn::Context& context, const XnChar* strInstanceName, const XnChar* strCreationInfo, xn::NodeInfoList* pNodes, const XnChar* strConfigurationDir, xn::ModuleProductionNode** ppInstance)
+	PCLProperties()
 	{
-		try {
-			MSRKinectDevice* node = new MSRKinectDevice(strCreationInfo);
-			node->SetNodeName(strInstanceName);
-			*ppInstance = node;
-			return XN_STATUS_OK;
-		} catch (XnStatusException e) {
-			return e.nStatus;
-		}
-
-	}
-
-	virtual XnStatus EnumerateProductionTreesImpl(xn::Context& context, xn::NodeInfoList& nodes, xn::EnumerationErrors* pErrors)
-	{
-		int count;
-		CHECK_HRESULT(NuiGetSensorCount(&count));
-		if (count == 0) {
-			return XN_STATUS_DEVICE_NOT_CONNECTED;
-		}
-
-		GetDescription(&descDevice);
-		NodeInfoList neededNodes;
-
-		for (int i = 0; i < count; i++) {
-			INuiSensor* pSensor = NULL;
-			CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
-
-			connectionInfo = 
-				ConnectionInfoUtil::encodeConnectionInfo(
-					GlobalConfig::getInstance()->isUseConnectionIdForCreationInfo() ?
-						bstr2cstr(pSensor->NuiDeviceConnectionId()).c_str() :
-						bstr2cstr(pSensor->NuiUniqueId()).c_str() );
-
-			nodes.Add(descDevice, connectionInfo.c_str(), &neededNodes);
-			pSensor->Release();
-		}
-
-		return XN_STATUS_OK;
+		SetIntProperty(PROP_DEPTH_OUTPUT_FORMAT, OpenNI_12_bit_depth);
 	}
 };
-
-XN_EXPORT_DEVICE(MSRKinectDeviceExporter);

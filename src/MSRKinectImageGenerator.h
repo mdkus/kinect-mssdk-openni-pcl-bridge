@@ -25,6 +25,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// Contributor: Michael Dingerkus <mdkus@web.de>,  Copyright (c) 2013
 //@COPYRIGHT@//
 
 #pragma once
@@ -33,11 +34,11 @@
 #include "MSRKinectMirrorCap.h"
 
 class MSRKinectImageGenerator :
-	public AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel>,
+	public AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, XnGrayscale8Pixel, XnGrayscale8Pixel>,
 	public virtual MSRKinectMirrorCap
 {
 private:
-	typedef AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, DWORD, XnRGB24Pixel> SuperClass;
+	typedef AbstractMSRKinectMapGenerator<xn::ModuleImageGenerator, XnGrayscale8Pixel, XnGrayscale8Pixel> SuperClass;
 
 private:
 	static ImageConfiguration::Desc* GetImageConfigDesc()
@@ -90,23 +91,23 @@ public:
 	MSRKinectMirrorCap_IMPL(m_pReader);
 
 protected:
-	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const DWORD* data, const NUI_LOCKED_RECT& lockedRect)
+	virtual XnStatus UpdateImageData(const NUI_IMAGE_FRAME* pFrame, const XnGrayscale8Pixel* data, const NUI_LOCKED_RECT& lockedRect)
 	{
-		assert(lockedRect.Pitch == GetXRes() * sizeof(DWORD));
+		assert(lockedRect.Pitch == GetXRes() * sizeof(XnGrayscale8Pixel));
 
-		const DWORD* sp = data;
-		XnRGB24Pixel* dp = m_pBuffer;
+		const XnGrayscale8Pixel* sp = data;
+		XnGrayscale8Pixel* dp = m_pBuffer;
 
 		XnUInt32 xRes = GetXRes();
 		XnUInt32 yRes = GetYRes();
+
 		int step = m_pReader->GetMirrorFactor();
+
 		for (XnUInt y = 0; y < yRes; y++) {
-			sp = data + y * xRes + (step < 0 ? xRes-1 : 0);
+			sp = data + y * xRes + (step < 0 ? xRes : 0);
 			for (XnUInt x = 0; x < xRes; x++) {
-				DWORD c = *sp;
-				dp->nRed = XnUInt8(c >> 16);
-				dp->nGreen = XnUInt8(c >> 8);
-				dp->nBlue = XnUInt8(c >> 0);
+				XnGrayscale8Pixel c = *sp;
+				*dp = c;
 
 				sp += step;
 				dp++;

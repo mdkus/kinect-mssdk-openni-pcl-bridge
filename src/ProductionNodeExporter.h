@@ -25,11 +25,15 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// Contributor: Michael Dingerkus <mdkus@web.de>,  Copyright (c) 2013
 //@COPYRIGHT@//
 
 #pragma once
 #include "base.h"
 #include "version.h"
+
+static XnProductionNodeDescription descDevice;
+static std::string connectionInfo;
 
 template<class ProductionNodeClass>
 class ProductionNodeExporter {
@@ -51,7 +55,10 @@ public:
 	void GetDescription(XnProductionNodeDescription* pDescription)
 	{
 		pDescription->Type = m_nodeType;
-		strcpy(pDescription->strVendor, VERSION_VENDOR);
+		if (m_nodeType == XN_NODE_TYPE_DEPTH || m_nodeType == XN_NODE_TYPE_IMAGE)
+			strcpy(pDescription->strVendor, VERSION_VENDOR_PCL);
+		else
+			strcpy(pDescription->strVendor, VERSION_VENDOR);
 		strcpy(pDescription->strName, m_strName);
 		pDescription->Version.nMajor = VERSION_MAJOR;
 		pDescription->Version.nMinor = VERSION_MINOR;

@@ -25,6 +25,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// Contributor: Michael Dingerkus <mdkus@web.de>,  Copyright (c) 2013
 //@COPYRIGHT@//
 
 #pragma once
@@ -63,7 +64,7 @@ public:
 		case XN_NODE_TYPE_IMAGE:
 		case XN_NODE_TYPE_IR:
 			{
-				NUI_IMAGE_TYPE imageType = (nodeType == XN_NODE_TYPE_IMAGE) ? NUI_IMAGE_TYPE_COLOR : NUI_IMAGE_TYPE_COLOR_INFRARED;
+				NUI_IMAGE_TYPE imageType = (nodeType == XN_NODE_TYPE_IMAGE) ? NUI_IMAGE_TYPE_COLOR_RAW_BAYER : NUI_IMAGE_TYPE_COLOR_INFRARED;
 
 				if (m_nInitFlags & NUI_INITIALIZE_FLAG_USES_COLOR) {
 					if (m_colorImageType != imageType) {
@@ -126,6 +127,27 @@ public:
 	{
 		if (streq(strCapability, XN_CAPABILITY_SKELETON)) {
 			m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_SKELETON;
+		}
+	}
+
+	void SwitchToDepthRequirement(XnPredefinedProductionNodeType nodeType)
+	{
+		switch (nodeType) {
+		case XN_NODE_TYPE_USER:
+			// Assume we cannot or should not open NUI_INITIALIZE_FLAG_USES_DEPTH at the same time
+			m_nInitFlags &= ~NUI_INITIALIZE_FLAG_USES_DEPTH;
+			m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX;
+
+			// Ignore the resolution
+			break;
+		
+		case XN_NODE_TYPE_DEPTH:
+			// Assume we cannot or should not open NUI_INITIALIZE_FLAG_USES_DEPTH at the same time
+			m_nInitFlags &= ~NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX;
+			m_nInitFlags |= NUI_INITIALIZE_FLAG_USES_DEPTH;
+
+			// Ignore the resolution
+			break;
 		}
 	}
 

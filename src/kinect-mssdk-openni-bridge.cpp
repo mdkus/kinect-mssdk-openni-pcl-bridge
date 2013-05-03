@@ -25,6 +25,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// Contributor: Michael Dingerkus <mdkus@web.de>,  Copyright (c) 2013
 //@COPYRIGHT@//
 
 #include "base.h"
@@ -46,8 +47,11 @@ XN_EXPORT_MODULE(Module)
 //#include "MSRKinectDepthGenerator.h"
 //SIMPLE_PRODUCTION_NODE_EXPORTER_DEF(MSRKinectDepthGenerator, DEPTH);
 
-#include "MSRKinectDepthGeneratorCompatibleWithPrimeSense.h"
-DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(DepthGeneratorCompatibleWithPrimeSense, DEPTH);
+//#include "MSRKinectDepthGeneratorCompatibleWithPrimeSense.h"
+//DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(DepthGeneratorCompatibleWithPrimeSense, DEPTH);
+
+#include "MSRKinectDepthGeneratorCompatibleWithPCL.h"
+DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(DepthGeneratorCompatibleWithPCL, DEPTH);
 
 #include "MSRKinectImageGenerator.h"
 DEFINE_PRODUCTION_NODE_EXPORTER_DEFS(ImageGenerator, IMAGE);

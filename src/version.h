@@ -10,7 +10,7 @@
 //   * Redistributions in binary form must reproduce the above copyright
 //     notice, this list of conditions and the following disclaimer in the
 //     documentation and/or other materials provided with the distribution.
-//   * Neither the name of the Tomoto S. Washio nor the names of his
+//   * Neither the name of the copyright holders nor the names of their
 //     contributors may be used to endorse or promote products derived from
 //     this software without specific prior written permission.
 // 
@@ -25,10 +25,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// Contributor: Michael Dingerkus <mdkus@web.de>,  Copyright (c) 2013
 //@COPYRIGHT@//
 
 #pragma once
 #define VERSION_VENDOR "Tomoto S. Washio"
+#define VERSION_VENDOR_PCL "Tomoto S. Washio/Michael Dingerkus"
 
 // KienctSDK major version
 #define VERSION_MAJOR 1
