@@ -54,11 +54,28 @@ protected:
 
 	virtual XnStatus EnumerateProductionTreesImpl(xn::Context& context, xn::NodeInfoList& nodes, xn::EnumerationErrors* pErrors)
 	{
-		XnProductionNodeDescription desc;
-		GetDescription(&desc);
-		NodeInfoList neededNodes, dummy;
-		neededNodes.Add(descDevice, connectionInfo.c_str(), &dummy);
-		return nodes.Add(desc, NULL, &neededNodes);
+		int count;
+		CHECK_HRESULT(NuiGetSensorCount(&count));
+		XnStatus res = XN_STATUS_OK;
+
+		for (int i = 0; res == XN_STATUS_OK && i < count; i++) {
+			INuiSensor* pSensor = NULL;
+			CHECK_HRESULT(NuiCreateSensorByIndex(i, &pSensor));
+		
+			connectionInfo =
+				ConnectionInfoUtil::encodeConnectionInfo(
+					GlobalConfig::getInstance()->isUseConnectionIdForCreationInfo() ?
+						bstr2cstr(pSensor->NuiDeviceConnectionId()).c_str() :
+						bstr2cstr(pSensor->NuiUniqueId()).c_str() );
+
+			XnProductionNodeDescription desc;
+			GetDescription(&desc);
+			NodeInfoList neededNodes, dummy;
+			neededNodes.Add(descDevice, connectionInfo.c_str(), &dummy);
+			res = nodes.Add(desc, NULL, &neededNodes);
+			pSensor->Release();
+		}
+		return res;
 	}
 };
 
