@@ -75,7 +75,7 @@ Project URL: http://code.google.com/p/kinect-mssdk-openni-bridge/
 
   - Install Microsofts Kinect SDK for the Kinect for Windows camera.
 
-  - Download the 'installV10.zip' file from one of the projects remote repositories mentioned at the top of this file.
+  - Download the 'kinect-mssdk-openni-pcl-bridge.7z' file from one of the projects remote repositories mentioned at the top of this file.
 
   - Create a subdirectory named '3rdparty' in your PCL_BINARY_DIR and unzip (Freeware '7-Zip') the 'kinect-mssdk-openni-pcl-bridge.7z'
     into this new subdirectory. There will be a directory named 'kinect-mssdk-openni-pcl-bridge' which contains the necessary files and 
